@@ -136,7 +136,9 @@ export default class DefaultRenderer extends Component {
       let { gestureResponseDistance } = selected;
 
       if(direction != 'vertical' ){
-        gestureResponseDistance = gestureResponseDistance || 10;
+        gestureResponseDistance = gestureResponseDistance || 50;
+      }else {
+        gestureResponseDistance = 0.1
       }
     return (
 

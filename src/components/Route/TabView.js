@@ -58,13 +58,15 @@ class TabView extends Component {
 
             // console.log(pageKey,MyComponent);
             return (
-                <View key={tab.key} style={{position:'absolute',
-         width:SCREEN_WIDTH,
-         height:SCREEN_HEIGHT-50,
-         top:0,
-         left:0,
-         zIndex:index==i?1:0}}>
-                    <MyComponent style={{backgroundColor:'rgb(250,250,250)'}}/>
+                <View key={tab.key} style={{
+                    position: 'absolute',
+                    width: SCREEN_WIDTH,
+                    height: SCREEN_HEIGHT - 50,
+                    top: 0,
+                    left: 0,
+                    zIndex: index == i ? 1 : 0
+                }}>
+                    <MyComponent style={{backgroundColor: 'rgb(250,250,250)'}}/>
                 </View>
             )
 
@@ -78,9 +80,10 @@ class TabView extends Component {
             <TabBar
                 tabs={tabState.tabs}
                 index={tabState.index}
-                onNavigate={(index)=>{
-            this.props.refreshNav(tabState.tabs[index].key);
-            this.props.switch(index)}}
+                onNavigate={(index)=> {
+                    this.props.refreshNav(tabState.tabs[index].key);
+                    this.props.switch(index)
+                }}
             />
         );
     };
@@ -91,10 +94,10 @@ class TabView extends Component {
         //第一个为主页list ，第二个为个人中心。
         return (
             <View style={styles.topView}>
-                <View style={{flex:1, flexDirection:'row'}}>
+                <View style={{flex: 1, flexDirection: 'row'}}>
                     {this._sceneMap(tabState)}
                 </View>
-                {this._renderTabBar()}
+                {/*{this._renderTabBar()}*/}
             </View>
         );
     }

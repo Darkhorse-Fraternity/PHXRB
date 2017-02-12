@@ -74,21 +74,22 @@ export function login(state:Object):Function {
     // loginRequest.params.user_name = state.accountText;
     // loginRequest.params.password = state.passwordText;
 
-    const parame = requestLogin(state.accountText, state.passwordText);
+    // const parame = requestLogin(state.accountText, state.passwordText);
 
     return dispatch => {
         dispatch(_loginRequest());
 
-        return request(parame, (response)=> {
+        // return request(parame, (response)=> {
 
-            if (response.statu) {
+            // if (response.statu) {
                 //加入sessionToken
-                dispatch(_loginSucceed(response));
-                dispatch(navigatePush('TabView'));
-            } else {
-                dispatch(_loginFailed(response));
-            }
-        });
+                // dispatch(_loginSucceed(response));
+                dispatch(navigatePush('Home'))
+                // dispatch(navigatePush('TabView'));
+            // } else {
+            //     dispatch(_loginFailed(response));
+            // }
+        // });
     }
 }
 
@@ -133,7 +134,7 @@ function _loginSucceed(response:Object):Object {
 
 export function loginSucceed(data:Object):Object {
     //保存登录信息。
-    setLeanCloudSession(data.sessionToken);
+    // setLeanCloudSession(data.sessionToken);
     return {
         type: LOGIN_SUCCEED,
         loaded: false,

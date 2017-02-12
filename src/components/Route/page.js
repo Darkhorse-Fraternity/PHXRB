@@ -14,12 +14,30 @@ import RegPhone from '../../pages/Setting/RegPhone'
 import Feedback from '../../pages/Setting/Feedback'
 import AlterPwd from '../../pages/PersonInfo/AlterPwd'
 import NickName from '../../pages/PersonInfo/NickName'
-
+import Home from '../../pages/PHXR/Home'
+import Financing from '../../pages/PHXR/Financing'
+import Financed from '../../pages/PHXR/Financed'
 
 import WidgetForm from '../../components/WidgetForm/WidgetForm'
+import Account from '../../pages/PersonInfo/Account'
+import UserInfo from '../../pages/PersonInfo/UserInfo'
+import CreditInfo from '../../pages/PersonInfo/CreditInfo'
+import AssetsInfo from '../../pages/PersonInfo/AssetsInfo'
+import AssetsList from '../../pages/PersonInfo/AssetsList'
+import FinanceDetail from '../../pages/PHXR/FinanceDetail'
 export  const PageMap =
 {
+  FinanceDetail,
+  AssetsList,
+  AssetsInfo,
+  CreditInfo,
+  UserInfo,
+  Account,
+  Financing,
+  Financed,
   WidgetForm,
+  Home,
+
   "WebView"             : BaseWebView,
   'TabView'             : TabView,
 

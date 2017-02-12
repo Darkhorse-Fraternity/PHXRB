@@ -103,6 +103,7 @@ export function navigateReset(routes:any, index:number) {
  * @return {[type]}              [description]
  */
 export function navigateRefresh(route:Object) {
+	console.log('test111:', route);
 	return {
 		type: NAV_REFRESH,
 		route,

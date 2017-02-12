@@ -91,7 +91,7 @@ class RegPhone extends Component {
     _gowebView = ()=> {
 
 
-        this.props.pushWebView({key: 'WebView', title: '微著网络服务协议', url: webUrl});
+        this.props.pushWebView({key: 'WebView', title: '普汇信融用户服务协议', url: webUrl});
     };
 
     _goRegist() {

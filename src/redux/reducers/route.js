@@ -5,7 +5,6 @@
 import {config} from '../../components/Route/pageConfig'
 import {combineReducers} from 'redux'
 import * as NavigationStateUtils from 'NavigationStateUtils'
-
 import {
     NAV_PUSH, NAV_POP,
     NAV_JUMP_TO_KEY,
@@ -17,21 +16,25 @@ import {
 import {LOGOUT} from '../actions/login'
 //生成原始单页配置数据。
 // const originalRoute = config('WidgetForm');
-const originalRoute = config('TabView');
+const originalRoute =  config('LoginView');
+const originalRoute2 = config('Home');
 
-const initialNavState = {
+const initialNavLoginState = {
     index: 0,
     routes: [
         originalRoute,
     ]
 }
 
-const initialNavLoginState = {
-    index: 1,
-    routes: [
+const initialNavHomeState = {
+    index:1,
+    routes:[
         originalRoute,
+        originalRoute2
     ]
 }
+
+
 
 
 /**
@@ -41,7 +44,7 @@ const initialNavLoginState = {
  * navigationState，有默认值initialNavState，以后则默认返回上次一次存的值，
  */
 
-function navigationState(state: Object = initialNavState, action) {
+function navigationState(state: Object = initialNavLoginState, action) {
     switch (action.type) {
         case NAV_PUSH: {
 
@@ -91,6 +94,7 @@ function navigationState(state: Object = initialNavState, action) {
 
             let lastOne = state.routes[state.index];
             Object.assign(lastOne, action.route);
+            console.log('test:', lastOne);
             return {
                 ...state,
             }

@@ -1,4 +1,4 @@
-package com.rnstartkit;
+package com.phxrb;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +18,7 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "RNStartKit";
+        return "phxrb";
     }
 
 

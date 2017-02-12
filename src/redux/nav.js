@@ -8,3 +8,8 @@ export function push(key) {
 export function pop(key) {
     store.dispatch(nav.navigatePop(key))
 }
+
+
+export function refresh(route) {
+    store.dispatch(nav.navigateRefresh(route))
+}
