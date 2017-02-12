@@ -46,21 +46,11 @@ export  default  class Home extends Component {
 
     __gofinancing = ()=> {
 
-        Alert.alert(
-            '请确定是否需要融资',
-            "",
-            [
-                {
-                    text: '取消', onPress: () => {
-                }
-                },
-                {text: '确定', onPress: () => push('Financing')},
-            ]
-        )
+        push('MemberList')
     }
 
     __myfinanced = ()=> {
-        push('Financed')
+        push('BusinessList')
     }
 
     render(): ReactElement<any> {

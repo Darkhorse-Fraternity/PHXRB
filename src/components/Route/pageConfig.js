@@ -56,7 +56,12 @@ export const pageConfig = {
     "AssetsList": {title: "资产列表"},
     "FinanceDetail": {title: "融资详情"},
     "UserInfoDetail": {title: '修改个人资料'},
-    "Aptitude": {title: '我的资料'}
+    "Aptitude": {title: '我的资料'},
+    "AptDetail": {title: '新增资料'},
+    "Business": {title:"需求确认"},
+    "BusinessList":{title:'业务列表'},
+    "MemberList":{title:'会员列表'},
+    "MemberInfo":{title:'会员信息'},
 }
 
 export function config(key: string): Object {

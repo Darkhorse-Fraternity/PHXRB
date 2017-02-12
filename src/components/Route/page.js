@@ -27,8 +27,18 @@ import AssetsList from '../../pages/PersonInfo/AssetsList'
 import FinanceDetail from '../../pages/PHXR/FinanceDetail'
 import UserInfoDetail from '../../pages/PersonInfo/UserInfoDetail'
 import Aptitude from '../../pages/PersonInfo/Aptitude'
+import AptDetail from '../../pages/PersonInfo/AptDetail'
+import MemberList from '../../pages/PHXR/MenberList'
+import MemBerInfo from '../../pages/PHXR/MemberInfo'
+import Business from '../../pages/PHXR/Business'
+import BusinessList from '../../pages/PHXR/BusinessList'
 export  const PageMap =
 {
+  BusinessList,
+  Business,
+  MemBerInfo,
+  MemberList,
+  AptDetail,
   Aptitude,
   UserInfoDetail,
   FinanceDetail,

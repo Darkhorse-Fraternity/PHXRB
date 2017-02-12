@@ -1,5 +1,5 @@
 /**
- * Created by lintong on 2017/2/2.
+ * Created by lintong on 2017/2/13.
  * @flow
  */
 'use strict';
@@ -10,8 +10,6 @@ import {
     View,
     StyleSheet,
     TouchableOpacity,
-    Text,
-    Alert,
 } from 'react-native'
 
 import {mainColor} from '../../configure'
@@ -19,18 +17,14 @@ import {connect} from 'react-redux'
 import * as immutable from 'immutable';
 import BaseListView from '../../components/Base/BaseListView';
 import {listLoad, listLoadMore} from '../../redux/actions/list'
-
-import {refresh,push} from '../../redux/nav'
-import {bindActionCreators} from 'redux';
-import {renderNavAddButton} from '../../util/viewUtil'
-
-const listKey = 'listKey'
+import {push} from '../../redux/nav'
+const listKey = MenberList
 function myListLoad(more: bool = false) {
     return (dispatch, getState) => {
     }
 }
 
-//我的资料
+
 @connect(
     state =>({
         data: state.list.get(listKey),
@@ -39,10 +33,11 @@ function myListLoad(more: bool = false) {
         //...bindActionCreators({},dispatch),
         load: ()=>dispatch(myListLoad()),
         loadMore: ()=>dispatch(myListLoad(true)),
+
     })
 )
 
-export default class List extends Component {
+export default class MenberList extends Component {
     constructor(props: Object) {
         super(props);
     }
@@ -58,39 +53,46 @@ export default class List extends Component {
     }
 
 
-    __tapRight(){
-        push('AptDetail')
-    }
-
-    componentDidMount() {
-
-        const rightBtn = renderNavAddButton(this.__tapRight)
-        refresh({renderRightComponent:rightBtn,
-            rightButtonDisabled:false,
-            rightButtonIsLoad:false});
-    }
-
     renderRow(itme: Object, sectionID: number, rowID: number) {
 
         return (
             <TouchableOpacity
                 style={{marginTop:10}}
                 onPress={()=>{
-                    {/*push('AssetsInfo')*/}
-                         Alert.alert(
-                        '确定要删除吗？',
-                           "",
-                        [
-                            {text: '取消', onPress: () => {}},
-                            {text: '确定', onPress: () =>{}},
-                        ])
-
             }}>
+                <View style={styles.line}/>
+
                 <View style={styles.row}>
-                    <Text>资料证明文件</Text>
-                    {/*<View style={styles.arrowView}/>*/}
-                    <Text>删除</Text>
+                    <Text
+                        numberOfLines={1}
+                        style={styles.date}>
+                        {moment(itme.updatedAt).format('YYYY-MM-DD HH:mm')}
+                    </Text>
+                    <View style={{ flexDirection: 'row',justifyContent:'space-between'}}>
+                        <View style={styles.subRow}>
+                            <Image source={trip_up}/>
+                            <Text
+                                numberOfLines={1}
+                                style={styles.text}>
+                                {itme.start}
+                            </Text>
+                        </View>
+                        <Text
+                            numberOfLines={1}
+                            style={[styles.subText,{color}]}>
+                            {itme.statu}
+                        </Text>
+                    </View>
+                    <View style={styles.subRow}>
+                        <Image source={trip_down}/>
+                        <Text
+                            numberOfLines={1}
+                            style={styles.text}>
+                            {itme.finish}
+                        </Text>
+                    </View>
                 </View>
+                <View style={styles.line}/>
             </TouchableOpacity>
         )
     }
@@ -100,13 +102,12 @@ export default class List extends Component {
         const loadStatu = this.props.data && this.props.data.get('loadStatu')
         let listData = this.props.data && this.props.data.get('listData')
         listData = listData && listData.toJS()
-        listData = ['111', '222']
+
         return (
             <BaseListView
                 //renderHeader={this._renderHeader}
                 style={[this.props.style,styles.list]}
-                //loadStatu={loadStatu}
-                loadStatu={'LIST_NORMAL'}
+                loadStatu={loadStatu}
                 loadData={this.props.load}
                 dataSource={listData}
                 loadMore={this.props.loadMore}
@@ -146,18 +147,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         paddingHorizontal: 18,
         paddingVertical: 18,
-        flexDirection:'row',
-        justifyContent:'space-between'
     },
-    arrowView: {
-        borderBottomWidth: StyleSheet.hairlineWidth * 2,
-        borderRightWidth: StyleSheet.hairlineWidth * 2,
-        borderColor: '#8c8c85',
-        transform: [{rotate: '315deg'}],
-        width: 10,
-        height: 10,
-    },
-
+    subRow: {
+        marginTop: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+    }
 })
 
 
