@@ -25,8 +25,12 @@ import CreditInfo from '../../pages/PersonInfo/CreditInfo'
 import AssetsInfo from '../../pages/PersonInfo/AssetsInfo'
 import AssetsList from '../../pages/PersonInfo/AssetsList'
 import FinanceDetail from '../../pages/PHXR/FinanceDetail'
+import UserInfoDetail from '../../pages/PersonInfo/UserInfoDetail'
+import Aptitude from '../../pages/PersonInfo/Aptitude'
 export  const PageMap =
 {
+  Aptitude,
+  UserInfoDetail,
   FinanceDetail,
   AssetsList,
   AssetsInfo,

@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
   barRightButtonText: {
     textAlign: 'right',
     fontSize: 15,
-    fontWeight:'normal'
+    fontWeight:'normal',
+    color:'black'
   },
 
   barLeftButtonText: {

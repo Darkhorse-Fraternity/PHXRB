@@ -16,8 +16,8 @@ export const pageConfig = {
         title: '登录', hideNavBar: true, gestureResponseDistance: 0.0001,
         direction: 'vertical'
     },
-    "Financing":{title:'我要融资'},
-    'Financed':{title:'我的融资'},
+    "Financing": {title: '我要融资'},
+    'Financed': {title: '我的融资'},
     "PersonCenter": {hideNavBar: true},
     "BaseWebView": {title: "加载中。。", gestureResponseDistance: 0.0001},
     "CourseInfoView": {title: "课程详情",},
@@ -48,13 +48,15 @@ export const pageConfig = {
     'iRate': {title: '评价'},
     'introDetail': {title: '回复'},
     'About': {title: '关于我们'},
-    'Home' : {title: "普汇信融",direction: 'vertical'},
-    "Account" : {title:'账户信息'},
-    "UserInfo" : {title:'我的信息'},
-    "CreditInfo" : {title:'信用信息'},
-    "AssetsInfo" : {title:"资产信息"},
-    "AssetsList" : {title:"资产列表"},
-    "FinanceDetail" : {title:"融资详情"},
+    'Home': {title: "普汇信融", direction: 'vertical'},
+    "Account": {title: '账户信息'},
+    "UserInfo": {title: '我的信息'},
+    "CreditInfo": {title: '信用信息'},
+    "AssetsInfo": {title: "资产信息"},
+    "AssetsList": {title: "资产列表"},
+    "FinanceDetail": {title: "融资详情"},
+    "UserInfoDetail": {title: '修改个人资料'},
+    "Aptitude": {title: '我的资料'}
 }
 
 export function config(key: string): Object {

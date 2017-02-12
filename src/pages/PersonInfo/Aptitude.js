@@ -11,6 +11,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Text,
+    Alert,
 } from 'react-native'
 
 import {mainColor} from '../../configure'
@@ -18,7 +19,10 @@ import {connect} from 'react-redux'
 import * as immutable from 'immutable';
 import BaseListView from '../../components/Base/BaseListView';
 import {listLoad, listLoadMore} from '../../redux/actions/list'
-import {push} from '../../redux/nav'
+
+import {refresh,push} from '../../redux/nav'
+import {bindActionCreators} from 'redux';
+import {renderNavAddButton} from '../../util/viewUtil'
 
 const listKey = 'listKey'
 function myListLoad(more: bool = false) {
@@ -37,6 +41,7 @@ function myListLoad(more: bool = false) {
         loadMore: ()=>dispatch(myListLoad(true)),
         push: (key)=> {
             // dispatch(navigatePush(key));
+            push('')
         },
     })
 )
@@ -57,17 +62,37 @@ export default class List extends Component {
     }
 
 
+    __tapRight(){
+    }
+
+    componentDidMount() {
+
+        const rightBtn = renderNavAddButton(this.__tapRight)
+        refresh({renderRightComponent:rightBtn,
+            rightButtonDisabled:false,
+            rightButtonIsLoad:false});
+    }
+
     renderRow(itme: Object, sectionID: number, rowID: number) {
 
         return (
             <TouchableOpacity
                 style={{marginTop:10}}
                 onPress={()=>{
-                    push('AssetsInfo')
+                    {/*push('AssetsInfo')*/}
+                         Alert.alert(
+                        '确定要删除吗？',
+                           "",
+                        [
+                            {text: '取消', onPress: () => {}},
+                            {text: '确定', onPress: () =>{}},
+                        ])
+
             }}>
                 <View style={styles.row}>
-                    <Text>福州鼓楼区xx小区x号楼</Text>
-                    <View style={styles.arrowView}/>
+                    <Text>资料证明文件</Text>
+                    {/*<View style={styles.arrowView}/>*/}
+                    <Text>删除</Text>
                 </View>
             </TouchableOpacity>
         )

@@ -271,7 +271,7 @@ class PersonInfo extends React.Component {
                 <View style={styles.group}>
                     {this._renderRow('我的资料', "", () => {
                         // NavigationManager.goToPage("AlterPwd");
-                        this.props.push("AssetsList");
+                        this.props.push("Aptitude");
                     })}
                 </View>
                 <View style={styles.groupSpace}>

@@ -16,7 +16,7 @@ import {
 } from 'react-native'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
-
+import {push} from '../../redux/nav'
 //static displayName = Account
 @connect(
     state =>({
@@ -40,10 +40,12 @@ export  default  class Account extends Component {
     static defaultProps = {};
 
 
-    _renderRow(title: string, des: string, onPress: Function) {
+    _renderRow(title: string, des: string,onPress: Function) {
         return (
             <View>
-                <TouchableHighlight onPress={onPress}>
+                <TouchableHighlight onPress={()=>{
+                    push({key:'UserInfoDetail',index:title})
+                }}>
                     <View style={styles.row}>
                         <Text style={styles.rowText}>
                             {title}
@@ -52,8 +54,10 @@ export  default  class Account extends Component {
                             <Text style={styles.rowDesText}>
                                 {des}
                             </Text>
+                            <View style={styles.arrowView}/>
                         </View>
                     </View>
+
                 </TouchableHighlight>
                 <View style={styles.separator}/>
             </View>
@@ -71,32 +75,16 @@ export  default  class Account extends Component {
 
                 {this._renderRow('性别', "男", () => {
                 })}
-                {this._renderRow('年龄', "25", () => {
+                {this._renderRow('身份证', "35042619890320000", () => {
                 })}
-                {this._renderRow('年龄', "25", () => {})}
-                {this._renderRow('身份证', "25", () => {})}
-                {this._renderRow('联系方式', "25", () => {})}
-                {this._renderRow('邮箱', "25", () => {})}
-                {this._renderRow('城市', "25", () => {})}
-                {this._renderRow('婚姻状态', "25", () => {})}
-                {this._renderRow('配偶姓名', "25", () => {})}
-                {this._renderRow('配偶身份证', "25", () => {})}
-                {this._renderRow('配偶电话', "25", () => {})}
-                {this._renderRow('居住地址', "25", () => {})}
-                {this._renderRow('邮编', "25", () => {})}
-                {this._renderRow('户籍地址', "25", () => {})}
-                {this._renderRow('工作单位', "25", () => {})}
-                {this._renderRow('单位地址', "25", () => {})}
-                {this._renderRow('单位性质', "25", () => {})}
-                {this._renderRow('单位规模', "25", () => {})}
-                {this._renderRow('单位人员规模', "25", () => {})}
-                {this._renderRow('在岗职位', "25", () => {})}
-                {this._renderRow('职位水平', "25", () => {})}
-                {this._renderRow('入职时间', "25", () => {})}
-                {this._renderRow('月工资水平', "25", () => {})}
-                {this._renderRow('提供工作证明文件', "25", () => {})}
-                {this._renderRow('非配偶直系亲属姓名1', "25", () => {})}
-
+                {this._renderRow('联系方式', "13588833404", () => {})}
+                {this._renderRow('邮箱', "420156367@qq.com", () => {})}
+                {this._renderRow('城市', "福州", () => {})}
+                {this._renderRow('婚姻状况', "未婚", () => {})}
+                {this._renderRow('年龄', "29", () => {})}
+                {this._renderRow('家庭地址', "福州xxxx", () => {})}
+                {this._renderRow('邮编', "350001", () => {})}
+                {this._renderRow('业务代码', "12046572", () => {})}
 
             </ScrollView>
         );
@@ -130,10 +118,19 @@ const styles = StyleSheet.create({
     },
     rowDesText:{
         fontSize:13,
-        color:'rgb(150,150,150)'
+        color:'rgb(150,150,150)',
+        marginRight:10,
     },
     separator: {
         backgroundColor: '#bbbbbb',
         height: StyleSheet.hairlineWidth,
+    },
+    arrowView: {
+        borderBottomWidth: StyleSheet.hairlineWidth * 2,
+        borderRightWidth: StyleSheet.hairlineWidth * 2,
+        borderColor: '#8c8c85',
+        transform: [{rotate: '315deg'}],
+        width: 10,
+        height: 10,
     },
 })
