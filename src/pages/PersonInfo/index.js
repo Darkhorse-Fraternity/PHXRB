@@ -241,7 +241,7 @@ class PersonInfo extends React.Component {
 
                  })}*/}
                 <View style={styles.groupSpace}/>
-                {this._renderRow('我的账户', this.props.userData.username, () => {
+                {this._renderRow('我的账号', this.props.userData.username, () => {
                     // NavigationManager.goToPage("NickName");
                     this.props.push("Account");
                 })}
@@ -259,25 +259,17 @@ class PersonInfo extends React.Component {
                 <View style={styles.groupSpace}>
                 </View>
                 <View style={styles.group}>
-                    {this._renderRow('个人信息', "", () => {
+                    {this._renderRow('我的信息', "", () => {
                         // NavigationManager.goToPage("AlterPwd");
                         this.props.push("UserInfo");
                     })}
                 </View>
 
-                <View style={styles.groupSpace}>
-                </View>
-                <View style={styles.group}>
-                    {this._renderRow('信用信息', "", () => {
-                        // NavigationManager.goToPage("AlterPwd");
-                        this.props.push("CreditInfo");
-                    })}
-                </View>
 
                 <View style={styles.groupSpace}>
                 </View>
                 <View style={styles.group}>
-                    {this._renderRow('我的资产', "", () => {
+                    {this._renderRow('我的资料', "", () => {
                         // NavigationManager.goToPage("AlterPwd");
                         this.props.push("AssetsList");
                     })}

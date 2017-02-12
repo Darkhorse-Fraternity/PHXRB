@@ -12,9 +12,11 @@ import {
     StyleSheet,
     TouchableHighlight,
     Text,
+    TouchableOpacity,
 } from 'react-native'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
+import {pop} from '../../redux/nav'
 
 //static displayName = Account
 @connect(
@@ -58,6 +60,10 @@ export  default  class Account extends Component {
         );
     }
 
+    __activate=()=>{
+        pop()
+    }
+
     render(): ReactElement<any> {
         return (
             <View style={[this.props.style,styles.wrap]}>
@@ -67,11 +73,16 @@ export  default  class Account extends Component {
                 {this._renderRow('账户', this.props.userData.username, () => {
                 })}
                 <View style={styles.separator}/>
-                {this._renderRow('类型', "融资会员", () => {
+                {this._renderRow('类型', "咨询顾问", () => {
                 })}
                 <View style={styles.separator}/>
                 {this._renderRow('状态', "已激活", () => {
                 })}
+
+                <TouchableOpacity style={styles.btn} onPress={this.__activate}>
+                    <Text style={styles.btnText}>返回</Text>
+                </TouchableOpacity>
+
             </View>
         );
     }
@@ -110,5 +121,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#bbbbbb',
         // marginLeft: 15,
         height: StyleSheet.hairlineWidth,
+    },
+    btn: {
+        marginTop: 30,
+        borderColor: 'blue',
+        borderWidth: StyleSheet.hairlineWidth,
+        padding: 10,
+        borderRadius: 10,
+        width:100,
+        height:40,
+        alignSelf:'center',
+        alignItems:'center',
+        justifyContent:'center',
+    },
+    btnText: {
+        color: 'blue',
+        fontSize: 15,
+        fontWeight: "400",
     },
 })
