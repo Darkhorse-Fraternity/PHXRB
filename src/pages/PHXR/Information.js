@@ -13,7 +13,7 @@ import {
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
 
-//static displayName = MemBerInfo
+//static displayName = Information
 @connect(
     state =>({
         //state:state.util.get()
@@ -22,7 +22,7 @@ import {bindActionCreators} from 'redux';
         //...bindActionCreators({},dispatch),
     })
 )
-export  default  class MemBerInfo extends Component {
+export  default  class Information extends Component {
     constructor(props: Object) {
         super(props);
     }
@@ -31,7 +31,7 @@ export  default  class MemBerInfo extends Component {
     static defaultProps = {};
 
     shouldComponentUpdate(nextProps: Object) {
-        return !immutable.is(this.props.data, nextProps.data)
+        return !immutable.is(this.props, nextProps)
     }
 
     render(): ReactElement<any> {

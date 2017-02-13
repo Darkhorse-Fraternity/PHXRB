@@ -62,6 +62,9 @@ export const pageConfig = {
     "BusinessList":{title:'业务列表'},
     "MemberList":{title:'会员列表'},
     "MemberInfo":{title:'会员信息'},
+    "Demand":{title:"需求详情"},
+    "Credit":{title:"信用信息"},
+    "Information":{title:"资料列表"},
 }
 
 export function config(key: string): Object {

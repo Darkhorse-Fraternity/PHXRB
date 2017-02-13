@@ -152,24 +152,24 @@ class PersonInfo extends React.Component {
 
 
     _renderRow(title: string, des: string, onPress: Function) {
-        return (
-            <View>
-                <TouchableHighlight onPress={onPress}>
-                    <View style={styles.row}>
+    return (
+        <View>
+            <TouchableHighlight onPress={onPress}>
+                <View style={styles.row}>
+                    <Text style={styles.rowText}>
+                        {title}
+                    </Text>
+                    <View style={styles.row2}>
                         <Text style={styles.rowText}>
-                            {title}
+                            {des}
                         </Text>
-                        <View style={styles.row2}>
-                            <Text style={styles.rowText}>
-                                {des}
-                            </Text>
-                            {title != '账号' && <View style={styles.arrowView}/>}
-                        </View>
+                        {title != '账号' && <View style={styles.arrowView}/>}
                     </View>
-                </TouchableHighlight>
-            </View>
-        );
-    }
+                </View>
+            </TouchableHighlight>
+        </View>
+    );
+}
 
     // handle:Object;
     // _changeGrade=(value:string)=>{
