@@ -12,14 +12,14 @@ import {
     TouchableOpacity,
     Text,
 } from 'react-native'
-
+import {push, refresh} from '../../redux/nav'
 import {mainColor} from '../../configure'
 import {connect} from 'react-redux'
 import * as immutable from 'immutable';
 import BaseListView from '../../components/Base/BaseListView';
 import {listLoad, listLoadMore} from '../../redux/actions/list'
-import {push} from '../../redux/nav'
-
+import {renderNavAddButton} from '../../util/viewUtil'
+import {Button,WingBlank} from 'antd-mobile';
 const listKey = 'listKey'
 function myListLoad(more: bool = false) {
     return (dispatch, getState) => {
@@ -44,6 +44,9 @@ function myListLoad(more: bool = false) {
 export default class List extends Component {
     constructor(props: Object) {
         super(props);
+        this.state = {
+            visible: false,
+        }
     }
 
     static propTypes = {
@@ -52,9 +55,27 @@ export default class List extends Component {
     };
     static defaultProps = {};
 
-    shouldComponentUpdate(nextProps: Object) {
-        return !immutable.is(this.props.data, nextProps.data)
+    // shouldComponentUpdate(nextProps: Object,nextState:Object) {
+    //     return !immutable.is(this.props, nextProps) ||  !immutable.is(this.state, nextState)
+    // }
+
+
+    __tapRight = ()=> {
+        this.setState({visible: true})
     }
+
+
+    _renderHeader =()=>{
+        return (
+            <View style={{flexDirection:'row',justifyContent:'center',marginTop:10}}>
+                <Button>新增房产</Button>
+                <WingBlank/>
+                <Button>新增汽车</Button>
+            </View>
+        )
+    }
+
+
 
 
     renderRow(itme: Object, sectionID: number, rowID: number) {
@@ -80,16 +101,18 @@ export default class List extends Component {
         listData = listData && listData.toJS()
         listData = ['111', '222']
         return (
-            <BaseListView
-                //renderHeader={this._renderHeader}
-                style={[this.props.style,styles.list]}
-                //loadStatu={loadStatu}
-                loadStatu={'LIST_NORMAL'}
-                loadData={this.props.load}
-                dataSource={listData}
-                loadMore={this.props.loadMore}
-                renderRow={this.renderRow.bind(this)}
-            />
+            <View style={[this.props.style,styles.list]}>
+                <BaseListView
+                    renderHeader={this._renderHeader}
+                    style={styles.list}
+                    //loadStatu={loadStatu}
+                    loadStatu={'LIST_NORMAL'}
+                    loadData={this.props.load}
+                    dataSource={listData}
+                    loadMore={this.props.loadMore}
+                    renderRow={this.renderRow.bind(this)}
+                />
+            </View>
         );
     }
 }
@@ -124,8 +147,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         paddingHorizontal: 18,
         paddingVertical: 18,
-        flexDirection:'row',
-        justifyContent:'space-between'
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     arrowView: {
         borderBottomWidth: StyleSheet.hairlineWidth * 2,

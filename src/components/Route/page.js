@@ -35,8 +35,10 @@ import BusinessList from '../../pages/PHXR/BusinessList'
 import Information from '../../pages/PHXR/Information'
 import Demand from '../../pages/PHXR/Demand'
 import Credit from '../../pages/PHXR/Credit'
+import InfoUpLoad from '../../pages/PHXR/InfoUpLoad'
 export  const PageMap =
 {
+  InfoUpLoad,
   Credit,
   Demand,
   Information,

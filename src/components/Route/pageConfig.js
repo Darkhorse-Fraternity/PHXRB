@@ -65,6 +65,7 @@ export const pageConfig = {
     "Demand":{title:"需求详情"},
     "Credit":{title:"信用信息"},
     "Information":{title:"资料列表"},
+    "InfoUpLoad":{title:'文件上传'},
 }
 
 export function config(key: string): Object {

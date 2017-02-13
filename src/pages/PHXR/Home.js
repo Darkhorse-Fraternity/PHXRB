@@ -18,9 +18,10 @@ import {
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
 import {placeholder} from '../../../source/'
-import {push,refresh} from '../../redux/nav'
+import {push, refresh} from '../../redux/nav'
 import {renderNavImageButton} from '../../util/viewUtil'
 //static displayName = Home
+import {Button, WhiteSpace} from 'antd-mobile';
 import {icon_class} from '../../../source'
 @connect(
     state =>({
@@ -58,12 +59,17 @@ export  default  class Home extends Component {
             <ScrollView style={[this.props.style, {backgroundColor:"white"}]}>
                 <View style={[this.props.style, styles.wrap]}>
                     <Image source={placeholder} style={styles.logo}/>
-                    <TouchableOpacity style={styles.btn} onPress={this.__gofinancing}>
-                        <Text style={styles.btnText}>我的会员</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.btn} onPress={this.__myfinanced}>
-                        <Text style={styles.btnText}>我的业务</Text>
-                    </TouchableOpacity>
+
+                    <WhiteSpace/>
+                    <WhiteSpace/>
+                    <WhiteSpace/>
+                    <View style={{width:200}}>
+                        <Button onClick={this.__gofinancing}>我的会员</Button>
+                    </View>
+                    <WhiteSpace/>
+                    <View style={{width:200}}>
+                        <Button onClick={this.__myfinanced}>我的业务</Button>
+                    </View>
                 </View>
             </ScrollView>
         );

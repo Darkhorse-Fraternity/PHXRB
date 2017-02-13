@@ -161,11 +161,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: 'rgb(100,100,100)'
     },
-    row: {
-        backgroundColor: 'white',
-        paddingHorizontal: 18,
-        paddingVertical: 18,
-    },
+    // row: {
+    //     backgroundColor: 'white',
+    //     paddingHorizontal: 18,
+    //     paddingVertical: 18,
+    // },
     subRow: {
         marginTop: 10,
         flexDirection: 'row',
