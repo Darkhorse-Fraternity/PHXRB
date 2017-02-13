@@ -10,7 +10,11 @@ import {
     View,
     StyleSheet,
     TouchableOpacity,
+    Text,
+    Button,
+    Linking,
 } from 'react-native'
+import { SearchBar } from 'antd-mobile';
 
 import {mainColor} from '../../configure'
 import {connect} from 'react-redux'
@@ -52,6 +56,9 @@ export default class MenberList extends Component {
         return !immutable.is(this.props.data, nextProps.data)
     }
 
+    makePhone(number:string){
+        Linking.openURL('tel:10086')
+    }
 
     renderRow(itme: Object, sectionID: number, rowID: number) {
 
@@ -59,41 +66,43 @@ export default class MenberList extends Component {
             <TouchableOpacity
                 style={{marginTop:10}}
                 onPress={()=>{
+                    push('MemberInfo')
             }}>
-                <View style={styles.line}/>
-
                 <View style={styles.row}>
-                    <Text
-                        numberOfLines={1}
-                        style={styles.date}>
-                        {moment(itme.updatedAt).format('YYYY-MM-DD HH:mm')}
-                    </Text>
-                    <View style={{ flexDirection: 'row',justifyContent:'space-between'}}>
-                        <View style={styles.subRow}>
-                            <Image source={trip_up}/>
-                            <Text
-                                numberOfLines={1}
-                                style={styles.text}>
-                                {itme.start}
-                            </Text>
-                        </View>
-                        <Text
-                            numberOfLines={1}
-                            style={[styles.subText,{color}]}>
-                            {itme.statu}
-                        </Text>
+                    <View>
+                        <Text>黄xx</Text>
+                        <Text style={{marginTop:10,color:'rgb(150,150,150)'}}>13588834854</Text>
                     </View>
-                    <View style={styles.subRow}>
-                        <Image source={trip_down}/>
-                        <Text
-                            numberOfLines={1}
-                            style={styles.text}>
-                            {itme.finish}
-                        </Text>
+                    <View style={{flexDirection:'row',alignItems:'center'}}>
+                        <View style={{marginRight:10}}>
+                            <Text style={{textAlign:'right'}}>45%</Text>
+                            <Button onPress={this.makePhone} style={{marginTop:10,}} title='通话'/>
+                        </View>
+                        <View style={styles.arrowView}/>
                     </View>
                 </View>
-                <View style={styles.line}/>
             </TouchableOpacity>
+        )
+    }
+
+
+    onChange(){
+
+    }
+
+    _renderHeader(){
+        return(
+            <View>
+                <SearchBar
+                    //value={this.state.value}
+                    placeholder="搜索"
+                    onSubmit={(value) => console.log(value, 'onSubmit')}
+                    onClear={(value) => console.log(value, 'onClear')}
+                    onFocus={() => console.log('onFocus')}
+                    onBlur={() => console.log('onBlur')}
+                    onChange={this.onChange}
+                />
+            </View>
         )
     }
 
@@ -102,12 +111,14 @@ export default class MenberList extends Component {
         const loadStatu = this.props.data && this.props.data.get('loadStatu')
         let listData = this.props.data && this.props.data.get('listData')
         listData = listData && listData.toJS()
+        listData = ['11', '22'];
 
         return (
+
             <BaseListView
-                //renderHeader={this._renderHeader}
+                renderHeader={this._renderHeader}
                 style={[this.props.style,styles.list]}
-                loadStatu={loadStatu}
+                loadStatu="LIST_NORMAL"
                 loadData={this.props.load}
                 dataSource={listData}
                 loadMore={this.props.loadMore}
@@ -147,12 +158,18 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         paddingHorizontal: 18,
         paddingVertical: 18,
-    },
-    subRow: {
-        marginTop: 10,
         flexDirection: 'row',
-        alignItems: 'center',
-    }
+        justifyContent: 'space-between'
+    },
+    arrowView: {
+        borderBottomWidth: StyleSheet.hairlineWidth * 2,
+        borderRightWidth: StyleSheet.hairlineWidth * 2,
+        borderColor: '#8c8c85',
+        transform: [{rotate: '315deg'}],
+        width: 10,
+        height: 10,
+    },
+
 })
 
 
