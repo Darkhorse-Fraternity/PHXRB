@@ -97,7 +97,7 @@ class TabView extends Component {
                 <View style={{flex: 1, flexDirection: 'row'}}>
                     {this._sceneMap(tabState)}
                 </View>
-                {/*{this._renderTabBar()}*/}
+                {this._renderTabBar()}
             </View>
         );
     }

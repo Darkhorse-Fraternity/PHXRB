@@ -11,7 +11,7 @@ import  {
     Picker,
     LayoutAnimation,
     TouchableOpacity,
-    NativeModules
+    NativeModules,
 } from 'react-native'
 import {OS} from '../../util/';
 
@@ -26,6 +26,7 @@ import {register} from '../../redux/actions/login'
 import {checkPhoneNum, Toast} from '../../util'
 
 const webUrl = 'https://static.dayi.im/static/fudaojun/rule.html?version=20160603182000';
+import { ActionSheet } from 'antd-mobile';
 class RegPhone extends Component {
     constructor(props: Object) {
         super(props);
@@ -121,6 +122,24 @@ class RegPhone extends Component {
     }
 
 
+    showActionSheet(message:string,op:any) {
+        const wrapProps = {onTouchStart: e => e.preventDefault()}
+        const BUTTONS = op.concat('取消')
+        ActionSheet.showActionSheetWithOptions({
+                options: BUTTONS,
+                // title: '标题',
+                cancelButtonIndex: BUTTONS.length - 1,
+                message,
+                maskClosable: true,
+                'data-seed': 'logId',
+                wrapProps,
+            },
+            (buttonIndex) => {
+                this.setState({ clicked: BUTTONS[buttonIndex] });
+            });
+    }
+
+
     focusNextField(nextField: string) {
 
         if (nextField == '1') {
@@ -156,6 +175,24 @@ class RegPhone extends Component {
         )
     }
 
+    _renderRow(title: string,  dex:string,onPress: Function) {
+        return (
+            <View>
+                <TouchableOpacity onPress={()=>onPress(title)}>
+                    <View style={styles.row}>
+                        <Text style={[styles.rowText,{marginRight:15}]}>
+                            {title}
+                        </Text>
+                        <View style={styles.row2}>
+                            <Text style={styles.dex} >{dex}</Text>
+                            <View style={styles.arrowView}/>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
     render() {
         var codeEnable = checkPhoneNum(this.state.phone) &&
             this.state.time == 60 && !this.state.isTap;
@@ -164,33 +201,48 @@ class RegPhone extends Component {
         return (
             <ScrollView
                 style={styles.container}
-                keyboardShouldPersistTaps={true}
+                keyboardShouldPersistTaps="always"
                 keyboardDismissMode='on-drag'>
+
+
+                {this._renderRowMain('用户名:', '请填入用户名',
+                    (text) => this.setState({phone: text}), 'default', true, 20, "1"
+                )}
 
                 {this._renderRowMain('手机号:', '请填入手机号码',
                     (text) => this.setState({phone: text}), 'numeric', true, 11, "1"
                 )}
 
-                <View style={{flexDirection:'row'}}>
-                    {this._renderRowMain('验证码:', '输入您收到的验证码',
-                        (text) => {
-                            this.setState({ymCode: text})
-                        },
-                        'numeric'
-                        , false, 6, "2"
-                    )}
+                {this._renderRow('请选择所在城市:', '福州',(title) => {
+                    this.showActionSheet(title,["福州","厦门"])
+                })}
+                {this._renderRowMain('密码:', '请输入密码',
+                    (text) => this.setState({phone: text}), 'default', true, 11, "1"
+                )}
+                {this._renderRowMain('确认密码:', '请再次确认密码',
+                    (text) => this.setState({phone: text}), 'default', true, 11, "1"
+                )}
 
-                    <BCButton containerStyle={styles.buttonContainerStyle}
-                              disabled={!codeEnable}
-                              loaded={this.state.timeLoad}
-                        //styleDisabled={{fontWeight:'normal'}}
-                              onPress={this._onClickCode.bind(this)}
-                              style={{fontWeight:'400',fontSize:14}}
-                    >
-                        {this.state.time == 60 || this.state.time == 0 ? '获取验证码' :
-                        this.state.time.toString() + '秒'}
-                    </BCButton>
-                </View>
+                {/*<View style={{flexDirection:'row'}}>*/}
+                    {/*{this._renderRowMain('验证码:', '输入您收到的验证码',*/}
+                        {/*(text) => {*/}
+                            {/*this.setState({ymCode: text})*/}
+                        {/*},*/}
+                        {/*'numeric'*/}
+                        {/*, false, 6, "2"*/}
+                    {/*)}*/}
+
+                    {/*<BCButton containerStyle={styles.buttonContainerStyle}*/}
+                              {/*disabled={!codeEnable}*/}
+                              {/*loaded={this.state.timeLoad}*/}
+                        {/*//styleDisabled={{fontWeight:'normal'}}*/}
+                              {/*onPress={this._onClickCode.bind(this)}*/}
+                              {/*style={{fontWeight:'400',fontSize:14}}*/}
+                    {/*>*/}
+                        {/*{this.state.time == 60 || this.state.time == 0 ? '获取验证码' :*/}
+                        {/*this.state.time.toString() + '秒'}*/}
+                    {/*</BCButton>*/}
+                {/*</View>*/}
 
 
                 <BCButton
@@ -198,14 +250,14 @@ class RegPhone extends Component {
                     isLoad={this.props.state.loaded}
                     onPress={this._goRegist.bind(this)}
                     containerStyle={styles.buttonContainerStyle2}>
-                    开始
+                    注册
                 </BCButton>
                 <View style={styles.bottom}>
-                    <Text style={styles.protocolPre}>点击开始,即表示已阅读并同意</Text>
+                    <Text style={styles.protocolPre}>点击注册,即表示已阅读并同意</Text>
                     <Button
                         onPress={this._gowebView}
                         style={styles.protocolSuf}>
-                        《diff使用条款》
+                        《普汇信融用户服务条款》
                     </Button>
                 </View>
             </ScrollView>
@@ -294,7 +346,35 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-    }
+    },
+    row: {
+        marginTop:15,
+        backgroundColor: 'rgba(200,200,200,0.1)',
+        padding: 29 / 2,
+        flexDirection: 'row',
+        alignItems:'center',
+        marginHorizontal:15,
+    },
+    row2: {
+        flex:1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent:'space-between'
+    },
+    rowText: {
+        fontSize: 14,
+        // fontWeight: '500',
+        color: blackFontColor,
+    },
+    arrowView: {
+        borderBottomWidth: StyleSheet.hairlineWidth * 2,
+        borderRightWidth: StyleSheet.hairlineWidth * 2,
+        borderColor: '#8c8c85',
+        transform: [{rotate: '315deg'}],
+        marginLeft: 5,
+        width: 10,
+        height: 10,
+    },
 })
 
 

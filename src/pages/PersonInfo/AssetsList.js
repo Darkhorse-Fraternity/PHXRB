@@ -35,9 +35,6 @@ function myListLoad(more: bool = false) {
         //...bindActionCreators({},dispatch),
         load: ()=>dispatch(myListLoad()),
         loadMore: ()=>dispatch(myListLoad(true)),
-        push: (key)=> {
-            // dispatch(navigatePush(key));
-        },
     })
 )
 
@@ -68,9 +65,9 @@ export default class List extends Component {
     _renderHeader =()=>{
         return (
             <View style={{flexDirection:'row',justifyContent:'center',marginTop:10}}>
-                <Button>新增房产</Button>
+                <Button onClick={()=>push('AddHouse')}>新增房产</Button>
                 <WingBlank/>
-                <Button>新增汽车</Button>
+                <Button onClick={()=>push('AddCar')}>新增汽车</Button>
             </View>
         )
     }
@@ -84,7 +81,7 @@ export default class List extends Component {
             <TouchableOpacity
                 style={{marginTop:10}}
                 onPress={()=>{
-                    push('AssetsInfo')
+                    push('AddHouse')
             }}>
                 <View style={styles.row}>
                     <Text>福州鼓楼区xx小区x号楼</Text>

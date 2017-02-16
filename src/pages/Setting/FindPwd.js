@@ -1,81 +1,69 @@
 /* @flow */
-//修改密码
+//注册页面
 'use strict';
-import React, {Component} from 'react';
-import ReactNative, {
+import React, {Component, PropTypes} from 'react';
+import  {
     ScrollView,
     StyleSheet,
     Text,
-    TouchableHighlight,
     View,
     TextInput,
     Picker,
+    LayoutAnimation,
+    TouchableOpacity,
+    NativeModules
 } from 'react-native'
-import {saveUserData} from '../../util/XGlobal'
-// import {Actions} from "react-native-router-flux";
-import {pixel, navbarHeight, Toast, checkPhoneNum} from '../../util/';
-import {OS} from '../../util';
+import {OS} from '../../util/';
+
 import {BCButton} from '../../components/Base/WBButton'
 import Button from 'react-native-button'
 import {request} from '../../request'
-// import { iforgotRequest} from '../../request/info'
-import {requestPasswordResetBySmsCode,resetPasswordBySmsCode} from '../../request/leanCloud'
-import {deepFontColor, lineColor, mainColor, backViewColor} from '../../configure'
-
+import {requestSmsCode} from '../../request/leanCloud'
+import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
 import {connect} from 'react-redux'
-import {navigateReplaceIndex,navigatePop} from '../../redux/actions/nav'
-import {getUserByObjectID} from '../../redux/actions/login'
-class FindPwd extends Component {
-    constructor(props:Object) {
+import {navigateReplaceIndex, navigatePush} from '../../redux/actions/nav'
+import {register} from '../../redux/actions/login'
+import {checkPhoneNum, Toast} from '../../util'
+
+const webUrl = 'https://static.dayi.im/static/fudaojun/rule.html?version=20160603182000';
+class RegPhone extends Component {
+    constructor(props: Object) {
         super(props);
         this.state = {
-            loaded: false,
-            grade: '',
             time: 60,
             codeName: '',
-            isTap: false,
             phone: "", //号码
             ymCode: "", //验证码
-            setPwd: "", //设置密码
-            requestHandle: {},
-            showPicker: false,
+            isTap: false,
             timeLoad: false,
         };
     }
 
-    state:{
-        loaded:bool,
-        grade:string,
+    state: {
         phone:string,
         time:number,
         codeName:string,
-        isTap:bool,
         ymCode:string,
-        setPwd:string,
-        requestHandle: Object,
-        showPicker:bool,
+        isTap:bool, // 用于time 是否在走。
         timeLoad:bool,
     };
 
 
-    id:number = 0;
-    codeHandle:Object;
-    findHandle:Object;
-
+    requestHandle: Object;
+    id: number = 0;
 
     _onClickCode() {
         //发送验证码请求
 //没注册过手机号 13517238595
 
-        var self = this;
         this.setState({timeLoad: true});
-        // loginCodeRequest.params.user_name = this.state.phone;
-        // loginCodeRequest.params.for_register = 'no';
-        const findPwdCode = requestPasswordResetBySmsCode(this.state.phone);
-        this.codeHandle = request(findPwdCode, function (response) {
-
+        var self = this;
+        requestSmsCode.params.mobilePhoneNumber = this.state.phone;
+        this.requestHandle = request(requestSmsCode, function (response) {
             if (response.statu) {
-                Toast.show(response.msg);
+                console.log('test:', response)
+                Toast.show("发送成功!");
+                self.refs[2] && self.refs[2].focus()
                 if (self.state.isTap == false) {
                     self.setState({isTap: true});
                     self.id = setInterval(function () {
@@ -88,64 +76,10 @@ class FindPwd extends Component {
     }
 
 
-    _login = ()=> {
-        //判断手机号的正则
-        if (!checkPhoneNum(this.state.phone)) {
-            Toast.show('不是正确的手机号码');
-            this.refs['1'].focus();
-            return;
-        }
-        //判断验证码的正则
-        var reg = /^\d{6}$/;
-        var flag = reg.test(this.state.ymCode)
-        if (!flag) {
-            Toast.show('不是正确验证码');
-            this.refs['2'].focus();
-            return;
-        }
-
-        //判断设置密码是否正确 6到16位
-        reg = /^.{6,16}$/
-        flag = reg.test(this.state.setPwd)
-        if (!flag) {
-            Toast.show('密码设置不正确');
-            this.refs['3'].focus();
-            return;
-        }
-
-        //点击提交请求网络
-
-        var self = this;
-        // iforgotRequest.params.user_name = this.state.phone;
-        // iforgotRequest.params.password = this.state.setPwd;
-        // iforgotRequest.params.verify_code = this.state.ymCode;
-        const resetPassword = resetPasswordBySmsCode(this.state.setPwd,this.state.ymCode);
-        this.setState({loaded: true});
-        this.findHandle = request(resetPassword, function (response) {
-            if (response.statu) {
-                // Toast.show(response.msg);
-                // saveUserData(response.data, iforgotRequest.params.user_name);//保存到本地。
-
-                // self.props.navigator.push({name:"main", component:MainTabView});
-                // self.props.push();
-                // response.data.objectId;
-                self.props.getUserByID(response.data.objectId,(res)=>{
-                  if(self.props.loginType != 'LOGIN_SUCCEED'){
-                    res.statu && self.props.push();
-                  }else{
-                    res.statu && self.props.pop();
-                  }
-
-                });
-            }
-            self.setState({loaded: false});
-        });
-
-    }
-
     time() {
         if (this.state.time == 0) {
             clearInterval(this.id);
+            // this.isTap = false;
             this.setState({isTap: false});
         }
 
@@ -154,37 +88,65 @@ class FindPwd extends Component {
         })
     }
 
+    _gowebView = ()=> {
 
-    componentWillUnmount() {
-        this.codeHandle && this.codeHandle.next();
-        this.findHandle && this.findHandle.next();
-        this.id && clearInterval(this.id);
+
+        this.props.pushWebView({key: 'WebView', title: '普汇信融用户服务协议', url: webUrl});
+    };
+
+    _goRegist() {
+        // 判断手机号的正则
+        if (!checkPhoneNum(this.state.phone)) {
+            Toast.show('不是正确的手机号码');
+            this.refs['1'].focus();
+            return;
+        }
+        //判断验证码的正则
+        const reg = /^\d{6}$/;
+        const flag = reg.test(this.state.ymCode)
+        if (!flag) {
+            Toast.show('不是正确验证码');
+            this.refs['2'].focus();
+            return;
+        }
+
+        this.props.mRegister(this.state);
+
     }
 
 
-    focusNextField(nextField:string) {
-        if (nextField == '2') {
-            this.refs['3'].focus();
-        } else if (nextField == '3') {
-            this._login();
+    componentWillUnmount() {
+        this.id && clearInterval(this.id);
+        this.requestHandle && this.requestHandle.next();
+    }
+
+
+    focusNextField(nextField: string) {
+
+        if (nextField == '1') {
+            this.refs['2'].focus();
+        } else if (nextField == '2') {
+            this._goRegist()
         }
     }
 
-    _renderRowMain(title:string, placeholder:string, onChangeText:Function,
-                   boardType:PropTypes.oneOf = 'default', autoFocus:bool = false, maxLength:number = 16,
-                   ref:string) {
+    _renderRowMain(title: string, placeholder: string, onChangeText: Function,
+                   boardType: PropTypes.oneOf = 'default', autoFocus: bool = false, maxLength: number = 16,
+                   ref: string) {
 
         return (
             <View style={styles.rowMainStyle}>
                 <Text style={styles.textStyle}>{title}</Text>
                 <TextInput
                     ref={ref}
+                    placeholderTextColor="rgba(180,180,180,1)"
                     selectionColor={mainColor}
                     returnKeyType='next'
                     autoFocus={autoFocus}
                     maxLength={maxLength}
                     keyboardType={boardType}
                     style={styles.textInputStyle}
+                    underlineColorAndroid='transparent'
                     placeholder={placeholder}
                     clearButtonMode='while-editing'
                     enablesReturnKeyAutomatically={true}
@@ -195,111 +157,147 @@ class FindPwd extends Component {
     }
 
     render() {
-
         var codeEnable = checkPhoneNum(this.state.phone) &&
-            this.state.time == 60 && this.state.isTap == false;
-
+            this.state.time == 60 && !this.state.isTap;
+        const reg = /^\d{6}$/;
+        const flag = reg.test(this.state.ymCode) && checkPhoneNum(this.state.phone)
         return (
-            <View style={styles.container}>
-                <ScrollView
-                    keyboardShouldPersistTaps={true}
-                    keyboardDismissMode='on-drag'>
+            <ScrollView
+                style={styles.container}
+                keyboardShouldPersistTaps="always"
+                keyboardDismissMode='on-drag'>
 
-                    <View style={[styles.rowStyle,{marginTop:29/2}]}>
-                        {this._renderRowMain('手机号码:', '请填入手机号',
-                            (text) => this.setState({phone: text}), 'numeric', true, 11, '1',
-                        )}
-                        <BCButton containerStyle={styles.buttonContainerStyle}
-                                  disabled={!codeEnable}
-                                  loaded={this.state.timeLoad}
-                                  onPress={this._onClickCode.bind(this)}
-                                  style={{fontWeight:'100',fontSize:14}}
-                        >
-                            {this.state.time == 60 || this.state.time == 0 ? '获取验证码' :
-                                this.state.time.toString()}
-                        </BCButton>
-                    </View>
+                {this._renderRowMain('手机号:', '请填入手机号码',
+                    (text) => this.setState({phone: text}), 'numeric', true, 11, "1"
+                )}
+                {this._renderRowMain('身份证:', '请填入身份证',
+                    (text) => this.setState({phone: text}), 'numeric', true, 50, "1"
+                )}
 
-                    <View style={styles.rowStyle}>
-                        {this._renderRowMain('验证码:', '输入验证码',
-                            (text) => this.setState({ymCode: text}), 'numbers-and-punctuation',
-                            false, 6, '2',
-                        )}
-                    </View>
-                    <View style={styles.rowStyle}>
-                        {this._renderRowMain('设置密码:', '6-16个字符,字母区分大小写',
-                            (text) => this.setState({setPwd: text}), 'numbers-and-punctuation'
-                            , false, 16, '3'
-                        )}
-                    </View>
+                <View style={{flexDirection:'row'}}>
+                    {this._renderRowMain('验证码:', '输入您收到的验证码',
+                        (text) => {
+                            this.setState({ymCode: text})
+                        },
+                        'numeric'
+                        , false, 6, "2"
+                    )}
 
-                    <BCButton
-                        isLoad={this.state.loaded|| this.props.load}
-                        containerStyle={styles.buttonContainerStyle2}
-                        onPress={this._login}>
-                        提交
+                    <BCButton containerStyle={styles.buttonContainerStyle}
+                              disabled={!codeEnable}
+                              loaded={this.state.timeLoad}
+                        //styleDisabled={{fontWeight:'normal'}}
+                              onPress={this._onClickCode.bind(this)}
+                              style={{fontWeight:'400',fontSize:14}}
+                    >
+                        {this.state.time == 60 || this.state.time == 0 ? '获取验证码' :
+                        this.state.time.toString() + '秒'}
                     </BCButton>
-                </ScrollView>
-            </View>
-        );
+                </View>
 
+
+                <BCButton
+                    disabled={!flag}
+                    isLoad={this.props.state.loaded}
+                    onPress={this._goRegist.bind(this)}
+                    containerStyle={styles.buttonContainerStyle2}>
+                    确定
+                </BCButton>
+                {/*<View style={styles.bottom}>*/}
+                    {/*<Text style={styles.protocolPre}>点击注册,即表示已阅读并同意</Text>*/}
+                    {/*<Button*/}
+                        {/*onPress={this._gowebView}*/}
+                        {/*style={styles.protocolSuf}>*/}
+                        {/*《普汇信融用户服务条款》*/}
+                    {/*</Button>*/}
+                {/*</View>*/}
+            </ScrollView>
+        );
     }
 }
 
+
 const styles = StyleSheet.create({
     container: {
-        marginTop: navbarHeight,
-        // flexDirection:'row',
         flex: 1,
-        backgroundColor: backViewColor,
+        backgroundColor: 'white',
+        paddingTop: 20,
     },
-    rowStyle: {
-        flexDirection: 'row',
-        backgroundColor: '#ffffff',
-        marginTop: 7,
-        marginLeft: 29 / 2,
-        marginRight: 29 / 2,
-        borderRadius: 3,
-        height: 40,
-        alignItems: 'center',
-        // flexDirection:'row'
-    },
+
+
     rowMainStyle: {
+
         flex: 1,
+        height: 40,
+        marginTop: 10,
+        backgroundColor: 'rgba(200,200,200,0.1)',
         paddingHorizontal: 15,
+        flexDirection: 'row',
         alignItems: 'center',
-        flexDirection: 'row'
+        marginHorizontal: 15,
     },
     buttonContainerStyle: {
-        marginRight: 5,
-        height: 25,
-        paddingHorizontal: 6,
+        marginRight: 15,
+        marginLeft: -5,
+        height: 40,
+        marginTop: 10,
+        paddingHorizontal: 15,
         alignSelf: 'center',
+
         justifyContent: 'center',
     },
     textStyle: {
-        // flex:1 ,
+        // flex: ,
         width: 65,
         fontSize: 14,
-        color: '#262324',
+        color: blackFontColor,
     },
     textInputStyle: {
-        marginLeft: 29 / 2,
+        // width:200,
+        flex: 1,
+        marginLeft: 0,
         textAlign: 'left',
-        fontSize: 13,
-        flex: 2,
-        height: 40,
-        borderColor: 'gray',
-        backgroundColor: '#00000000',
+        fontSize: 14,
+        color: 'black',
+    },
+    buttonSelectStyle: {
+        marginLeft: OS == 'ios' ? 29 / 2 : 27,
+        flex: 1,
+        height: 30,
+        justifyContent: 'center',
+    },
+    buttonTextStyle: {
+        fontSize: 14,
+        color: '#9ba0a2'
+    },
+    buttonMainTextStyle: {
+        fontSize: 14,
+        color: deepFontColor,
     },
     buttonContainerStyle2: {
-        marginTop: 7,
-        height: 40,
         marginLeft: 29 / 2,
         marginRight: 29 / 2,
+        marginTop: 30,
+        height: 40,
         justifyContent: 'center',
     },
 
+    protocolPre: {
+        marginTop: 8,
+        fontSize: 11,
+        color: '#9e9e9e',
+    },
+    protocolSuf: {
+        marginTop: 8,
+        fontSize: 11,
+        color: mainColor,
+    },
+
+    bottom: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
 })
 
 
@@ -307,8 +305,7 @@ const mapStateToProps = (state) => {
     //从login reduce 中获取state的初始值。
     //console.log('state:',state);
     return {
-      load:state.login.loaded,
-      loginType:state.login.type,
+        state: state.login,
     }
 }
 
@@ -318,16 +315,17 @@ const mapDispatchToProps = (dispatch) => {
             //index 为空 则为当前index
             dispatch(navigateReplaceIndex('TabView'));
         },
-        pop:()=>{
-           dispatch(navigatePop());
+        mRegister: (state)=> {
+            dispatch(register(state));
         },
-        getUserByID:(id:string,callBack:Function)=>{
-            dispatch(getUserByObjectID(id,callBack));
-        },
+        pushWebView: (params)=> {
+            dispatch(navigatePush(params));
+        }
+
     }
 }
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(FindPwd)
+)(RegPhone)

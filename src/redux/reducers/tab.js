@@ -23,9 +23,10 @@ import {
     // const person_center_hover = require('../../../source/img/xy_person_hover/xy_person_hover.png');
 const unLoginTabs = [
 
-        {
-            key: 'WidgetForm', name: 'logo-freebsd-devil', title: '首页'
-        },
+        {key: 'Home', name: 'logo-freebsd-devil', title: '首页'},
+        {key: 'MemberList', name: 'logo-freebsd-devil', title: '会员'},
+        {key: 'BusinessList', name: 'logo-freebsd-devil', title: '业务'},
+        {key: 'PersonInfo', name: 'logo-freebsd-devil', title: '我的'},
     ]
 
 const loginTabs = unLoginTabs

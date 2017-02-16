@@ -10,7 +10,7 @@
 
 export const pageConfig = {
     'TabView': {
-        title: '普惠信融', hideBackBtn: true, gestureResponseDistance: 0.0001,
+        title: '普惠信融', hideBackBtn: true, gestureResponseDistance: 0.0001,direction: 'vertical'
     },
     'LoginView': {
         title: '登录', hideNavBar: true, gestureResponseDistance: 0.0001,
@@ -66,6 +66,8 @@ export const pageConfig = {
     "Credit":{title:"信用信息"},
     "Information":{title:"资料列表"},
     "InfoUpLoad":{title:'文件上传'},
+    "AddCar":{title:"新增汽车"},
+    "AddHouse":{title:"新增房产"},
 }
 
 export function config(key: string): Object {

@@ -84,8 +84,8 @@ export function login(state:Object):Function {
             // if (response.statu) {
                 //加入sessionToken
                 // dispatch(_loginSucceed(response));
-                dispatch(navigatePush('Home'))
-                // dispatch(navigatePush('TabView'));
+                // dispatch(navigatePush('Home'))
+                dispatch(navigatePush('TabView'));
             // } else {
             //     dispatch(_loginFailed(response));
             // }
