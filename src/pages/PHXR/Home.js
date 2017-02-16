@@ -23,6 +23,7 @@ import {renderNavImageButton} from '../../util/viewUtil'
 //static displayName = Home
 import {Button, WhiteSpace} from 'antd-mobile';
 import {icon_class} from '../../../source'
+import {logo} from '../../../source'
 @connect(
     state =>({
         //state:state.util.get()
@@ -58,7 +59,7 @@ export  default  class Home extends Component {
         return (
             <ScrollView style={[this.props.style, {backgroundColor:"white"}]}>
                 <View style={[this.props.style, styles.wrap]}>
-                    <Image source={placeholder} style={styles.logo}/>
+                    <Image source={logo} style={styles.logo}/>
 
                     <WhiteSpace/>
                     <WhiteSpace/>

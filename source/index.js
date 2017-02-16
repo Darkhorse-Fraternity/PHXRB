@@ -7,3 +7,4 @@ export const guide3 = require('./img/guide/引导页03.jpg')
 
 
 export const steps = require('./img/lease/steps.png')
+export const logo = require('./img/LOGO.png')
