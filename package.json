@@ -33,7 +33,8 @@
     "redux": "^3.6.0",
     "redux-api-middleware": "^1.0.2",
     "redux-form": "^6.4.3",
-    "redux-thunk": "^2.1.0"
+    "redux-thunk": "^2.1.0",
+    "yargs": "^6.6.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",
@@ -45,7 +46,8 @@
     "jest": "17.0.3",
     "jest-react-native": "17.1.0",
     "react-native-debugger-open": "^0.3.2",
-    "react-test-renderer": "~15.4.0-rc.4"
+    "react-test-renderer": "~15.4.0-rc.4",
+    "shelljs": "^0.7.6"
   },
   "jest": {
     "preset": "react-native"

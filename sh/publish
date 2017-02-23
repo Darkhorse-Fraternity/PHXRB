@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+var shell = require("shelljs/global");
+var argv = require('yargs')
+    .command("fir", "fir.im", function (yargs) {
+        var argv = yargs.reset()
+            .demand(['p'])
+            .default({p: 'android'})
+            .help("h")
+            .alias("h", "help")
+            .argv;
+
+        console.log('hello ', argv.p);
+        if(argv.p == 'ios'){
+            exec('fir build_ipa ios/workspace -w -S phxrb -p')
+        }else if(argv.p == 'android'){
+            cd('android');
+            if(exec('./gradlew assembleRelease').code != 0){
+                exec('fir p /app/build/outputs/apk/app-release.apk')
+            }
+        }else{
+            echo('Error: need -p /"android/"');
+        }
+
+    })
+    .argv;
