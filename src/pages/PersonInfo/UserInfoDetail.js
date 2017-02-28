@@ -19,9 +19,12 @@ import {bindActionCreators} from 'redux';
 import {renderNavSenderButton} from '../../util/viewUtil'
 import {ActionSheet, DatePicker} from 'antd-mobile';
 import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
-import {phxr_submit_advisers_info, phxr_query_advisers_info} from '../../request/qzapi'
+import {phxr_submit_advisers_info, phxr_query_advisers_info,phxr_act_account} from '../../request/qzapi'
 import {send} from '../../request'
 import {request} from '../../redux/actions/req'
+import {updateUserData} from '../../redux/actions/login'
+import moment from 'moment';
+
 import {Toast, checkPhoneNum, checkIDCard} from '../../util'
 //static displayName = UserInfoDetail
 @connect(
@@ -30,24 +33,33 @@ import {Toast, checkPhoneNum, checkIDCard} from '../../util'
     }),
     dispatch =>({
         //...bindActionCreators({},dispatch),
-        load: (param)=> {
-            dispatch((dispatch, getState) => {
+        load:  (param)=> {
+              dispatch(async (dispatch, getState) => {
                 const userId = getState().login.data.userId
                 const params = phxr_submit_advisers_info(userId, param)
                 // request('phxr_query_person_info',param)
                 // send(param).then(())
-                send(params).then(response => {
-                    if (response.rspCode) {
-                        // console.log('response:', response.result);
-                        Toast.show("修改成功");
-                        const params1 = phxr_query_advisers_info(userId)
-                        dispatch(request('phxr_query_advisers_info', params1))
-                        pop()
+                 try {
+                    const response = await send(params)
+                     if (response.rspCode) {
+                         // console.log('response:', response.result);
+                         Toast.show("修改成功");
+                         const params1 = phxr_query_advisers_info(userId)
+                         dispatch(request('phxr_query_advisers_info', params1))
+                         //更新个人信息
 
-                    }
-                }).catch(e => {
-                    dispatch(requestFailed(key, e.message))
-                })
+                         const params2 = phxr_act_account(userId)
+                         const response2 = await send(params2)
+                         if (response2.rspCode) {
+                             dispatch(updateUserData(response2.result))
+                         }
+
+                         pop()
+
+                     }
+                 }catch (e){
+                     dispatch(requestFailed("phxr_query_advisers_info", e.message))
+                 }
             })
 
         }
@@ -166,12 +178,13 @@ export  default  class UserInfoDetail extends Component {
     }
 
     _renderDatePikcerRow(title: string, dex: string, onPress: Function) {
+        const zhNow = moment().locale('zh-cn').utcOffset(8);
         return (
             <DatePicker
                 mode="date"
                 title="选择日期"
                 visible={this.state.visible}
-                extra="可选,小于结束日期"
+                maxDate={zhNow}
                 onOk={() => {this.setState({visible:false})}}
                 onChange={(monmet)=>{
                     const text = monmet.format("YYYY-MM-DD")

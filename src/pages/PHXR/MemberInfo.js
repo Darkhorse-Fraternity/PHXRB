@@ -39,6 +39,9 @@ import {updateUserData} from '../../redux/actions/login'
                 }).catch(e => {
                     dispatch(requestFailed(key, e.message))
                 })
+
+
+
             }
 
         }

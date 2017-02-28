@@ -83,12 +83,12 @@ export function phxr_verification_code(phoneNo,codeType) {
  *   4.5 账号信息
  *
  */
-export function phxr_act_account(userName) {
+export function phxr_act_account(userId) {
     return {
         path:'/phxr_act_account',
         method:methodType.post,
         params:{
-            userName,
+            userId,
         },
     }
 }
