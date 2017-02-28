@@ -17,8 +17,17 @@ export default function listState(state: immutable.Map<string,any> = initialStat
     switch (action.type) {
 
         case LIST_FAILED:
-        case LIST_START:
+        case LIST_START:{
+            if(action.loadStatu == "LIST_FIRST_JOIN"){
+                return state.set(action.key,immutable.fromJS({
+                    loadStatu:action.loadStatu,
+                    page:0,
+                    listData:{},
+                }));
+            }
             return state.setIn([action.key, 'loadStatu'], action.loadStatu);
+        }
+
         case LIST_SUCCEED:{
 
             return   state.updateIn([action.key],(oldObj)=>{

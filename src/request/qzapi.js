@@ -376,8 +376,8 @@ export function phxr_query_files_list(userId,fileClass,pageSize,currentPage) {
             userId,
             fileClass,
             page:{
-                pageSize,
-                currentPage
+                pageSize:20,
+                currentPage:1,
             }
         },
     }
@@ -416,7 +416,7 @@ export function phxr_query_person_list(userId,pageSize,currentPage) {
             userId,
             page:{
                 pageSize : 20,
-                currentPage : 0
+                currentPage : 1
             }
         },
     }

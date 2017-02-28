@@ -19,13 +19,7 @@ import {refresh, pop} from '../../redux/nav'
 import {ImagePicker, Button} from 'antd-mobile';
 
 
-const data = [{
-    url: 'https://zos.alipayobjects.com/rmsportal/PZUUCKTRIHWiZSY.jpeg',
-    id: '2121',
-}, {
-    url: 'https://zos.alipayobjects.com/rmsportal/hqQWgTXdrlmVVYi.jpeg',
-    id: '2122',
-}];
+
 
 @connect(
     state =>({
@@ -33,13 +27,51 @@ const data = [{
     }),
     dispatch =>({
         //...bindActionCreators({},dispatch),
+        upload:(files)=>{
+            dispatch(async (dispatch,getState)=>{
+
+                try{
+                    const body = new FormData()
+                    files.map((item)=>{
+                        const file = {
+                            uri:item.url,
+                            name:item.filename,
+                            type:"image/jpg",
+                            height:item.height,
+                            width:item.width,
+                        }
+                        body.append('file', file)
+                    })
+
+
+                    console.log('test:', body);
+
+                    const url = 'http://103.236.253.138:8088/uploadFile'
+                    const response = await  fetch(url, {
+                        method: 'POST',
+                        body,
+                        headers:{'Content-Type': 'multipart/form-data; charset=utf-8' }
+                    })
+                    console.log('test:', response);
+
+                }catch (e){
+                    console.log('test:', e.message());
+                }
+
+
+
+
+
+
+            })
+        }
     })
 )
 export  default  class AptDetail extends Component {
     constructor(props: Object) {
         super(props);
         this.state = {
-            files: data,
+            files: [],
         }
     }
 
@@ -69,8 +101,9 @@ export  default  class AptDetail extends Component {
     //     return !immutable.is(this.props.data, nextProps.data)
     // }
 
-    __tapRight() {
-        pop()
+    __tapRight=()=> {
+        this.props.upload(this.state.files);
+        // pop()
     }
 
     componentDidMount() {

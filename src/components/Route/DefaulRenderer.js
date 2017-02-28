@@ -118,7 +118,7 @@ export default class DefaultRenderer extends Component {
     const style = selected.style || navigationState.style;
 
     if (animation  == false) {
-      optionals.cardStyleInterpolator = ()=>{}
+      // optionals.cardStyleInterpolator = ()=>{}
     }
 
       let { gestureResponseDistance } = selected;

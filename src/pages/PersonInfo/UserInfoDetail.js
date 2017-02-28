@@ -48,11 +48,11 @@ import {Toast, checkPhoneNum, checkIDCard} from '../../util'
                          dispatch(request('phxr_query_advisers_info', params1))
                          //更新个人信息
 
-                         const params2 = phxr_act_account(userId)
-                         const response2 = await send(params2)
-                         if (response2.rspCode) {
-                             dispatch(updateUserData(response2.result))
-                         }
+                         // const params2 = phxr_act_account(userId)
+                         // const response2 = await send(params2)
+                         // if (response2.rspCode) {
+                         //     dispatch(updateUserData(response2.result))
+                         // }
 
                          pop()
 

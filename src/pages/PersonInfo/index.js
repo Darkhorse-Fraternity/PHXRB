@@ -9,7 +9,6 @@ import {
     View,
     Picker,
     Image,
-    LayoutAnimation,
 } from 'react-native'
 import {pixel, navbarHeight} from '../../util/'
 import imagePicker from '../../util/imagePicker'

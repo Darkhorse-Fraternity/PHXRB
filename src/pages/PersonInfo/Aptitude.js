@@ -19,15 +19,18 @@ import {connect} from 'react-redux'
 import * as immutable from 'immutable';
 import BaseListView from '../../components/Base/BaseListView';
 import {listLoad, listLoadMore} from '../../redux/actions/list'
-
+import {phxr_query_files_list,phxr_deal_files} from  '../../request/qzapi'
 import {refresh,push} from '../../redux/nav'
 import {bindActionCreators} from 'redux';
 import {renderNavAddButton} from '../../util/viewUtil'
 
-const listKey = 'listKey'
+const listKey = 'fiels_listKey'
 function myListLoad(more: bool = false) {
     return (dispatch, getState) => {
-    }
+        const id = getState().login.data.userId
+        const params = phxr_query_files_list(id)
+        more?dispatch(listLoadMore(listKey,params)):dispatch(listLoad(listKey,params))
+     }
 }
 
 //我的资料
@@ -42,7 +45,7 @@ function myListLoad(more: bool = false) {
     })
 )
 
-export default class List extends Component {
+export default class FilesList extends Component {
     constructor(props: Object) {
         super(props);
     }
@@ -51,10 +54,15 @@ export default class List extends Component {
         load: PropTypes.func.isRequired,
         loadMore: PropTypes.func.isRequired,
     };
-    static defaultProps = {};
+    static defaultProps = {
+        data:immutable.fromJS({
+            listData:{},
+            loadStatu:'LIST_NORMAL',
+        })
+    };
 
     shouldComponentUpdate(nextProps: Object) {
-        return !immutable.is(this.props.data, nextProps.data)
+        return !immutable.is(this.props, nextProps)
     }
 
 
@@ -97,16 +105,16 @@ export default class List extends Component {
 
     render() {
 
-        const loadStatu = this.props.data && this.props.data.get('loadStatu')
-        let listData = this.props.data && this.props.data.get('listData')
-        listData = listData && listData.toJS()
+        const loadStatu = this.props.data.get('loadStatu')
+        console.log('test:', this.props.data.get('listData'));
+        let listData =  this.props.data.get('listData').toJS()
         listData = ['111', '222']
         return (
             <BaseListView
                 //renderHeader={this._renderHeader}
                 style={[this.props.style,styles.list]}
                 //loadStatu={loadStatu}
-                loadStatu={'LIST_NORMAL'}
+                loadStatu={loadStatu}
                 loadData={this.props.load}
                 dataSource={listData}
                 loadMore={this.props.loadMore}
