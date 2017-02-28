@@ -52,6 +52,10 @@ function checkPhoneNum(num:string):bool{
   const reg = /^1[0-9]{10}$/;
   return reg.test(num)
 }
+function checkIDCard(num:string):bool {
+  const reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+  return reg.test(num)
+}
 
 
 module.exports = {
@@ -67,4 +71,5 @@ module.exports = {
   URLManage, //将URLManage 适配安卓苹果。
   throwIfMissing,
   checkPhoneNum,
+  checkIDCard,
 };

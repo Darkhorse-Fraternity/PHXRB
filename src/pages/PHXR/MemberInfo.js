@@ -15,7 +15,10 @@ import {
 import {connect} from 'react-redux'
 import {push} from '../../redux/nav'
 import {bindActionCreators} from 'redux';
-
+import {phxr_query_person_info} from '../../request/qzapi'
+import {request} from '../../redux/actions/req'
+import {send} from '../../request'
+import {updateUserData} from '../../redux/actions/login'
 //static displayName = MemberInfo
 @connect(
     state =>({
@@ -23,6 +26,22 @@ import {bindActionCreators} from 'redux';
     }),
     dispatch =>({
         //...bindActionCreators({},dispatch),
+        load:()=>{
+            return (dispatch,getState) =>{
+                const userId = getState().login.data.userId
+                const params = phxr_query_person_info(userId)
+                // request('phxr_query_person_info',param)
+                // send(param).then(())
+                send(params).then(response => {
+                    if(response.rspCode){
+                        updateUserData(response.result)
+                    }
+                }).catch(e => {
+                    dispatch(requestFailed(key, e.message))
+                })
+            }
+
+        }
     })
 )
 export  default  class MemberInfo extends Component {
@@ -36,6 +55,7 @@ export  default  class MemberInfo extends Component {
     shouldComponentUpdate(nextProps: Object) {
         return !immutable.is(this.props, nextProps)
     }
+
 
 
     _renderRow(title: string,  onPress: Function) {

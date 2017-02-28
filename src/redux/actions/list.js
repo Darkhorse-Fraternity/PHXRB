@@ -25,16 +25,16 @@ import {send} from '../../request'
  * 保证加载的时候，同个请求不窜行。
  */
 
-export function listLoad(key:string,path:string,params:Object):Function{
+export function listLoad(key:string,params:Object):Function{
     return (dispatch) => {
-        return dispatch(_requestlist(0,key,path,params));
+        return dispatch(_requestlist(0,key,params));
     }
 }
 
-export function listLoadMore(key:string,path:string,params:Object):Function{
+export function listLoadMore(key:string,params:Object):Function{
     return (dispatch,getState) => {
         const page = getState().list.getIn([key,'page']) +1;
-        return dispatch(_requestlist(page,key),path,params);
+        return dispatch(_requestlist(page,key),params);
     }
 }
 
@@ -43,16 +43,24 @@ export function listLoadMore(key:string,path:string,params:Object):Function{
  * @param  {[type]} state:Object [description]
  * @return {[type]}              [description]
  */
-function _requestlist(page:number,key:string,path:string,params:Object):Function {
+function _requestlist(page:number,key:string,params:Object):Function {
 
     return (dispatch,getState) => {
         const load = getState().list.getIn([key,'loadStatu'])
         if(load != LIST_LOAD_DATA && load != LIST_LOAD_MORE ){//not serial
             // const newParams = limitSearch(path,page,pageSize,params);
+            if(params.page){params.page.currentPage = page}
+
             dispatch(_listStart(page != 0,load == undefined,key));//当page 不为0 的时候则表示不是加载多页。
             send(params).then(response => {
-                console.log('res:', response);
-                dispatch(_listSucceed(response.results,page,key));
+                // console.log('res:', response);
+                if(response.rspCode){
+                    console.log('response:', response);
+                    dispatch(_listSucceed(response.result,page,key));
+                }else {
+                    dispatch(_listFailed(key));
+                }
+
             }).catch(e => {
                 console.log('error:',e.message)
                 dispatch(_listFailed(key));

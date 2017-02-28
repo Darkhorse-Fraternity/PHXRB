@@ -114,23 +114,11 @@ export default class DefaultRenderer extends Component {
     const optionals = {};
     const selected = navigationState.routes[navigationState.index];
     let direction = navigationState.direction
-    const applyAnimation = selected.applyAnimation || navigationState.applyAnimation;
+    const animation = selected.animation
     const style = selected.style || navigationState.style;
 
-    if (applyAnimation) {
-      optionals.applyAnimation = applyAnimation;
-    } else {
-      let duration = selected.duration;
-      if (duration === null || duration === undefined) duration = navigationState.duration;
-      if (duration !== null && duration !== undefined) {
-        optionals.applyAnimation = (pos, navState) => {
-          if (duration === 0) {
-            pos.setValue(navState.index);
-          } else {
-            Animated.timing(pos, { toValue: navState.index, duration }).start();
-          }
-        };
-      }
+    if (animation  == false) {
+      optionals.cardStyleInterpolator = ()=>{}
     }
 
       let { gestureResponseDistance } = selected;
@@ -160,8 +148,7 @@ export default class DefaultRenderer extends Component {
         //  <View style={{flex:1}}>
         //    {this.renderCard(props)}
         //    {this._renderHeader(props)}
-        //  </View>
-        //)}
+        //  </Vi
         {...optionals}
       />
     );

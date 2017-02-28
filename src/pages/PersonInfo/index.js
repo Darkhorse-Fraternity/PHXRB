@@ -17,15 +17,14 @@ import {connect} from 'react-redux'
 import {navigatePush} from '../../redux/actions/nav'
 import {uploadAvatar} from '../../redux/actions/util'
 import {backViewColor, blackFontColor, grayFontColor} from '../../configure';
-const EmitterSubscription = require('EmitterSubscription');
-import {createAnimatableComponent} from 'react-native-animatable';
-const AniScrollView = createAnimatableComponent(ScrollView);
+
 import {logout} from '../../redux/actions/login'
 import {my_head} from '../../../source/'
 const styles = StyleSheet.create({
     list: {
         backgroundColor: backViewColor,
         marginTop: navbarHeight,
+        flex:1
     },
     groupSpace: {
         height: 15 / 2,
@@ -232,7 +231,7 @@ class PersonInfo extends React.Component {
         // console.log('test:',this.props.userData);
 
         return (
-            <AniScrollView animation="fadeIn" duration={500} delay={100} style={styles.list}>
+            <View  style={styles.list}>
                 <View style={styles.groupSpace}/>
                 {/*{this._renderHeadRow(this.props.picker)}*/}
 
@@ -282,7 +281,7 @@ class PersonInfo extends React.Component {
                         this.props.logout()
                     })}
                 </View>
-            </AniScrollView>
+            </View>
         );
     }
 }

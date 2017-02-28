@@ -6,8 +6,9 @@
 'use strict'
 
 import {request} from '../../request';
-import {requestLogin, requestUsersByMobilePhone,getUserByID} from '../../request/leanCloud';
-import {saveAccount,saveUserData, loadAccount, clearUserData} from '../../util/XGlobal'
+// import {requestLogin, requestUsersByMobilePhone,getUserByID} from '../../request/leanCloud';
+import  {phxr_register,phxr_login} from '../../request/qzapi'
+import {saveAccount, saveUserData, loadAccount, clearUserData} from '../../util/XGlobal'
 import {
     navigatePush,
     navigatePop,
@@ -15,7 +16,7 @@ import {
     navigatePopToIndex,
     navigateReplaceIndex
 } from './nav'
-
+import {checkPhoneNum, Toast} from '../../util'
 import {setLeanCloudSession} from '../../configure'
 // *** Action Types ***
 export const ACCOUNT_CHANGE = 'ACCOUNTTEXT_CHANGE'
@@ -28,7 +29,7 @@ export const LOGOUT = 'LOGOUT'
 export const UPDATE_USERDATA = 'UPDATE_USERDATA'
 
 //当为异步的时候这么写，返回一个函数
-export function loadAccountAction():Function {
+export function loadAccountAction(): Function {
 
     return dispatch => {
         return loadAccount(ret => {
@@ -36,7 +37,7 @@ export function loadAccountAction():Function {
         });
     }
 }
-function _loadAccount(ret:string):Object {
+function _loadAccount(ret: string): Object {
     return {
         type: LOAD_ACCOUNT,
         accountText: ret,
@@ -44,14 +45,14 @@ function _loadAccount(ret:string):Object {
     }
 }
 
-export function accountTextChange(text:string):Object {
+export function accountTextChange(text: string): Object {
     return {
         type: ACCOUNT_CHANGE,
         accountText: text,
     }
 }
 
-export function passwordTextChange(text:string):Object {
+export function passwordTextChange(text: string): Object {
     return {
         type: ACCOUNT_CHANGE,
         passwordText: text,
@@ -69,7 +70,7 @@ export function passwordTextChange(text:string):Object {
  * @param  {[type]} state:Object [description]
  * @return {[type]}              [description]
  */
-export function login(state:Object):Function {
+export function login(state: Object): Function {888
 
     // loginRequest.params.user_name = state.accountText;
     // loginRequest.params.password = state.passwordText;
@@ -77,19 +78,28 @@ export function login(state:Object):Function {
     // const parame = requestLogin(state.accountText, state.passwordText);
 
     return dispatch => {
+
+        // dispatch(navigatePush('TabView'));
+
         dispatch(_loginRequest());
 
-        // return request(parame, (response)=> {
+        const parame = phxr_login(state.phone,state.password,state.ymCode)
 
-            // if (response.statu) {
+        return request(parame, (response)=> {
+
+            console.log('test:', response.data);
+            console.log('test:', response.data.rspCode);
+            if (response.data.rspCode) {
                 //加入sessionToken
-                // dispatch(_loginSucceed(response));
-                // dispatch(navigatePush('Home'))
+                console.log('test:', '1111');
+                dispatch(_loginSucceed(response.data.result));
+                console.log('test:', '2222');
                 dispatch(navigatePush('TabView'));
-            // } else {
-            //     dispatch(_loginFailed(response));
-            // }
-        // });
+            } else {
+                Toast.show(response.data.rspMsg)
+                dispatch(_loginFailed(response));
+            }
+        });
     }
 }
 
@@ -99,40 +109,68 @@ export function login(state:Object):Function {
  * @param  {[type]} state:Object [description]
  * @return {[type]}              [description]
  */
-export function register(state:Object):Function {
+export function register(state: Object): Function {
 
-    const params = requestUsersByMobilePhone(state.phone, state.ymCode,
-        state.setPwd);
+// userName,phoneNo,pwd,registType,hasAdvisersCode,advisersCode,Province,city
+    const cityCode = state.clicked == '厦门' ? '0592' : '0591'
+
+    const params = phxr_register(state.userName, state.phone,
+        state.password, "1", "0", '', "0", cityCode);
 
     return dispatch => {
         dispatch(_loginRequest());
+
         request(params, function (response) {
-            if (response.statu) {
+            if (response.data.rspCode) {
                 dispatch(_loginSucceed(response));
+                Toast.show('注册成功')
                 dispatch(navigatePop());
             } else {
+                Toast.show(response.data.rspMsg)
                 dispatch(_loginFailed(response));
             }
         });
     }
 }
 
+export function iForgot(state:Object):Function {
+    return dispatch => {
 
+        // dispatch(navigatePush('TabView'));
 
-function _loginRequest():Object {
+        dispatch(_loginRequest());
+
+        const parame = phxr_forget_pwd(state.phone,state.idCardNo,state.ymCode)
+
+        return request(parame, (response)=> {
+
+            if (response.data.rspCode) {
+                //加入sessionToken
+                dispatch(_loginSucceed(response.data.result));
+                Toast.show('将密码发送至您手机，请查收')
+                dispatch(navigatePop());
+            } else {
+                Toast.show(response.data.rspMsg)
+                dispatch(_loginFailed(response));
+            }
+        });
+    }
+}
+
+function _loginRequest(): Object {
     return {
         type: LOGIN_REQUEST,
         loaded: true,
     }
 }
 
-function _loginSucceed(response:Object):Object {
-    saveUserData(response.data);
-    saveAccount(response.data.mobilePhoneNumber);
-    return loginSucceed(response.data);
+function _loginSucceed(response: Object): Object {
+    saveUserData(response);
+    // saveAccount(response.data.mobilePhoneNumber);
+    return loginSucceed(response);
 }
 
-export function loginSucceed(data:Object):Object {
+export function loginSucceed(data: Object): Object {
     //保存登录信息。
     // setLeanCloudSession(data.sessionToken);
     return {
@@ -144,7 +182,7 @@ export function loginSucceed(data:Object):Object {
 
 }
 
-function _loginFailed(response:Object):Object {
+function _loginFailed(response: Object): Object {
     return {
         type: LOGIN_FAILED,
         loaded: false
@@ -152,7 +190,7 @@ function _loginFailed(response:Object):Object {
 }
 
 
-export function logout():Function {
+export function logout(): Function {
     clearUserData();
 
     return dispatch => {
@@ -173,18 +211,18 @@ function logout2() {
     }
 }
 
-export function updateUserData(data:Object){
+export function updateUserData(data: Object) {
     return {
-      type:UPDATE_USERDATA,
-      data:data,
+        type: UPDATE_USERDATA,
+        data: data,
     }
 }
 
 
-export  function getUserByObjectID(objectID:string,callBack:Function) :Function{
+export function getUserByObjectID(objectID: string, callBack: Function): Function {
     return dispatch => {
         dispatch(_loginRequest());
-       const param = getUserByID(objectID);
+        const param = getUserByID(objectID);
         return request(param, (response)=> {
 
             if (response.statu) {

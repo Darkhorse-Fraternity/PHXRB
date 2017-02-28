@@ -41,9 +41,9 @@ export  default  class Home extends Component {
     static defaultProps = {};
 
     componentDidMount() {
-        const renderLeftComponent = renderNavImageButton(icon_class, 'left',
-            ()=>push('PersonInfo'))
-        refresh({renderLeftComponent})
+        // const renderLeftComponent = renderNavImageButton(icon_class, 'left',
+        //     ()=>push('PersonInfo'))
+        // refresh({renderLeftComponent})
     }
 
     __gofinancing = ()=> {

@@ -14,6 +14,7 @@ import {mainColor, textInputTextColor, placeholderTextColor} from '../../configu
 import {request} from '../../request'
 // import {pwdRequest} from '../../request/info'
 import {updatePassword} from '../../request/leanCloud'
+import {phxr_modify_pwd} from '../../request/qzapi'
 // import NavigationManager from '../Route/NavigationManager'
 import {renderNavSenderButton} from '../../util/viewUtil'
 
@@ -72,7 +73,7 @@ import {navigatePop,navigateRefresh} from '../../redux/actions/nav'
  _tapRight=()=>{
    if(this.state != null){
 
-     var reg = /^.{6,16}$/
+     var reg = /^.{1,26}$/
 
      if(!reg.test(this.state.oldPwd)){
        Toast.show('旧密码不正确');
@@ -103,11 +104,11 @@ import {navigatePop,navigateRefresh} from '../../redux/actions/nav'
       var self = this;
       // pwdRequest.params.old_password = this.state.oldPwd;
       // pwdRequest.params.new_password = this.state.newPwd;
-      const param = updatePassword(this.props.objectId,this.state.oldPwd,this.state.newPwd)
+      const param = phxr_modify_pwd(this.props.data.userAccount,this.state.oldPwd,this.state.newPwd)
       let handle = request(param, function(response){
-           if(response.statu){
+           if(response.data.rspCode){
             self.props.pop();
-           Toast.show(response.msg)
+           Toast.show('修改成功')
            }
         self.props.refresh({rightButtonIsLoad:false})
       });
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
 	return {
-    objectId:state.login.data.objectId,
+    data:state.login.data,
 	}
 }
 

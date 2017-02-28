@@ -18,12 +18,12 @@ import {OS} from '../../util/';
 import {BCButton} from '../../components/Base/WBButton'
 import Button from 'react-native-button'
 import {request} from '../../request'
-import {requestSmsCode} from '../../request/leanCloud'
+import {phxr_verification_code} from '../../request/qzapi'
 import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
 import {connect} from 'react-redux'
 import {navigateReplaceIndex, navigatePush} from '../../redux/actions/nav'
-import {register} from '../../redux/actions/login'
-import {checkPhoneNum, Toast} from '../../util'
+import {iForgot} from '../../redux/actions/login'
+import {checkPhoneNum, checkIDCard,Toast} from '../../util'
 
 const webUrl = 'https://static.dayi.im/static/fudaojun/rule.html?version=20160603182000';
 class RegPhone extends Component {
@@ -36,6 +36,7 @@ class RegPhone extends Component {
             ymCode: "", //验证码
             isTap: false,
             timeLoad: false,
+            idCardNo:''
         };
     }
 
@@ -58,10 +59,10 @@ class RegPhone extends Component {
 
         this.setState({timeLoad: true});
         var self = this;
-        requestSmsCode.params.mobilePhoneNumber = this.state.phone;
-        this.requestHandle = request(requestSmsCode, function (response) {
-            if (response.statu) {
-                console.log('test:', response)
+        const param = phxr_verification_code(this.state.phone,'8')
+        this.requestHandle = request(param, function (response) {
+            if (response.data.rspCode) {
+                //console.log('test:', response)
                 Toast.show("发送成功!");
                 self.refs[2] && self.refs[2].focus()
                 if (self.state.isTap == false) {
@@ -70,6 +71,8 @@ class RegPhone extends Component {
                         self.time()
                     }, 1000)
                 }
+            }else{
+                Toast.show(response.data.rspMsg);
             }
             self.setState({timeLoad: false});
         });
@@ -94,11 +97,18 @@ class RegPhone extends Component {
         this.props.pushWebView({key: 'WebView', title: '普汇信融用户服务协议', url: webUrl});
     };
 
-    _goRegist() {
+    _goRegist=()=> {
         // 判断手机号的正则
         if (!checkPhoneNum(this.state.phone)) {
             Toast.show('不是正确的手机号码');
             this.refs['1'].focus();
+            return;
+        }
+
+
+        if(!checkIDCard(this.state.idCardNo)){
+            Toast.show('不是正确的身份证验证码');
+            this.refs['2'].focus();
             return;
         }
         //判断验证码的正则
@@ -126,6 +136,8 @@ class RegPhone extends Component {
         if (nextField == '1') {
             this.refs['2'].focus();
         } else if (nextField == '2') {
+            this.refs['3'].focus();
+        }else {
             this._goRegist()
         }
     }
@@ -160,7 +172,8 @@ class RegPhone extends Component {
         var codeEnable = checkPhoneNum(this.state.phone) &&
             this.state.time == 60 && !this.state.isTap;
         const reg = /^\d{6}$/;
-        const flag = reg.test(this.state.ymCode) && checkPhoneNum(this.state.phone)
+        const enableIDCard = checkIDCard(this.state.idCardNo)
+        const flag = reg.test(this.state.ymCode) && checkPhoneNum(this.state.phone) && enableIDCard
         return (
             <ScrollView
                 style={styles.container}
@@ -171,7 +184,7 @@ class RegPhone extends Component {
                     (text) => this.setState({phone: text}), 'numeric', true, 11, "1"
                 )}
                 {this._renderRowMain('身份证:', '请填入身份证',
-                    (text) => this.setState({phone: text}), 'numeric', true, 50, "1"
+                    (text) => this.setState({idCardNo: text}), 'numeric', false, 50, "2"
                 )}
 
                 <View style={{flexDirection:'row'}}>
@@ -180,7 +193,7 @@ class RegPhone extends Component {
                             this.setState({ymCode: text})
                         },
                         'numeric'
-                        , false, 6, "2"
+                        , false, 6, "3"
                     )}
 
                     <BCButton containerStyle={styles.buttonContainerStyle}
@@ -199,7 +212,7 @@ class RegPhone extends Component {
                 <BCButton
                     disabled={!flag}
                     isLoad={this.props.state.loaded}
-                    onPress={this._goRegist.bind(this)}
+                    onPress={this._goRegist}
                     containerStyle={styles.buttonContainerStyle2}>
                     确定
                 </BCButton>
@@ -316,7 +329,7 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(navigateReplaceIndex('TabView'));
         },
         mRegister: (state)=> {
-            dispatch(register(state));
+            dispatch(iForgot(state));
         },
         pushWebView: (params)=> {
             dispatch(navigatePush(params));

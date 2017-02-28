@@ -18,13 +18,34 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
 import {push} from '../../redux/nav'
 //static displayName = Account
+import {phxr_query_advisers_info} from '../../request/qzapi'
+import {request} from '../../redux/actions/req'
+import {send} from '../../request'
+import {updateUserData} from '../../redux/actions/login'
 @connect(
     state =>({
         //state:state.util.get()
-        userData: state.login.data,
+        data: state.req.get('phxr_query_advisers_info'),
     }),
     dispatch =>({
         //...bindActionCreators({},dispatch),
+        load:()=>{
+             dispatch((dispatch,getState) =>{
+                const userId = getState().login.data.userId
+                const params = phxr_query_advisers_info(userId)
+                 dispatch(request('phxr_query_advisers_info',params))
+                // send(param).then(())
+                // send(params).then(response => {
+                //     if(response.rspCode){
+                //         updateUserData(response.result)
+                //     }
+                // }).catch(e => {
+                //     dispatch(requestFailed(key, e.message))
+                // })
+
+            })
+
+        }
     })
 )
 export  default  class Account extends Component {
@@ -36,15 +57,21 @@ export  default  class Account extends Component {
         return !immutable.is(this.props.data, nextProps.data)
     }
 
+    componentDidMount() {
+        this.props.load();
+    }
+
     static propTypes = {};
-    static defaultProps = {};
+    static defaultProps = {
+        data:immutable.fromJS({})
+    };
 
 
-    _renderRow(title: string, des: string,onPress: Function) {
+    _renderRow(title: string, des: string,point:string,onPress: Function) {
         return (
             <View>
                 <TouchableHighlight onPress={()=>{
-                    push({key:'UserInfoDetail',index:title})
+                    push({key:'UserInfoDetail',index:title,point})
                 }}>
                     <View style={styles.row}>
                         <Text style={styles.rowText}>
@@ -52,7 +79,7 @@ export  default  class Account extends Component {
                         </Text>
                         <View style={styles.row2}>
                             <Text style={styles.rowDesText}>
-                                {des}
+                                {des||"未填写"}
                             </Text>
                             <View style={styles.arrowView}/>
                         </View>
@@ -65,26 +92,30 @@ export  default  class Account extends Component {
     }
 
     render(): ReactElement<any> {
+
+        const data = this.props.data.toJS().data || {}
+
+        //console.log('test:', data);
         return (
             <ScrollView style={[this.props.style,styles.wrap]}>
                 {/*{this._renderRow('账号',this.props.userData.mobilePhoneNumber ,() => {
 
                  })}*/}
-                {this._renderRow('姓名', "李xx", () => {
+                {this._renderRow('姓名', data.name, "name",() => {
                 })}
 
-                {this._renderRow('性别', "男", () => {
+                {this._renderRow('性别', data.sex=="1"?"男":"女", "sex",() => {
                 })}
-                {this._renderRow('身份证', "35042619890320000", () => {
+                {this._renderRow('身份证', data.cardNum,"cardNum", () => {
                 })}
-                {this._renderRow('联系方式', "13588833404", () => {})}
-                {this._renderRow('邮箱', "420156367@qq.com", () => {})}
-                {this._renderRow('城市', "福州", () => {})}
-                {this._renderRow('婚姻状况', "未婚", () => {})}
-                {this._renderRow('年龄', "29", () => {})}
-                {this._renderRow('家庭地址', "福州xxxx", () => {})}
-                {this._renderRow('邮编', "350001", () => {})}
-                {this._renderRow('业务代码', "12046572", () => {})}
+                {this._renderRow('联系方式',  data.telNum, "telNum",() => {})}
+                {this._renderRow('邮箱', data.email, "email",() => {})}
+                {this._renderRow('城市',  data.homeCity=="591"?"福州":"厦门","homeCity" ,() => {})}
+                {this._renderRow('婚姻状况', data.isMarriage?"已婚":"未婚","isMarriage", () => {})}
+                {this._renderRow('出生日期', data.birthday, "birthday",() => {})}
+                {this._renderRow('家庭地址', data.userAddr,"userAddr",() => {})}
+                {this._renderRow('邮编', data.postCodes,"postCodes", () => {})}
+                {this._renderRow('业务代码', data.serviceCode, "serviceCode",() => {})}
 
             </ScrollView>
         );

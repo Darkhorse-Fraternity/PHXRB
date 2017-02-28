@@ -7,6 +7,7 @@
 import {backViewColor, blackFontColor, grayFontColor} from '../../configure';
 import * as immutable from 'immutable';
 import React, {Component, PropTypes} from 'react';
+import {phxr_act_account} from '../../request/qzapi'
 import {
     View,
     StyleSheet,
@@ -26,6 +27,9 @@ import {pop} from '../../redux/nav'
     }),
     dispatch =>({
         //...bindActionCreators({},dispatch),
+        load:()=>{
+            const params = phxr_act_account()
+        }
     })
 )
 export  default  class Account extends Component {
@@ -70,13 +74,13 @@ export  default  class Account extends Component {
                 {/*{this._renderRow('账号',this.props.userData.mobilePhoneNumber ,() => {
 
                  })}*/}
-                {this._renderRow('账户', this.props.userData.username, () => {
+                {this._renderRow('账户', this.props.userData.userAccount, () => {
                 })}
                 <View style={styles.separator}/>
                 {this._renderRow('类型', "咨询顾问", () => {
                 })}
                 <View style={styles.separator}/>
-                {this._renderRow('状态', "已激活", () => {
+                {this._renderRow('状态', this.props.userData?"已激活":"未激活", () => {
                 })}
 
                 <TouchableOpacity style={styles.btn} onPress={this.__activate}>

@@ -94,7 +94,7 @@ function navigationState(state: Object = initialNavLoginState, action) {
 
             let lastOne = state.routes[state.index];
             Object.assign(lastOne, action.route);
-            console.log('test:', lastOne);
+            // console.log('test:', lastOne);
             return {
                 ...state,
             }

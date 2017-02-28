@@ -99,6 +99,7 @@ export function preConfig():Function {
         loadUserData().then((response)=>{
             dispatch(loginSucceed(response))
             // console.log('test:',response)
+            dispatch(navigatePush('TabView',false))
             dispatch(__preConfigResult())
 
         }).catch((error)=>{

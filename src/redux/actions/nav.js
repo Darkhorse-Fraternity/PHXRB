@@ -29,7 +29,7 @@ export const NAV_REPLACE_INDEX = 'NAV_REPLACE_INDEX'
 
 export function navigatePush(state:any,animation:bool = true) {
 	// const config = {};
-	state = typeof state === 'string' ?{...config(state),animationStyle:animation?undefined:null}
+	state = typeof state === 'string' ?{...config(state),animation:animation}
 											: {...config(state.key),...state,};
 	return {
 		type: NAV_PUSH,
@@ -103,7 +103,7 @@ export function navigateReset(routes:any, index:number) {
  * @return {[type]}              [description]
  */
 export function navigateRefresh(route:Object) {
-	console.log('test111:', route);
+	// console.log('test111:', route);
 	return {
 		type: NAV_REFRESH,
 		route,

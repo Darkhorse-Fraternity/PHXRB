@@ -21,10 +21,14 @@ import {connect} from 'react-redux'
 import * as immutable from 'immutable';
 import BaseListView from '../../components/Base/BaseListView';
 import {listLoad, listLoadMore} from '../../redux/actions/list'
+import {phxr_query_person_list} from '../../request/qzapi'
 import {push} from '../../redux/nav'
-const listKey = MenberList
+const listKey = 'MenberList'
 function myListLoad(more: bool = false) {
     return (dispatch, getState) => {
+        const id = getState().login.data.userId
+        const params = phxr_query_person_list(id)
+        more?dispatch(listLoadMore(listKey,params)):dispatch(listLoad(listKey,params))
     }
 }
 
