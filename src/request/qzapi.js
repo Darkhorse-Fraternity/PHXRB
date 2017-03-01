@@ -153,11 +153,15 @@ export function phxr_query_person_credit(userId) {
  *   4.10 提交会员信用
  *
  */
-export function phxr_submit_person_credit(params) {
+export function phxr_submit_person_credit(creditId,userId,params) {
     return {
         path:'/phxr_submit_person_credit',
         method:methodType.post,
-        params:params
+        params:{
+            creditId,
+            userId,
+            ...params
+        }
     }
 }
 
@@ -368,17 +372,13 @@ export function phxr_submit_advisers_info(userId,params) {
  *   4.25 查询资料文件列表
  *
  */
-export function phxr_query_files_list(userId,fileClass,pageSize,currentPage) {
+export function phxr_query_files_list(userType,userId) {
     return {
         path:'/phxr_query_files_list',
         method:methodType.post,
         params:{
             userId,
-            fileClass,
-            page:{
-                pageSize:20,
-                currentPage:1,
-            }
+            userType,
         },
     }
 }
@@ -415,7 +415,7 @@ export function phxr_query_person_list(userId,pageSize,currentPage) {
         params:{
             userId,
             page:{
-                pageSize : 20,
+                pageSize : 9999,
                 currentPage : 1
             }
         },

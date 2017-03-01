@@ -19,14 +19,43 @@ import {
 import {connect} from 'react-redux'
 import {pop} from '../../redux/nav'
 import {bindActionCreators} from 'redux';
-
+import {send} from '../../request'
+import {
+    phxr_query_person_credit,
+    phxr_submit_person_credit,
+} from '../../request/qzapi'
+import {request} from '../../redux/actions/req'
+import {Toast} from '../../util'
 //static displayName = MemberInfo
 @connect(
     state =>({
         //state:state.util.get()
     }),
-    dispatch =>({
+    (dispatch,props) =>({
         //...bindActionCreators({},dispatch),
+        load: ()=> {
+            const userId = props.scene.route.userId
+            const params = phxr_query_person_credit(userId)
+            dispatch(request('phxr_query_person_credit', params))
+        },
+        submit:(key,value)=>{
+            dispatch(async (dispatch,getState)=>{
+
+                try{
+                    const userId = props.scene.route.userId
+                    const params = phxr_submit_person_credit(props.data.get('creditId'),
+                        userId,{[key]:value})
+                    const response = await send(params)
+                    if(response.rspCode){
+                        await props.load()
+                    }
+
+                }catch (e){
+                    Toast.show(e.message())
+                }
+
+            })
+        }
     })
 )
 export  default  class Credit extends Component {
@@ -35,14 +64,19 @@ export  default  class Credit extends Component {
     }
 
     static propTypes = {};
-    static defaultProps = {};
+    static defaultProps = {
+        data:immutable.fromJS({})
+    };
 
     shouldComponentUpdate(nextProps: Object) {
         return !immutable.is(this.props, nextProps)
     }
 
+    componentDidMount() {
+        this.props.load()
+    }
 
-    showActionSheet(message:string,op:any) {
+    showActionSheet=(message:string,key,op:any)=> {
         const wrapProps = {onTouchStart: e => e.preventDefault()}
         const BUTTONS = op.concat('取消')
         ActionSheet.showActionSheetWithOptions({
@@ -55,9 +89,15 @@ export  default  class Credit extends Component {
                 wrapProps,
             },
             (buttonIndex) => {
-                this.setState({ clicked: BUTTONS[buttonIndex] });
+                // this.setState({ clicked: BUTTONS[buttonIndex] });
+                if(buttonIndex !=  BUTTONS.length - 1){
+                    this.props.submit(key,BUTTONS[buttonIndex])
+                }
+
             });
     }
+
+
 
 
     _renderRow(title: string,  dex:string,onPress: Function) {
@@ -81,44 +121,66 @@ export  default  class Credit extends Component {
 
     render(): ReactElement<any> {
         const BUTTONS = ['0', '1', '2', '3', '4','5','6','6次以上'];
+        console.log('test:', this.props.data);
+        const data = this.props.data.toJS()
         return (
             <ScrollView style={[this.props.style,styles.wrap]}>
 
                 <View style={styles.groupSpace}/>
-                {this._renderRow('近一年是否有贷款及信用卡还款累计逾期次数', '1',(title) => {
-                    this.showActionSheet(title,BUTTONS)
+                {this._renderRow('近一年是否有贷款及信用卡还款累计逾期次数',
+                    data.totalOverdueTimesOneYear,
+                    (title) => {
+                    this.showActionSheet(title,"totalOverdueTimesOneYear",BUTTONS)
                 })}
                 <View style={styles.groupSpace}/>
-                {this._renderRow('近两年是否有贷款及信用卡还款累计逾期次数','2' ,(title) => {
-                    this.showActionSheet(title,BUTTONS)
+                {this._renderRow('近两年是否有贷款及信用卡还款累计逾期次数',
+                    data.totalOverdueTimesTwoYear,
+                    (title) => {
+                    this.showActionSheet(title,"totalOverdueTimesTwoYear",BUTTONS)
                 })}
                 <View style={styles.groupSpace}/>
-                {this._renderRow('近三年是否有贷款及信用卡还款累计逾期次数', '3',(title) => {
-                    this.showActionSheet(title,BUTTONS)
+                {this._renderRow('近三年是否有贷款及信用卡还款累计逾期次数',
+                    data.totalOverdueTimesThreeYear,
+                    (title) => {
+                    this.showActionSheet(title,"totalOverdueTimesThreeYear",BUTTONS)
                 })}
                 <View style={styles.groupSpace}/>
-                {this._renderRow('5年内是否存在资产处置、担保代偿要求', '是',(title) => {
-                    this.showActionSheet(title,["是","否"])
+                {this._renderRow('5年内是否存在资产处置、担保代偿要求',
+                    data.AssetDisposalGuaranteeFiveYear,
+                    (title) => {
+                    this.showActionSheet(title,"AssetDisposalGuaranteeFiveYear",["是","否"])
                 })}
                 <View style={styles.groupSpace}/>
-                {this._renderRow('信用卡账户状态', '正常',(title) => {
-                    this.showActionSheet(title,["正常","呆账","止付","冻结"])
+                {this._renderRow('信用卡账户状态',
+                    data.CreditCardAccountState,
+                    (title) => {
+                    this.showActionSheet(title,"CreditCardAccountState",
+                        ["正常","呆账","止付","冻结"])
                 })}
                 <View style={styles.groupSpace}/>
-                {this._renderRow('信贷五级分类状态','正常' ,(title) => {
-                    this.showActionSheet(title,["正常","次级","可疑","损失"])
+                {this._renderRow('信贷五级分类状态',
+                    data.creditFiveLevelState,
+                    (title) => {
+                    this.showActionSheet(title,"creditFiveLevelState",["正常","次级","可疑","损失"])
                 })}
                 <View style={styles.groupSpace}/>
-                {this._renderRow('对外担保贷款状态','正常', (title) => {
-                    this.showActionSheet(title,["正常","次级","可疑","损失","无要求"])
+                {this._renderRow('对外担保贷款状态',
+                    data.SecuredLoanState,
+                    (title) => {
+                    this.showActionSheet(title,"SecuredLoanState",
+                        ["正常","次级","可疑","损失","无要求"])
                 })}
                 <View style={styles.groupSpace}/>
-                {this._renderRow('近一个月贷款及信用卡审批查询次数', '0',(title) => {
-                    this.showActionSheet(title,BUTTONS)
+                {this._renderRow('近一个月贷款及信用卡审批查询次数',
+                    data.ApprovalQueryTimesOneMonth,
+                    (title) => {
+                    this.showActionSheet(title,"ApprovalQueryTimesOneMonth",BUTTONS)
                 })}
                 <View style={styles.groupSpace}/>
-                {this._renderRow('近三个月贷款及信用卡审批查询次数', '0',(title) => {
-                    this.showActionSheet(title,BUTTONS)
+                {this._renderRow('近三个月贷款及信用卡审批查询次数',
+                    data.ApprovalQueryTimesThreeMonth,
+                    (title) => {
+                    this.showActionSheet(title,"ApprovalQueryTimesThreeMonth",BUTTONS)
                 })}
 
             </ScrollView>

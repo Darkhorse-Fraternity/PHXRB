@@ -9,7 +9,7 @@ import React, {Component, PropTypes} from 'react';
 import {
     View,
     StyleSheet,
-    TextInput
+    TextInput,
 } from 'react-native'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
@@ -18,7 +18,7 @@ import {refresh, pop} from '../../redux/nav'
 //static displayName = AptDetail
 import {ImagePicker, Button} from 'antd-mobile';
 
-
+import {Toast} from '../../util'
 
 
 @connect(
@@ -46,13 +46,15 @@ import {ImagePicker, Button} from 'antd-mobile';
 
                     console.log('test:', body);
 
-                    const url = 'http://103.236.253.138:8088/uploadFile'
+                    const url = 'http://10.1.1.221:8088/uploadImage'
+                    // const url = 'http://103.236.253.138:8088/uploadImage'
                     const response = await  fetch(url, {
                         method: 'POST',
                         body,
                         headers:{'Content-Type': 'multipart/form-data; charset=utf-8' }
                     })
-                    console.log('test:', response);
+                    console.log('response:', response.status);
+                    Toast.show("statu:"+response.status )
 
                 }catch (e){
                     console.log('test:', e.message());

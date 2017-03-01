@@ -51,7 +51,6 @@ export const pageConfig = {
     'Home': {title: "普汇信融", direction: 'vertical'},
     "Account": {title: '账户信息'},
     "UserInfo": {title: '我的信息'},
-    "CreditInfo": {title: '信用信息'},
     "AssetsInfo": {title: "资产信息"},
     "AssetsList": {title: "资产列表"},
     "FinanceDetail": {title: "融资详情"},

@@ -70,7 +70,7 @@ export function passwordTextChange(text: string): Object {
  * @param  {[type]} state:Object [description]
  * @return {[type]}              [description]
  */
-export function login(state: Object): Function {888
+export function login(state: Object): Function {
 
     // loginRequest.params.user_name = state.accountText;
     // loginRequest.params.password = state.passwordText;

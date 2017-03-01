@@ -58,8 +58,19 @@ function _preConfig() {
 
     //pushConfig()
 
-
-
+  // const param = {
+  //         "userId": 1250,
+  //         "userAccount": "TonyYo",
+  //         "userType": 1,
+  //         "phoneNo": "13588833404",
+  //         "advisersCode": "",
+  //         "status": 1,
+  //         "city": "0592",
+  //         "province": "0",
+  //         "createTime": "2017-02-26 10:39:52"
+  // }
+  //
+  // saveUserData(param)
 }
 
 

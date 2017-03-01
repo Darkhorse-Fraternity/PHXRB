@@ -222,7 +222,7 @@ class RegPhone extends Component {
                     onPress={this._login}
                     containerStyle={styles.cbutton}
                     disabled={!flag}
-                    //isLoad={state.loaded}
+                    isLoad={this.props.state.loaded}
                 >
                     登 录
                 </BCButton>

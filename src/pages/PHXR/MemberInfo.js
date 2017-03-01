@@ -80,33 +80,34 @@ export  default  class MemberInfo extends Component {
 
 
     render(): ReactElement<any> {
+        const userId = this.props.scene.route.userId
         return (
             <View style={[this.props.style,styles.wrap]}>
 
                 <View style={styles.groupSpace}/>
                 {this._renderRow('需求信息', () => {
                     // NavigationManager.goToPage("NickName");
-                    push("Demand");
+                    push({key:"Demand",userId});
                 })}
                 <View style={styles.groupSpace}/>
                 {this._renderRow('个人信息', () => {
                     // NavigationManager.goToPage("NickName");
-                    push("UserInfo");
+                    push({key:"UserInfo",userId});
                 })}
                 <View style={styles.groupSpace}/>
                 {this._renderRow('信用信息', () => {
                     // NavigationManager.goToPage("NickName");
-                    push("Credit");
+                    push({key:"Credit",userId});
                 })}
                 <View style={styles.groupSpace}/>
                 {this._renderRow('资产信息', () => {
                     // NavigationManager.goToPage("NickName");
-                    push("AssetsList");
+                    push({key:"AssetsList",userId});
                 })}
                 <View style={styles.groupSpace}/>
                 {this._renderRow('资料信息', () => {
                     // NavigationManager.goToPage("NickName");
-                    push("Information");
+                    push({key:"Information",userId});
                 })}
 
             </View>

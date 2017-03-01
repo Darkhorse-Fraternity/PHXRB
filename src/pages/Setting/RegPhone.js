@@ -252,10 +252,10 @@ class RegPhone extends Component {
                         this.showActionSheet(title, ["福州", "厦门"])
                     })}
                     {this._renderRowMain('密码:', '请输入密码',
-                        (text) => this.setState({password: text}), 'default', false, 11, "3",true
+                        (text) => this.setState({password: text}), 'default', false, 50, "3",true
                     )}
                     {this._renderRowMain('确认密码:', '请再次确认密码',
-                        (text) => this.setState({passwordAgain: text}), 'default', false, 11, "4",true
+                        (text) => this.setState({passwordAgain: text}), 'default', false, 50, "4",true
                     )}
 
                     {/*<View style={{flexDirection:'row'}}>*/}

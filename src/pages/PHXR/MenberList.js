@@ -14,7 +14,7 @@ import {
     Button,
     Linking,
 } from 'react-native'
-import { SearchBar } from 'antd-mobile';
+import {SearchBar} from 'antd-mobile';
 
 import {mainColor} from '../../configure'
 import {connect} from 'react-redux'
@@ -28,7 +28,7 @@ function myListLoad(more: bool = false) {
     return (dispatch, getState) => {
         const id = getState().login.data.userId
         const params = phxr_query_person_list(id)
-        more?dispatch(listLoadMore(listKey,params)):dispatch(listLoad(listKey,params))
+        more ? dispatch(listLoadMore(listKey, params)) : dispatch(listLoad(listKey, params))
     }
 }
 
@@ -48,20 +48,30 @@ function myListLoad(more: bool = false) {
 export default class MenberList extends Component {
     constructor(props: Object) {
         super(props);
+        this.state = {
+            searchText: "",
+        }
     }
 
     static propTypes = {
         load: PropTypes.func.isRequired,
         loadMore: PropTypes.func.isRequired,
     };
-    static defaultProps = {};
+    static defaultProps = {
+        data: immutable.fromJS({
+            listData: {
+                content: []
+            },
+        })
+    };
 
-    shouldComponentUpdate(nextProps: Object) {
-        return !immutable.is(this.props.data, nextProps.data)
-    }
+    // shouldComponentUpdate(nextProps: Object, nextState:string) {
+    //     return !immutable.is(this.props, nextProps)
+    //         || immutable.is(this.state, nextState)
+    // }
 
-    makePhone(number:string){
-        Linking.openURL('tel:10086')
+    makePhone(number: string) {
+        Linking.openURL('tel:' + number)
     }
 
     renderRow(itme: Object, sectionID: number, rowID: number) {
@@ -70,17 +80,17 @@ export default class MenberList extends Component {
             <TouchableOpacity
                 style={{marginTop:10}}
                 onPress={()=>{
-                    push('MemberInfo')
+                    push({key:'MemberInfo',userId:itme.userId})
             }}>
                 <View style={styles.row}>
                     <View>
-                        <Text>黄xx</Text>
-                        <Text style={{marginTop:10,color:'rgb(150,150,150)'}}>13588834854</Text>
+                        <Text>{itme.customerName}</Text>
+                        <Text style={{marginTop:10,color:'rgb(150,150,150)'}}>{itme.telNum}</Text>
                     </View>
                     <View style={{flexDirection:'row',alignItems:'center'}}>
                         <View style={{marginRight:10}}>
-                            <Text style={{textAlign:'right'}}>45%</Text>
-                            <Button onPress={this.makePhone} style={{marginTop:10,}} title='通话'/>
+                            <Text style={{textAlign:'right'}}>{itme.dataPercent * 100}%</Text>
+                            <Button onPress={()=>this.makePhone(itme.telNum)} style={{marginTop:10,}} title='通话'/>
                         </View>
                         <View style={styles.arrowView}/>
                     </View>
@@ -90,12 +100,8 @@ export default class MenberList extends Component {
     }
 
 
-    onChange(){
-
-    }
-
-    _renderHeader(){
-        return(
+    _renderHeader() {
+        return (
             <View>
                 <SearchBar
                     //value={this.state.value}
@@ -104,7 +110,12 @@ export default class MenberList extends Component {
                     onClear={(value) => console.log(value, 'onClear')}
                     onFocus={() => console.log('onFocus')}
                     onBlur={() => console.log('onBlur')}
-                    onChange={this.onChange}
+                    onChange={(text)=>{ 
+                        if(typeof text == 'string'){
+                         this.setState({searchText:text})
+                        }
+
+                    }}
                 />
             </View>
         )
@@ -112,17 +123,24 @@ export default class MenberList extends Component {
 
     render() {
 
-        const loadStatu = this.props.data && this.props.data.get('loadStatu')
-        let listData = this.props.data && this.props.data.get('listData')
-        listData = listData && listData.toJS()
-        listData = ['11', '22'];
+        const loadStatu = this.props.data.get('loadStatu')
+        let listData = this.props.data.get('listData').toJS().content
+
+        if (this.state.searchText.length > 0) {
+            listData = listData.filter(item => {
+                const text = this.state.searchText
+                if (item.telNum.indexOf(text) >=0 || item.customerName.indexOf(text)>= 0) {
+                    return item
+                }
+            })
+        }
 
         return (
 
             <BaseListView
-                renderHeader={this._renderHeader}
+                renderHeader={this._renderHeader.bind(this)}
                 style={[this.props.style,styles.list]}
-                loadStatu="LIST_NORMAL"
+                loadStatu={loadStatu}
                 loadData={this.props.load}
                 dataSource={listData}
                 loadMore={this.props.loadMore}
