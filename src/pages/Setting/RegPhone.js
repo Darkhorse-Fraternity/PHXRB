@@ -170,7 +170,10 @@ class RegPhone extends Component {
                 wrapProps,
             },
             (buttonIndex) => {
-                this.setState({clicked: BUTTONS[buttonIndex]});
+                if(buttonIndex != BUTTONS.length - 1){
+                    this.setState({clicked: BUTTONS[buttonIndex]});
+                }
+
             });
     }
 
@@ -238,10 +241,10 @@ class RegPhone extends Component {
             <ScrollView
                 style={styles.container}
                 keyboardShouldPersistTaps="always"
-                keyboardDismissMode='on-drag'>
+                keyboardDismissMode='interactive'>
 
                     {this._renderRowMain('用户名:', '请填入用户名',
-                        (text) => this.setState({userName: text}), 'default', true, 20, "1"
+                        (text) => this.setState({userName: text}), 'default', true, 16, "1"
                     )}
 
                     {this._renderRowMain('手机号:', '请填入手机号码',

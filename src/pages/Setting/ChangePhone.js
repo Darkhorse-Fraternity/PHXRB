@@ -165,7 +165,7 @@ class RegPhone extends Component {
             <ScrollView
                 style={styles.container}
                 keyboardShouldPersistTaps={true}
-                keyboardDismissMode='on-drag'>
+                keyboardDismissMode='interactive'>
 
                 <View style={styles.rowMainStyle}>
                     <Text style={[styles.textStyle,{width:300} ]}>您当前用的手机号码是:{this.props.state.accountText}</Text>

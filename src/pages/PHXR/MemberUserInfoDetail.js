@@ -19,47 +19,53 @@ import {bindActionCreators} from 'redux';
 import {renderNavSenderButton} from '../../util/viewUtil'
 import {ActionSheet, DatePicker} from 'antd-mobile';
 import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
-import {phxr_submit_advisers_info, phxr_query_advisers_info,phxr_act_account} from '../../request/qzapi'
+import {phxr_submit_person_info,
+    phxr_query_person_info,
+    phxr_query_person_list,
+    phxr_act_account} from '../../request/qzapi'
 import {send} from '../../request'
 import {request} from '../../redux/actions/req'
 import {updateUserData} from '../../redux/actions/login'
 import moment from 'moment';
-
+import {listLoad} from '../../redux/actions/list'
 import {Toast, checkPhoneNum, checkIDCard} from '../../util'
 //static displayName = UserInfoDetail
 @connect(
     state =>({
         //state:state.util.get()
     }),
-    dispatch =>({
+    (dispatch,props) =>({
         //...bindActionCreators({},dispatch),
         load:  (param)=> {
-              dispatch(async (dispatch, getState) => {
-                const userId = getState().login.data.userId
-                const params = phxr_submit_advisers_info(userId, param)
+            dispatch(async (dispatch, getState) => {
+                // const userId = getState().login.data.userId
+                const params = phxr_submit_person_info(props.scene.route.userId, param)
                 // request('phxr_query_person_info',param)
                 // send(param).then(())
-                 try {
+                try {
                     const response = await send(params)
-                     if (response.rspCode) {
-                         // console.log('response:', response.result);
-                         Toast.show("修改成功");
-                         const params1 = phxr_query_advisers_info(userId)
-                         dispatch(request('phxr_query_advisers_info', params1))
-                         //更新个人信息
+                    if (response.rspCode) {
+                        // console.log('response:', response.result);
+                        Toast.show("修改成功");
+                        const params1 = phxr_query_person_info(props.scene.route.userId)
+                        dispatch(request('phxr_query_person_info', params1))
+                        //更新个人信息
 
-                         // const params2 = phxr_act_account(userId)
-                         // const response2 = await send(params2)
-                         // if (response2.rspCode) {
-                         //     dispatch(updateUserData(response2.result))
-                         // }
+                        const id = getState().login.data.userId
+                        const params2 = phxr_query_person_list(id)
+                        dispatch(listLoad("MenberList", params2))
+                        // const params2 = phxr_act_account(userId)
+                        // const response2 = await send(params2)
+                        // if (response2.rspCode) {
+                        //     dispatch(updateUserData(response2.result))
+                        // }
 
-                         pop()
+                        pop()
 
-                     }
-                 }catch (e){
-                     dispatch(requestFailed("phxr_query_advisers_info", e.message))
-                 }
+                    }
+                }catch (e){
+                    dispatch(requestFailed("phxr_query_advisers_info", e.message))
+                }
             })
 
         }
@@ -87,7 +93,7 @@ export  default  class UserInfoDetail extends Component {
         //做验证
         const point = this.props.scene.route.point
         let clicked = this.state.clicked
-        if (point == 'name' && clicked.length == 0) {
+        if (point == 'customerName' && clicked.length == 0) {
             Toast.show("姓名不能为空");
             return;
         }
@@ -102,7 +108,7 @@ export  default  class UserInfoDetail extends Component {
             return;
         }
 
-        if (point == 'cardNum' && !checkIDCard(clicked)) {
+        if (point == 'idCardNo' && !checkIDCard(clicked)) {
             Toast.show("不是正确的身份证号码");
             return;
         }
@@ -112,11 +118,29 @@ export  default  class UserInfoDetail extends Component {
             if (clicked == "厦门") clicked = "592"
         }
 
-        if (point == 'isMarriage') {
+        if (point == 'marriageStatus') {
             if (clicked == "未婚") clicked = "0"
             if (clicked == "已婚") clicked = "1"
             if (clicked == "离婚") clicked = "2"
         }
+
+        let arr = []
+        if(point == "companyNature"){
+            arr = ["政府机关", "事业单位", "私企","外企"]
+            clicked =  arr.indexOf(clicked)
+
+        }
+
+        if (point == "jobLevel"){
+            arr = ["普通员工", "中层管理", "高层管理","高层管理","企业主","个体经营者"]
+            clicked =  arr.indexOf(clicked)
+        }
+
+        if(point == "companySize"){
+            arr = ["20人以下", "20人至50人", "50人至100人","100人以上"]
+            clicked =  arr.indexOf(clicked)
+        }
+
 
         if (clicked.length == 0) {
             Toast.show("数据不能为空。");
@@ -140,7 +164,9 @@ export  default  class UserInfoDetail extends Component {
     __renderInputRow(name, props): ReactElement<any> {
         const point = this.props.scene.route.point
         let keyboardType = "default"
-        if (point == "postCodes" || point == "serviceCode" || point == "telNum") {
+        if (point == "postCodes" || point == "serviceCode" || point == "telNum"
+            || point == "spousePhoneNo" || point == "immediateFamilyPhone1"
+            || point == "immediateFamilyPhone2") {
             keyboardType = 'numeric'
         }
         return (
@@ -232,13 +258,17 @@ export  default  class UserInfoDetail extends Component {
 
         // console.log('test:', point);
         // console.log('test:', this.state.clicked);
+
+        const array = ['sex',"homeCity","marriageStatus","companySize","companyNature","jobLevel"]
+        const flag =  array.indexOf(point) == -1
         return (
             <View style={[this.props.style,styles.wrap]}>
-                {(point == "name" || point == "cardNum" || point == "telNum"
-                || point == "email" || point == "postCodes" || point == "serviceCode"
-                || point == "userAddr")
+
+                {flag && point !=  "birthday" && point != 'EntryDate'
                 && this.__renderInputRow(this.props.scene.route.index, {})}
-                {(point == "sex" || point == "homeCity" || point == "isMarriage")
+
+
+                {!flag && point !=  "birthday" && point != 'EntryDate'
                 && this._renderRow("请选择您的" + this.props.scene.route.index,
                     this.state.clicked, (title) => {
                         var arr = [];
@@ -248,14 +278,27 @@ export  default  class UserInfoDetail extends Component {
                         if (point == "homeCity") {
                             arr = ["福州", "厦门"]
                         }
-                        if (point == "isMarriage") {
+                        if (point == "marriageStatus") {
                             arr = ["未婚", "已婚", "离婚"]
                         }
+
+                        if(point == "companyNature"){
+                            arr = ["政府机关", "事业单位", "私企","外企"]
+                        }
+
+                        if (point == "jobLevel"){
+                            arr = ["普通员工", "中层管理", "高层管理","高层管理","企业主","个体经营者"]
+                        }
+
+                        if(point == "companySize"){
+                            arr = ["20人以下", "20人至50人", "50人至100人","100人以上"]
+                        }
+
+
                         this.showActionSheet(title, arr)
                     })}
-                {point == 'birthday' &&
-                this._renderDatePikcerRow("请选择您的" + this.props.scene.route.index,
-                    this.state.clicked)}
+                {(point == 'birthday' || point == 'EntryDate') &&
+                this._renderDatePikcerRow("请选择您的" + this.props.scene.route.index,this.state.clicked)}
             </View>
         );
     }

@@ -13,6 +13,7 @@ export function request(key: string, params: Object): Function {
     return (dispatch) => {
         dispatch(requestStart(key));//当page 不为0 的时候则表示不是加载多页。
         send(params).then(response => {
+            console.log('response:',response);
             if(response.rspCode){
                 dispatch(requestSucceed(key, response.result))
             }else{

@@ -21,14 +21,26 @@ import {connect} from 'react-redux'
 import TipProgress from '../../components/TipProgress'
 import {bindActionCreators} from 'redux';
 import {pop} from '../../redux/nav'
+import {phxr_query_financing_detail} from '../../request/qzapi'
+import {request} from '../../redux/actions/req'
 //static displayName = Account
 @connect(
     state =>({
         //state:state.util.get()
-        userData: state.login.data,
+        data:state.req.get('phxr_query_financing_detail')
     }),
-    dispatch =>({
+    (dispatch,props) =>({
         //...bindActionCreators({},dispatch),
+        load:()=>{
+            dispatch(async (dispatch,getState)=>{
+
+                // const uid = getState().login.data.userId
+                const params = phxr_query_financing_detail(props.scene.route.businessId)
+                await dispatch(request('phxr_query_financing_detail',params))
+
+            })
+
+        }
     })
 )
 export  default  class Business extends Component {
@@ -40,8 +52,18 @@ export  default  class Business extends Component {
         return !immutable.is(this.props.data, nextProps.data)
     }
 
-    static propTypes = {};
-    static defaultProps = {};
+    static propTypes = {
+        load: PropTypes.func.isRequired,
+    };
+    static defaultProps = {
+        data:immutable.fromJS({
+        })
+    };
+
+
+    componentDidMount() {
+        this.props.load()
+    }
 
 
     _renderRow(title: string, des: string, onPress: Function) {
@@ -109,6 +131,9 @@ export  default  class Business extends Component {
         pop()
     }
     render(): ReactElement<any> {
+        let data =  this.props.data.toJS().data || [{}]
+        data = data[0]
+        console.log('data:', data);
         return (
             <ScrollView style={[this.props.style,styles.wrap]}>
                 {/*{this._renderRow('账号',this.props.userData.mobilePhoneNumber ,() => {
@@ -128,7 +153,7 @@ export  default  class Business extends Component {
                 {this._renderRow('服务需求', "首次融资服务申请", () => {
                 })}
                 <View>
-                    {this.__renderTipProgress(['需求确认','信息录入','材料收集','材料审核'],2,'hidden')}
+                    {this.__renderTipProgress(['需求确认','信息录入','材料收集','材料审核'],0,'hidden')}
                     {/*{this.__renderTipProgress(['需求确认1','信息录入1','材料收集1','材料审核1'],4,'right')}*/}
                     {/*{this.__renderTipProgress(['需求确认2','信息录入2','材料收集2','材料审核2'],1,'left')}*/}
                     <View style={[styles.line]}/>

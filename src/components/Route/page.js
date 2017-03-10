@@ -37,8 +37,14 @@ import Credit from '../../pages/PHXR/Credit'
 import InfoUpLoad from '../../pages/PHXR/InfoUpLoad'
 import AddCar from '../../pages/PHXR/AddCar'
 import AddHouse from '../../pages/PHXR/AddHouse'
+import MemberUserInfo from '../../pages/PHXR/MemberUserInfo'
+import MemberUserInfoDetail from '../../pages/PHXR/MemberUserInfoDetail'
+import FinanceTip from '../../pages/PHXR/FinanceTip'
 export  const PageMap =
 {
+  FinanceTip,
+  MemberUserInfoDetail,
+  MemberUserInfo,
   AddHouse,
   AddCar,
   InfoUpLoad,

@@ -182,13 +182,13 @@ class RegPhone extends Component {
             <ScrollView
                 style={styles.container}
                 keyboardShouldPersistTaps="always"
-                keyboardDismissMode='on-drag'>
+                keyboardDismissMode='interactive'>
 
                 <Image source={logo} style={styles.logo}/>
 
 
                 {this._renderRowMain('用户名/手机号:', '请填入用户名或手机号码',
-                    (text) => this.setState({phone: text}), 'default', false, 50, "2"
+                    (text) => this.setState({phone: text}), 'default', false, 16, "2"
                 )}
 
 

@@ -87,12 +87,12 @@ export  default  class MemberInfo extends Component {
                 <View style={styles.groupSpace}/>
                 {this._renderRow('需求信息', () => {
                     // NavigationManager.goToPage("NickName");
-                    push({key:"Demand",userId});
+                    push({key:"FinanceDetail",userId:this.props.scene.route.userId});
                 })}
                 <View style={styles.groupSpace}/>
                 {this._renderRow('个人信息', () => {
                     // NavigationManager.goToPage("NickName");
-                    push({key:"UserInfo",userId});
+                    push({key:"MemberUserInfo",userId});
                 })}
                 <View style={styles.groupSpace}/>
                 {this._renderRow('信用信息', () => {

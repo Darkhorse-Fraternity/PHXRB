@@ -16,32 +16,122 @@ import {
 } from 'react-native'
 import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
 import {connect} from 'react-redux'
-import { ActionSheet } from 'antd-mobile';
+import {ActionSheet} from 'antd-mobile';
 import {bindActionCreators} from 'redux';
-
+import {phxr_submit_person_house, phxr_query_person_assets_list} from '../../request/qzapi'
+import {request} from '../../redux/actions/req'
+import {renderNavSenderButton} from '../../util/viewUtil'
+import {refresh} from '../../redux/nav'
+import {Toast} from '../../util'
 //static displayName = AddHouse
+
+const isEmpty = value => value === undefined || value === null || value === '';
 @connect(
     state =>({
         //state:state.util.get()
     }),
-    dispatch =>({
+    (dispatch, props) =>({
         //...bindActionCreators({},dispatch),
+        submit: (state)=> {
+            dispatch(async(dispatch, getState)=> {
+                const userId = getState().login.data.userId
+                //做验证
+                //0、多选转化
+                //1、判断不为空
+                //2、身份证和电话号码判断
+                //3、判断actType
+                if(isEmpty(state.houseAddress)){
+                    Toast.show('房屋地址不能为空')
+                    return;
+                }
+                if(isEmpty(state.serviceYears)){
+                    Toast.show('已用年限不能为空')
+                    return;
+                }
+                if(isEmpty(state.propertyArea)){
+                    Toast.show('产权面积不能为空')
+                    return;
+                }
+                if(isEmpty(state.useArea)){
+                    Toast.show('实际使用面积不能为空')
+                    return;
+                }
+                if(isEmpty(state.totalFloor)){
+                    Toast.show('所在建筑总层数不能为空')
+                    return;
+                }
+                if(isEmpty(state.positionFloor)){
+                    Toast.show('所处层数不能为空')
+                    return;
+                }
+
+
+                const newState ={
+                    houseCity:state.houseCity == "福州"?"591":"592",
+                    houseType:["个人住宅(70年产权)", "商住两用", "商铺", "写字楼",
+                        "别墅", "停车位", "自建房", "动迁房", "经济适用房", "预算房"].indexOf(state.houseType),
+                    ifElevator:["否","是"].indexOf(state.ifElevator),
+                    ifShare:["否","是"].indexOf(state.ifShare)
+                }
+                const param = {
+                    userId,
+                    actType: props.scene.route.actType||"0",
+                    ...state,
+                    ...newState
+                }
+                try {
+                    const params = phxr_submit_person_house(param)
+                    await dispatch(request('phxr_submit_person_house', params))
+                    const params2 = phxr_query_person_assets_list(uid)
+                    await dispatch(request('phxr_query_person_assets_list', params2))
+                } catch (e) {
+                    Toast.show(e.message)
+                }
+
+            })
+        }
     })
 )
 export  default  class AddHouse extends Component {
     constructor(props: Object) {
         super(props);
+        this.state = {
+            houseAddress: '',
+            houseCity: "福州",
+            houseType: "个人住宅(70年产权)",
+            serviceYears: "",
+            propertyArea: "",
+            useArea: "",
+            totalFloor: "",
+            positionFloor: "",
+            ifElevator: "否",
+            ifShare: "否",
+            shareName: "",
+            shareIdCardNo: "",
+            sharePhoneNo: "",
+            shareRelation: ""
+        }
     }
 
     static propTypes = {};
     static defaultProps = {};
 
-    shouldComponentUpdate(nextProps: Object) {
-        return !immutable.is(this.props, nextProps)
+    shouldComponentUpdate(nextProps: Object,nextState:Object) {
+        return !immutable.is(this.props, nextProps)||
+                !immutable.is(this.state,nextState)
     }
 
 
-    showActionSheet(message:string,op:any) {
+    _tapRight() {
+        this.props.submit(this.state)
+    }
+
+    componentDidMount() {
+        const rightBtn = renderNavSenderButton(this._tapRight.bind(this))
+        refresh({renderRightComponent: rightBtn});
+    }
+
+    showActionSheet(message: string, key, op: any) {
         const wrapProps = {onTouchStart: e => e.preventDefault()}
         const BUTTONS = op.concat('取消')
         ActionSheet.showActionSheetWithOptions({
@@ -54,12 +144,15 @@ export  default  class AddHouse extends Component {
                 wrapProps,
             },
             (buttonIndex) => {
-                this.setState({ clicked: BUTTONS[buttonIndex] });
+                if (buttonIndex != BUTTONS.length - 1) {
+                    this.setState({[key]: BUTTONS[buttonIndex]});
+                }
+
             });
     }
 
-    _renderRowMain(title: string, placeholder: string, onChangeText: Function,
-                   boardType: PropTypes.oneOf = 'default', autoFocus: bool = false, maxLength: number = 16,
+    _renderRowMain(title: string, placeholder: string, key: string, boardType: PropTypes.oneOf = 'default',
+                   autoFocus: bool = false, maxLength: number = 40,
                    ref: string) {
 
         return (
@@ -78,8 +171,8 @@ export  default  class AddHouse extends Component {
                     placeholder={placeholder}
                     clearButtonMode='while-editing'
                     enablesReturnKeyAutomatically={true}
-                    onSubmitEditing={() =>this.focusNextField(ref)}
-                    onChangeText={onChangeText}/>
+                    //onSubmitEditing={() =>this.focusNextField(ref)}
+                    onChangeText={(text)=>{this.setState({ [key]: text});}}/>
             </View>
         )
     }
@@ -108,41 +201,45 @@ export  default  class AddHouse extends Component {
             <ScrollView
                 style={styles.wrap}
                 keyboardShouldPersistTaps="always"
-                keyboardDismissMode='on-drag'>
+                keyboardDismissMode='interactive'>
 
-                {this._renderRowMain('房产地址:', 'x省x市x县',
-                )}
-
-                {this._renderRowMain('所在小区:', '',
+                {this._renderRowMain('房产地址:', '请填写', "houseAddress"
                 )}
 
-                {this._renderRow('请选择所在城市:', '个人住宅(70年产权)', (title) => {
-                    this.showActionSheet(title, ["个人住宅(70年产权)", "商住两用","商铺","写字楼",
-                        "别墅","停车位","自建房","动迁房","经济适用房","预算房"])
+                {/*{this._renderRowMain('城市区号:', '福州:591,厦门:592', "houseCity","numeric"*/}
+                {/*)}*/}
+                {this._renderRow('所在城市:', this.state.houseCity, (title) => {
+                    this.showActionSheet(title, "houseCity",["福州","厦门"])
                 })}
-                {this._renderRowMain('已用年限:', '',
-                )}
-                {this._renderRowMain('产权面积:', '',
-                )}
-                {this._renderRowMain('实际适用面积:', '',
-                )}
-                {this._renderRowMain('所在建筑总层数:', '',
-                )}
-                {this._renderRowMain('所处层数:', '',
-                )}
-                {this._renderRow('是否有电梯:', '是', (title) => {
-                    this.showActionSheet(title, ["是","否"])
+
+
+                {this._renderRow('请选择所在城市:', this.state.houseType, (title) => {
+                    this.showActionSheet(title, "houseType", ["个人住宅(70年产权)", "商住两用", "商铺", "写字楼",
+                        "别墅", "停车位", "自建房", "动迁房", "经济适用房", "预算房"])
                 })}
-                {this._renderRow('是否有共有产权人:', '是', (title) => {
-                    this.showActionSheet(title, ["是","否"])
+                {this._renderRowMain('已用年限:', '', "serviceYears","numeric"
+                )}
+                {this._renderRowMain('产权面积:', '', "propertyArea","numeric"
+                )}
+                {this._renderRowMain('实际使用面积:', '', "useArea","numeric"
+                )}
+                {this._renderRowMain('所在建筑总层数:', '', "totalFloor","numeric"
+                )}
+                {this._renderRowMain('所处层数:', '', "positionFloor","numeric"
+                )}
+                {this._renderRow('是否有电梯:', this.state.ifElevator, (title) => {
+                    this.showActionSheet(title, "ifElevator", ["是", "否"])
                 })}
-                {this._renderRowMain('公有产权人姓名:', '',
+                {this._renderRow('是否有共有产权人:', this.state.ifShare, (title) => {
+                    this.showActionSheet(title, "ifShare", ["是", "否"])
+                })}
+                {this._renderRowMain('公有产权人姓名:', '', "shareName"
                 )}
-                {this._renderRowMain('共有产权人的身份证:', '',
+                {this._renderRowMain('共有产权人的身份证:', '', "shareIdCardNo"
                 )}
-                {this._renderRowMain('共有产权人的电话:', '',
+                {this._renderRowMain('共有产权人的电话:', '', "sharePhoneNo","numeric"
                 )}
-                {this._renderRowMain('共有产权人的关系:', '',
+                {this._renderRowMain('共有产权人的关系:', '', "shareRelation"
                 )}
 
             </ScrollView>
@@ -154,7 +251,7 @@ export  default  class AddHouse extends Component {
 const styles = StyleSheet.create({
     wrap: {
         flex: 1,
-        backgroundColor:'white'
+        backgroundColor: 'white'
     },
     rowMainStyle: {
 
@@ -179,7 +276,8 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        marginLeft: 15,
     },
     rowText: {
         fontSize: 14,
@@ -203,7 +301,7 @@ const styles = StyleSheet.create({
     textInputStyle: {
         // width:200,
         flex: 1,
-        marginLeft: 0,
+        marginLeft: 10,
         textAlign: 'left',
         fontSize: 14,
         color: 'black',

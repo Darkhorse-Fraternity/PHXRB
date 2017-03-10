@@ -68,7 +68,10 @@ export  default  class Demand extends Component {
                 wrapProps,
             },
             (buttonIndex) => {
-                this.setState({ clicked: BUTTONS[buttonIndex] });
+                if(buttonIndex != BUTTONS.length - 1){
+                    this.setState({ clicked: BUTTONS[buttonIndex] });
+                }
+
             });
     }
 

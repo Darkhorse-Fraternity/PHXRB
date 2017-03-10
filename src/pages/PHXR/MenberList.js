@@ -89,7 +89,7 @@ export default class MenberList extends Component {
                     </View>
                     <View style={{flexDirection:'row',alignItems:'center'}}>
                         <View style={{marginRight:10}}>
-                            <Text style={{textAlign:'right'}}>{itme.dataPercent * 100}%</Text>
+                            <Text style={{textAlign:'right'}}>{(itme.dataPercent * 100).toFixed(2)}%</Text>
                             <Button onPress={()=>this.makePhone(itme.telNum)} style={{marginTop:10,}} title='通话'/>
                         </View>
                         <View style={styles.arrowView}/>

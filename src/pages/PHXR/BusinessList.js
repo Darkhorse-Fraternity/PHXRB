@@ -17,26 +17,17 @@ import {mainColor} from '../../configure'
 import {connect} from 'react-redux'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import CourseTabBar from '../../components/CourseTabBar'
-
+import Financed from './Financed'
 import * as immutable from 'immutable';
-import BaseListView from '../../components/Base/BaseListView';
-import {listLoad, listLoadMore} from '../../redux/actions/list'
-import {push} from '../../redux/nav'
-const listKey = BusinessList
-function myListLoad(more: bool = false) {
-    return (dispatch, getState) => {
-    }
-}
+
+
 
 
 @connect(
     state =>({
-        data: state.list.get(listKey),
     }),
     dispatch =>({
-        //...bindActionCreators({},dispatch),
-        load: ()=>dispatch(myListLoad()),
-        loadMore: ()=>dispatch(myListLoad(true)),
+
 
     })
 )
@@ -47,8 +38,6 @@ export default class BusinessList extends Component {
     }
 
     static propTypes = {
-        load: PropTypes.func.isRequired,
-        loadMore: PropTypes.func.isRequired,
     };
     static defaultProps = {};
 
@@ -57,78 +46,34 @@ export default class BusinessList extends Component {
     }
 
 
-    renderRow(itme: Object, sectionID: number, rowID: number) {
-
-        return (
-            <TouchableOpacity
-                style={{marginTop:10}}
-                onPress={()=>{
-                    push('Business')
-            }}>
-                <View style={styles.row}>
-                    <View>
-                        <Text>收到来自xxx的融资请求</Text>
-                        <Text style={{marginTop:10,color:'rgb(150,150,150)'}}>13588834854</Text>
-                    </View>
-                    <View style={{flexDirection:'row',alignItems:'center'}}>
-                        <View style={{marginRight:10}}>
-                            <Text style={{textAlign:'right'}}>80%</Text>
-                            <Text style={{marginTop:10,color:'rgb(150,150,150)'}}>2012.2.2</Text>
-                        </View>
-                        <View style={styles.arrowView}/>
-                    </View>
-                </View>
-            </TouchableOpacity>
-        )
-    }
 
     render() {
 
-        const loadStatu = this.props.data && this.props.data.get('loadStatu')
-        let listData = this.props.data && this.props.data.get('listData')
-        listData = listData && listData.toJS()
-        listData = ['111', '222']
+
         return (
-            <ScrollableTabView initialPage={0} renderTabBar={()=><CourseTabBar/>}>
-                <BaseListView
+            <ScrollableTabView style={styles.wrap} initialPage={0} renderTabBar={()=><CourseTabBar/>}>
+                <Financed
                     tabLabel="新任务"
-                    //renderHeader={this._renderHeader}
                     style={[this.props.style,styles.list]}
-                    loadStatu="LIST_NORMAL"
-                    loadData={this.props.load}
-                    dataSource={listData}
-                    loadMore={this.props.loadMore}
-                    renderRow={this.renderRow.bind(this)}
+                    businessSate="0"
                 />
-                <BaseListView
+                <Financed
                     tabLabel="已办任务"
-                    //renderHeader={this._renderHeader}
+                    businessSate="1"
                     style={[this.props.style,styles.list]}
-                    loadStatu={loadStatu}
-                    loadData={this.props.load}
-                    dataSource={listData}
-                    loadMore={this.props.loadMore}
-                    renderRow={this.renderRow.bind(this)}
+
                 />
-                <BaseListView
+                <Financed
                     tabLabel="完成任务"
-                    //renderHeader={this._renderHeader}
+                    businessSate="2"
                     style={[this.props.style,styles.list]}
-                    loadStatu={loadStatu}
-                    loadData={this.props.load}
-                    dataSource={listData}
-                    loadMore={this.props.loadMore}
-                    renderRow={this.renderRow.bind(this)}
+
                 />
-                <BaseListView
+                <Financed
                     tabLabel="结案任务"
-                    //renderHeader={this._renderHeader}
+                    businessSate="3"
                     style={[this.props.style,styles.list]}
-                    loadStatu={loadStatu}
-                    loadData={this.props.load}
-                    dataSource={listData}
-                    loadMore={this.props.loadMore}
-                    renderRow={this.renderRow.bind(this)}
+
                 />
             </ScrollableTabView>
         );
@@ -138,6 +83,7 @@ export default class BusinessList extends Component {
 const styles = StyleSheet.create({
     wrap: {
         flex: 1,
+        backgroundColor: 'white',
     },
     list: {
         flex: 1,

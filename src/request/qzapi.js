@@ -127,11 +127,14 @@ export function phxr_query_person_info(userId) {
  *   4.8 提交会员信息
  *
  */
-export function phxr_submit_person_info(params) {
+export function phxr_submit_person_info(userId,params) {
     return {
         path:'/phxr_submit_person_info',
         method:methodType.post,
-        params:params
+        params:{
+            userId,
+            ...params
+        }
     }
 }
 
@@ -169,12 +172,12 @@ export function phxr_submit_person_credit(creditId,userId,params) {
  *   4.11 查询会员资产列表
  *
  */
-export function phxr_query_person_assets_list(personId) {
+export function phxr_query_person_assets_list(userId) {
     return {
         path:'/phxr_query_person_assets_list',
         method:methodType.post,
         params:{
-            personId
+            userId
         },
     }
 }
@@ -281,13 +284,12 @@ export function phxr_financing_apply(personId) {
  *   4.19 查询融资业务列表
  *
  */
-export function phxr_query_financing_list(QueryType,personId,advisersId,businessSate) {
+export function phxr_query_financing_list(queryType,advisersId,businessSate) {
     return {
         path:'/phxr_query_financing_list',
         method:methodType.post,
         params:{
-            QueryType,
-            personId,
+            queryType,
             advisersId,
             businessSate
         },
@@ -298,11 +300,12 @@ export function phxr_query_financing_list(QueryType,personId,advisersId,business
  *   4.20 查询融资详情
  *
  */
-export function phxr_query_financing_detail(personId) {
+export function phxr_query_financing_detail(businessId,personId) {
     return {
         path:'/phxr_query_financing_detail',
         method:methodType.post,
         params:{
+            businessId,
             personId
         },
     }
@@ -372,13 +375,17 @@ export function phxr_submit_advisers_info(userId,params) {
  *   4.25 查询资料文件列表
  *
  */
-export function phxr_query_files_list(userType,userId) {
+export function phxr_query_files_list(userId) {
     return {
         path:'/phxr_query_files_list',
         method:methodType.post,
         params:{
             userId,
-            userType,
+            fileClass:0,
+            page:{
+                pageSize:20,
+                currentPage:1
+            },
         },
     }
 }
@@ -440,11 +447,15 @@ export function phxr_query_business_info(personId) {
  *   4.29 提交需求信息
  *
  */
-export function phxr_submit_business_info(params) {
+export function phxr_submit_business_info(businessId,personId,params) {
     return {
         path:'/phxr_submit_business_info',
         method:methodType.post,
-        params:params,
+        params:{
+            businessId,
+            personId,
+            ...params
+        },
     }
 }
 /*

@@ -31,6 +31,7 @@ export default class TextField extends Component {
             ...otherProps,
         } = this.props;
 
+        console.log('test:', this.props);
         return (
             <TextInput
                 // Let's only change the text color instead of showing error messages

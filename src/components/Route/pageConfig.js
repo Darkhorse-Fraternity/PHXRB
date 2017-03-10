@@ -53,7 +53,8 @@ export const pageConfig = {
     "UserInfo": {title: '我的信息'},
     "AssetsInfo": {title: "资产信息"},
     "AssetsList": {title: "资产列表"},
-    "FinanceDetail": {title: "融资详情"},
+    "FinanceDetail": {title: "需求详情"},
+    "FinanceTip":{title:'需求退回'},
     "UserInfoDetail": {title: '修改个人资料'},
     "Aptitude": {title: '我的资料'},
     "AptDetail": {title: '新增资料'},
@@ -67,6 +68,8 @@ export const pageConfig = {
     "InfoUpLoad":{title:'文件上传'},
     "AddCar":{title:"新增汽车"},
     "AddHouse":{title:"新增房产"},
+    "MemberUserInfo":{title:"会员信息"},
+    "MemberUserInfoDetail":{title:"修改会员信息"}
 }
 
 export function config(key: string): Object {

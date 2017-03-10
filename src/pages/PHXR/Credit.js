@@ -29,7 +29,7 @@ import {Toast} from '../../util'
 //static displayName = MemberInfo
 @connect(
     state =>({
-        //state:state.util.get()
+        state:state.util.get("phxr_query_person_credit")
     }),
     (dispatch,props) =>({
         //...bindActionCreators({},dispatch),
@@ -45,7 +45,9 @@ import {Toast} from '../../util'
                     const userId = props.scene.route.userId
                     const params = phxr_submit_person_credit(props.data.get('creditId'),
                         userId,{[key]:value})
+                    console.log('test:', params);
                     const response = await send(params)
+                    console.log('test:', "1111");
                     if(response.rspCode){
                         await props.load()
                     }

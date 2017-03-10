@@ -16,7 +16,8 @@ import {
 } from 'react-native'
 import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
 import {connect} from 'react-redux'
-import { ActionSheet } from 'antd-mobile';
+import moment from 'moment';
+import { ActionSheet ,DatePicker} from 'antd-mobile';
 import {bindActionCreators} from 'redux';
 
 //static displayName = AddHouse
@@ -24,24 +25,109 @@ import {bindActionCreators} from 'redux';
     state =>({
         //state:state.util.get()
     }),
-    dispatch =>({
+    (dispatch, props) =>({
         //...bindActionCreators({},dispatch),
+        submit: (state)=> {
+            dispatch(async(dispatch, getState)=> {
+                const userId = getState().login.data.userId
+                //做验证
+                //0、多选转化
+                //1、判断不为空
+                //2、身份证和电话号码判断
+                //3、判断actType
+                if(isEmpty(state.brand)){
+                    Toast.show('品牌不能为空')
+                    return;
+                }
+                if(isEmpty(state.model)){
+                    Toast.show('型号不能为空')
+                    return;
+                }
+                if(isEmpty(state.plateNumber)){
+                    Toast.show('车牌号不能为空')
+                    return;
+                }
+                if(isEmpty(state.kilometers)){
+                    Toast.show("公里数不能为空")
+                    return;
+                }
+                if(isEmpty(state.totalTradeTimes)){
+                    Toast.show('总过户数不能为空')
+                    return;
+                }
+                if(isEmpty(state.tradeTimesOneYear)){
+                    Toast.show('近一年内过户次数不能为空')
+                    return;
+                }
+
+
+
+                const newState ={
+                    houseCity:state.houseCity == "福州"?"591":"592",
+                    houseType:["个人住宅(70年产权)", "商住两用", "商铺", "写字楼",
+                        "别墅", "停车位", "自建房", "动迁房", "经济适用房", "预算房"].indexOf(state.houseType),
+                    ifElevator:["否","是"].indexOf(state.ifElevator),
+                    ifShare:["否","是"].indexOf(state.ifShare)
+                }
+                const param = {
+                    userId,
+                    actType: props.scene.route.actType||"0",
+                    ...state,
+                    ...newState
+                }
+                try {
+                    const params = phxr_submit_person_house(param)
+                    await dispatch(request('phxr_submit_person_house', params))
+                    const params2 = phxr_query_person_assets_list(uid)
+                    await dispatch(request('phxr_query_person_assets_list', params2))
+                } catch (e) {
+                    Toast.show(e.message)
+                }
+
+            })
+        }
     })
 )
 export  default  class AddCar extends Component {
     constructor(props: Object) {
         super(props);
+        this.state={
+            carId:"乘用车",
+            brand:"",
+            useType:"非营运",
+            carType:"乘用车",
+            model:"",
+            plateNumber:"",
+            kilometers:"",
+            productionDate:moment().format("YYYY-MM-DD"),
+            buyDate:moment().format("YYYY-MM-DD"),
+            totalTradeTimes:"",
+            tradeTimesOneYear:"",
+            pledge:"否",
+            seized:"否",
+            annualVerification:"否",
+            registerCompany:"否",
+            blackPlate:"否",
+            owner:"否",
+            ownerName:"",
+            ownerIdCardNo:"",
+            ownerPhoneNo:"",
+            ownerRelation:"",
+
+        }
+
     }
 
     static propTypes = {};
     static defaultProps = {};
 
-    shouldComponentUpdate(nextProps: Object) {
-        return !immutable.is(this.props, nextProps)
+    shouldComponentUpdate(nextProps: Object,nextState:Object) {
+        return !immutable.is(this.props, nextProps)||
+            !immutable.is(this.state,nextState)
     }
 
 
-    showActionSheet(message:string,op:any) {
+    showActionSheet(message: string, key, op: any) {
         const wrapProps = {onTouchStart: e => e.preventDefault()}
         const BUTTONS = op.concat('取消')
         ActionSheet.showActionSheetWithOptions({
@@ -54,12 +140,15 @@ export  default  class AddCar extends Component {
                 wrapProps,
             },
             (buttonIndex) => {
-                this.setState({ clicked: BUTTONS[buttonIndex] });
+                if (buttonIndex != BUTTONS.length - 1) {
+                    this.setState({[key]: BUTTONS[buttonIndex]});
+                }
+
             });
     }
 
-    _renderRowMain(title: string, placeholder: string, onChangeText: Function,
-                   boardType: PropTypes.oneOf = 'default', autoFocus: bool = false, maxLength: number = 16,
+    _renderRowMain(title: string, placeholder: string, key: string, boardType: PropTypes.oneOf = 'default',
+                   autoFocus: bool = false, maxLength: number = 40,
                    ref: string) {
 
         return (
@@ -78,8 +167,8 @@ export  default  class AddCar extends Component {
                     placeholder={placeholder}
                     clearButtonMode='while-editing'
                     enablesReturnKeyAutomatically={true}
-                    onSubmitEditing={() =>this.focusNextField(ref)}
-                    onChangeText={onChangeText}/>
+                    //onSubmitEditing={() =>this.focusNextField(ref)}
+                    onChangeText={(text)=>{this.setState({ [key]: text});}}/>
             </View>
         )
     }
@@ -102,68 +191,87 @@ export  default  class AddCar extends Component {
         );
     }
 
+    _renderDatePikcerRow = (title: string, dex: string,key:string, onPress: Function)=> {
+        const zhNow = moment().locale('zh-cn').utcOffset(8);
+        return (
+            <DatePicker
+                mode="date"
+                title="选择日期"
+                visible={this.state[key+"_visible"]}
+                maxDate={zhNow}
+                onOk={() => {this.setState({[key+"_visible"]:false})}}
+                onChange={(monmet)=>{
+                    const text = monmet.format("YYYY-MM-DD")
+                    this.setState({[key]:text})
+                }}
+                onDismiss={() => this.setState({[key+"_visible"]:false})}
+            >
+                {this._renderRow(title,this.state[key],()=>{
+                    this.setState({[key+"_visible"]:true})
+                })}
+            </DatePicker>
+        )
+    }
 
     render(): ReactElement<any> {
         return (
             <ScrollView
                 style={styles.wrap}
                 keyboardShouldPersistTaps="always"
-                keyboardDismissMode='on-drag'>
+                keyboardDismissMode='interactive'>
 
-                {this._renderRow('机动车类型:', '乘用车', (title) => {
-                    this.showActionSheet(title, ["乘用车", "客车","货车","牵引汽车",
+                {this._renderRow('机动车类型:', this.state.carId, (title) => {
+                    this.showActionSheet(title,"carId", ["乘用车", "客车","货车","牵引汽车",
                         ])
                 })}
 
-                {this._renderRow('请选择所在城市:', '个人住宅(70年产权)', (title) => {
-                    this.showActionSheet(title, ["营运", "客车","货车","牵引汽车",
+                {this._renderRow('使用性质:', this.state.useType, (title) => {
+                    this.showActionSheet(title,"useType" ,["营运", "客车","货车","牵引汽车",
                     ])
                 })}
 
-                {this._renderRowMain('品牌:', '',
+                {this._renderRowMain('品牌:', '',"brand"
                 )}
-                {this._renderRowMain('型号:', '',
+                {this._renderRowMain('型号:', '',"model"
                 )}
-                {this._renderRowMain('车牌号:', '',
+                {this._renderRowMain('车牌号:', '',"plateNumber"
                 )}
-                {this._renderRowMain('公里数:', '',
+                {this._renderRowMain('公里数:', '',"kilometers","numeric"
                 )}
-                {this._renderRowMain('出产日期:', '',
-                )}
-                {this._renderRowMain('购买日期:', '',
-                )}
+                {this._renderDatePikcerRow('出产日期:', '',"productionDate")}
+                {this._renderDatePikcerRow('购买日期:', '',"buyDate")}
 
-                {this._renderRowMain('总过户次数:', '',
+                {this._renderRowMain('总过户次数:', '',"totalTradeTimes","numeric"
 
                 )}
-                {this._renderRowMain('近一年内过户次数:', '',
+                {this._renderRowMain('近一年内过户次数:', '',"tradeTimesOneYear"
 
                 )}
-                {this._renderRow('车管所抵押:', '是', (title) => {
-                    this.showActionSheet(title, ["是","否"])
+                {this._renderRow('车管所抵押:', this.state.pledge, (title) => {
+                    this.showActionSheet(title,"pledge", ["是","否"])
                 })}
-                {this._renderRow('查封车:', '是', (title) => {
-                    this.showActionSheet(title, ["是","否"])
+                {this._renderRow('查封车:', this.state.seized, (title) => {
+                    this.showActionSheet(title,"seized", ["是","否"])
                 })}
-                {this._renderRow('正常年审:', '是', (title) => {
-                    this.showActionSheet(title, ["是","否"])
+                {this._renderRow('正常年审:',this.state.annualVerification, (title) => {
+                    this.showActionSheet(title, "annualVerification",["是","否"])
                 })}
-                {this._renderRow('注册在公司:', '是', (title) => {
-                    this.showActionSheet(title, ["是","否"])
+                {this._renderRow('注册在公司:',this.state.registerCompany, (title) => {
+                    this.showActionSheet(title,'registerCompany', ["是","否"])
                 })}
-                {this._renderRow('黑牌车:', '是', (title) => {
-                    this.showActionSheet(title, ["是","否"])
+                {this._renderRow('黑牌车:',this.state.blackPlate, (title) => {
+                    this.showActionSheet(title,"blackPlate" ,["是","否"])
                 })}
-                {this._renderRow('自有机动车:', '是', (title) => {
-                    this.showActionSheet(title, ["是","否"])
+                {this._renderRow('自有机动车:',this.state.owner, (title) => {
+                    this.showActionSheet(title, "owner",["是","否"])
                 })}
-                {this._renderRowMain('所有人的姓名:', '',
+                {this._renderRowMain('所有人的姓名:', '',"ownerName"
                 )}
-                {this._renderRowMain('所有人的身份证:', '',
+                {this._renderRowMain('所有人的身份证:', '',"ownerIdCardNo"
                 )}
-                {this._renderRowMain('所有人的电话:', '',
+                {this._renderRowMain('所有人的电话:', '',"ownerPhoneNo","numeric"
                 )}
-                {this._renderRowMain('于本人关系:', '',
+                {this._renderRowMain('于本人关系:', '',"ownerRelation"
                 )}
 
             </ScrollView>
@@ -224,9 +332,10 @@ const styles = StyleSheet.create({
     textInputStyle: {
         // width:200,
         flex: 1,
-        marginLeft: 0,
+        marginLeft: 10,
         textAlign: 'left',
         fontSize: 14,
         color: 'black',
+
     },
 })
