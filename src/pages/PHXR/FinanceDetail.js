@@ -54,7 +54,7 @@ import {Toast} from '../../util'
             
 
             const flag = data.checkStatus == 0 || data.checkStatus == 2
-            const businessState  = flag ?1:2
+            const businessState  = flag ?2:1
             let pa = {businessState,title:data.title}
             if(flag){
                 //提交审核
@@ -69,13 +69,14 @@ import {Toast} from '../../util'
             }
 
 
-            const params = phxr_submit_business_info(props.scene.route.businessId,
-                props.scene.route.userId,pa)
-            console.log('test:', params);
+            const params = phxr_submit_business_info(data.businessId,pa)
+            // console.log('test:', params);
             const res = await send(params)
             //
-            res.rspCode && pop() && Toast.show('提交成功!')
-
+            if(res.rspCode ){
+                Toast.show('提交成功!')
+                pop()
+            }
 
         }
     })

@@ -19,7 +19,10 @@ import {connect} from 'react-redux'
 import moment from 'moment';
 import { ActionSheet ,DatePicker} from 'antd-mobile';
 import {bindActionCreators} from 'redux';
-
+import {phxr_submit_person_car, phxr_query_person_assets_list} from '../../request/qzapi'
+import {request} from '../../redux/actions/req'
+import {renderNavSenderButton} from '../../util/viewUtil'
+import {refresh} from '../../redux/nav'
 //static displayName = AddHouse
 @connect(
     state =>({
@@ -63,11 +66,14 @@ import {bindActionCreators} from 'redux';
 
 
                 const newState ={
-                    houseCity:state.houseCity == "福州"?"591":"592",
-                    houseType:["个人住宅(70年产权)", "商住两用", "商铺", "写字楼",
-                        "别墅", "停车位", "自建房", "动迁房", "经济适用房", "预算房"].indexOf(state.houseType),
-                    ifElevator:["否","是"].indexOf(state.ifElevator),
-                    ifShare:["否","是"].indexOf(state.ifShare)
+                    useType:["非营运","营运"].indexOf(state.useType),
+                    carType:["乘用车", "客车", "货车", "牵引汽车"].indexOf(state.carType),
+                    pledge:["否","是"].indexOf(state.pledge),
+                    seized:["否","是"].indexOf(state.seized),
+                    annualVerification:["否","是"].indexOf(state.annualVerification),
+                    registerCompany:["否","是"].indexOf(state.registerCompany),
+                    blackPlate:["否","是"].indexOf(state.blackPlate),
+                    owner:["否","是"].indexOf(state.owner),
                 }
                 const param = {
                     userId,
@@ -76,7 +82,7 @@ import {bindActionCreators} from 'redux';
                     ...newState
                 }
                 try {
-                    const params = phxr_submit_person_house(param)
+                    const params = phxr_submit_person_car(param)
                     await dispatch(request('phxr_submit_person_house', params))
                     const params2 = phxr_query_person_assets_list(uid)
                     await dispatch(request('phxr_query_person_assets_list', params2))
@@ -126,6 +132,14 @@ export  default  class AddCar extends Component {
             !immutable.is(this.state,nextState)
     }
 
+    _tapRight() {
+        this.props.submit(this.state)
+    }
+
+    componentDidMount() {
+        const rightBtn = renderNavSenderButton(this._tapRight.bind(this))
+        refresh({renderRightComponent: rightBtn});
+    }
 
     showActionSheet(message: string, key, op: any) {
         const wrapProps = {onTouchStart: e => e.preventDefault()}

@@ -447,13 +447,12 @@ export function phxr_query_business_info(personId) {
  *   4.29 提交需求信息
  *
  */
-export function phxr_submit_business_info(businessId,personId,params) {
+export function phxr_submit_business_info(businessId,params) {
     return {
         path:'/phxr_submit_business_info',
         method:methodType.post,
         params:{
             businessId,
-            personId,
             ...params
         },
     }

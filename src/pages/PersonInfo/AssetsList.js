@@ -11,6 +11,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Text,
+    Alert,
 } from 'react-native'
 import {push, refresh} from '../../redux/nav'
 import {mainColor} from '../../configure'
@@ -20,14 +21,14 @@ import BaseListView from '../../components/Base/BaseListView';
 import {listLoad, listLoadMore} from '../../redux/actions/list'
 import {renderNavAddButton} from '../../util/viewUtil'
 
-import {phxr_query_person_assets_list } from '../../request/qzapi'
+import {phxr_query_person_assets_list} from '../../request/qzapi'
 import {request} from '../../redux/actions/req'
-import {Button,WingBlank} from 'antd-mobile';
+import {Button, WingBlank} from 'antd-mobile';
 const listKey = 'listKey'
-function myListLoad(id,more: bool = false) {
+function myListLoad(id, more: bool = false) {
     return (dispatch, getState) => {
         const params = phxr_query_files_list(id)
-        more?dispatch(listLoadMore(listKey,params)):dispatch(listLoad(listKey,params))
+        more ? dispatch(listLoadMore(listKey, params)) : dispatch(listLoad(listKey, params))
     }
 }
 
@@ -35,16 +36,16 @@ function myListLoad(id,more: bool = false) {
 @connect(
     state =>({
         //state:state.util.get()
-        data:state.req.get('phxr_query_person_assets_list')
+        data: state.req.get('phxr_query_person_assets_list')
     }),
     dispatch =>({
         //...bindActionCreators({},dispatch),
-        load:()=>{
+        load: ()=> {
 
-            dispatch(async (dispatch,getState)=>{
+            dispatch(async(dispatch, getState)=> {
                 const uid = getState().login.data.userId
                 const params = phxr_query_person_assets_list(uid)
-                await dispatch(request('phxr_query_person_assets_list',params))
+                await dispatch(request('phxr_query_person_assets_list', params))
             })
 
 
@@ -65,8 +66,8 @@ export default class List extends Component {
     };
 
     static defaultProps = {
-        data:immutable.fromJS({
-            data:[]
+        data: immutable.fromJS({
+            data: []
         })
     };
 
@@ -84,7 +85,7 @@ export default class List extends Component {
         return !immutable.is(this.props.data, nextProps.data)
     }
 
-    _renderHeader =()=>{
+    _renderHeader = ()=> {
         return (
             <View style={{flexDirection:'row',justifyContent:'center',marginTop:10}}>
                 <Button onClick={()=>push('AddHouse')}>新增房产</Button>
@@ -93,8 +94,6 @@ export default class List extends Component {
             </View>
         )
     }
-
-
 
 
     renderRow(itme: Object, sectionID: number, rowID: number) {
@@ -107,7 +106,20 @@ export default class List extends Component {
             }}>
                 <View style={styles.row}>
                     <Text>{itme.assetsName}</Text>
-                    <View style={styles.arrowView}/>
+                    <View style={styles.row2}>
+                        <Text  onPress={()=>{
+                             Alert.alert(
+                        '确定要删除吗？',
+                           "",
+                        [
+                            {text: '取消', onPress: () => {}},
+                            {text: '确定', onPress: () =>{}},
+                        ])
+
+                        }}>删除 </Text>
+                        <View style={styles.arrowView}/>
+                    </View>
+
                 </View>
             </TouchableOpacity>
         )
@@ -117,6 +129,7 @@ export default class List extends Component {
 
         let listData = this.props.data && this.props.data.get('data')
         listData = listData && listData.toJS()
+        // listData = ["1", '2']
         return (
             <View style={[this.props.style,styles.list]}>
                 <BaseListView
@@ -173,6 +186,10 @@ const styles = StyleSheet.create({
         transform: [{rotate: '315deg'}],
         width: 10,
         height: 10,
+    },
+    row2:{
+        flexDirection:'row',
+        alignItems:'center'
     },
 
 })
