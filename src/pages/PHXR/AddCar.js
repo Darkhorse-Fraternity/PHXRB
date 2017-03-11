@@ -32,7 +32,7 @@ import {refresh} from '../../redux/nav'
         //...bindActionCreators({},dispatch),
         submit: (state)=> {
             dispatch(async(dispatch, getState)=> {
-                const userId = getState().login.data.userId
+                const userId = props.scene.route.userId
                 //做验证
                 //0、多选转化
                 //1、判断不为空
@@ -84,7 +84,7 @@ import {refresh} from '../../redux/nav'
                 try {
                     const params = phxr_submit_person_car(param)
                     await dispatch(request('phxr_submit_person_house', params))
-                    const params2 = phxr_query_person_assets_list(uid)
+                    const params2 = phxr_query_person_assets_list(userId)
                     await dispatch(request('phxr_query_person_assets_list', params2))
                 } catch (e) {
                     Toast.show(e.message)

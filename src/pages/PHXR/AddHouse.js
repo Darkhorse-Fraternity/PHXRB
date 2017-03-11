@@ -34,7 +34,7 @@ const isEmpty = value => value === undefined || value === null || value === '';
         //...bindActionCreators({},dispatch),
         submit: (state)=> {
             dispatch(async(dispatch, getState)=> {
-                const userId = getState().login.data.userId
+                const userId = props.scene.route.userId
                 //做验证
                 //0、多选转化
                 //1、判断不为空
@@ -69,9 +69,9 @@ const isEmpty = value => value === undefined || value === null || value === '';
                 const newState ={
                     houseCity:state.houseCity == "福州"?"591":"592",
                     houseType:["个人住宅(70年产权)", "商住两用", "商铺", "写字楼",
-                        "别墅", "停车位", "自建房", "动迁房", "经济适用房", "预算房"].indexOf(state.houseType),
-                    ifElevator:["否","是"].indexOf(state.ifElevator),
-                    ifShare:["否","是"].indexOf(state.ifShare)
+                        "别墅", "停车位", "自建房", "动迁房", "经济适用房", "预算房"].indexOf(state.houseType)+"",
+                    ifElevator:["否","是"].indexOf(state.ifElevator)+"",
+                    ifShare:["否","是"].indexOf(state.ifShare)+""
                 }
                 const param = {
                     userId,
@@ -82,7 +82,7 @@ const isEmpty = value => value === undefined || value === null || value === '';
                 try {
                     const params = phxr_submit_person_house(param)
                     await dispatch(request('phxr_submit_person_house', params))
-                    const params2 = phxr_query_person_assets_list(uid)
+                    const params2 = phxr_query_person_assets_list(userId)
                     await dispatch(request('phxr_query_person_assets_list', params2))
                 } catch (e) {
                     Toast.show(e.message)

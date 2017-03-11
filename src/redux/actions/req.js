@@ -7,7 +7,7 @@ import {send} from '../../request'
 export const REQUEST_LOAD = 'REQUEST_LOAD'
 export const REQUEST_SUCCEEED = 'REQUEST_SUCCEEED'
 export const REQUEST_FAILED = 'REQUEST_FAILED'
-
+import {Toast} from '../../util'
 export function request(key: string, params: Object): Function {
 
     return (dispatch) => {
@@ -17,6 +17,7 @@ export function request(key: string, params: Object): Function {
             if(response.rspCode){
                 dispatch(requestSucceed(key, response.result))
             }else{
+                Toast.show(response.rspMsg+"")
                 dispatch(requestFailed(key, response.rspMsg))
             }
 

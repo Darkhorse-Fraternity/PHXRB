@@ -20,6 +20,7 @@ import {request} from '../../redux/actions/req'
 import {send} from '../../request'
 import {updateUserData} from '../../redux/actions/login'
 //static displayName = MemberInfo
+import {Toast} from '../../util'
 @connect(
     state =>({
         //state:state.util.get()
@@ -35,6 +36,8 @@ import {updateUserData} from '../../redux/actions/login'
                 send(params).then(response => {
                     if(response.rspCode){
                         updateUserData(response.result)
+                    }else {
+                        Toast.show(response.rspMsg)
                     }
                 }).catch(e => {
                     dispatch(requestFailed(key, e.message))

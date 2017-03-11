@@ -24,6 +24,7 @@ import {renderNavAddButton} from '../../util/viewUtil'
 import {phxr_query_person_assets_list} from '../../request/qzapi'
 import {request} from '../../redux/actions/req'
 import {Button, WingBlank} from 'antd-mobile';
+import {Toast} from '../../util'
 const listKey = 'listKey'
 function myListLoad(id, more: bool = false) {
     return (dispatch, getState) => {
@@ -38,14 +39,19 @@ function myListLoad(id, more: bool = false) {
         //state:state.util.get()
         data: state.req.get('phxr_query_person_assets_list')
     }),
-    dispatch =>({
+    (dispatch,props) =>({
         //...bindActionCreators({},dispatch),
         load: ()=> {
 
             dispatch(async(dispatch, getState)=> {
-                const uid = getState().login.data.userId
-                const params = phxr_query_person_assets_list(uid)
-                await dispatch(request('phxr_query_person_assets_list', params))
+                // const uid = getState().login.data.userId
+                try {
+                    const params = phxr_query_person_assets_list(props.scene.route.userId)
+                    await dispatch(request('phxr_query_person_assets_list', params))
+                }catch (e){
+                    Toast.show(e.message)
+                }
+
             })
 
 
@@ -86,11 +92,12 @@ export default class List extends Component {
     }
 
     _renderHeader = ()=> {
+        const userId = this.props.scene.route.userId
         return (
             <View style={{flexDirection:'row',justifyContent:'center',marginTop:10}}>
-                <Button onClick={()=>push('AddHouse')}>新增房产</Button>
+                <Button onClick={()=>push({key:'AddHouse',userId})}>新增房产</Button>
                 <WingBlank/>
-                <Button onClick={()=>push('AddCar')}>新增汽车</Button>
+                <Button onClick={()=>push({key:'AddCar',userId})}>新增汽车</Button>
             </View>
         )
     }

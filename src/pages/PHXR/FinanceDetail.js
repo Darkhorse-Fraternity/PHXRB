@@ -76,6 +76,8 @@ import {Toast} from '../../util'
             if(res.rspCode ){
                 Toast.show('提交成功!')
                 pop()
+            }else{
+                Toast.show(res.rspMsg)
             }
 
         }

@@ -62,6 +62,8 @@ import {Toast, checkPhoneNum, checkIDCard} from '../../util'
 
                         pop()
 
+                    }else {
+                        Toast.show(response.rspMsg)
                     }
                 }catch (e){
                     dispatch(requestFailed("phxr_query_advisers_info", e.message))
@@ -108,7 +110,7 @@ export  default  class UserInfoDetail extends Component {
             return;
         }
 
-        if (point == 'idCardNo' && !checkIDCard(clicked)) {
+        if (point == 'cardNum' && !checkIDCard(clicked)) {
             Toast.show("不是正确的身份证号码");
             return;
         }
@@ -118,7 +120,7 @@ export  default  class UserInfoDetail extends Component {
             if (clicked == "厦门") clicked = "592"
         }
 
-        if (point == 'marriageStatus') {
+        if (point == 'isMarriage') {
             if (clicked == "未婚") clicked = "0"
             if (clicked == "已婚") clicked = "1"
             if (clicked == "离婚") clicked = "2"
@@ -140,7 +142,23 @@ export  default  class UserInfoDetail extends Component {
             arr = ["20人以下", "20人至50人", "50人至100人","100人以上"]
             clicked =  arr.indexOf(clicked)
         }
+        if(point == "provideWorkCertificate"){
+            arr = ["否", "是"]
+            clicked =  arr.indexOf(clicked)
+        }
 
+
+        const phones = ["immediateFamilyPhone1","immediateFamilyPhone2","spouseTelNum","telNum"]
+        if(phones.indexOf(point) != -1 && !checkPhoneNum(clicked)){
+            Toast.show("不是正确的手机号码")
+            return
+        }
+
+        const ids = ["spouseIdCardNo","cardNum"]
+        if(ids.indexOf(point) != -1 && !checkPhoneNum(clicked)){
+            Toast.show("不是正确的身份证号码")
+            return
+        }
 
         if (clicked.length == 0) {
             Toast.show("数据不能为空。");
@@ -165,8 +183,8 @@ export  default  class UserInfoDetail extends Component {
         const point = this.props.scene.route.point
         let keyboardType = "default"
         if (point == "postCodes" || point == "serviceCode" || point == "telNum"
-            || point == "spousePhoneNo" || point == "immediateFamilyPhone1"
-            || point == "immediateFamilyPhone2") {
+            || point == "spouseTelNum" || point == "immediateFamilyPhone1"
+            || point == "immediateFamilyPhone2"||point == "monthlyWages") {
             keyboardType = 'numeric'
         }
         return (
@@ -259,12 +277,12 @@ export  default  class UserInfoDetail extends Component {
         // console.log('test:', point);
         // console.log('test:', this.state.clicked);
 
-        const array = ['sex',"homeCity","marriageStatus","companySize","companyNature","jobLevel"]
+        const array = ['sex',"homeCity","isMarriage","companySize","companyNature","jobLevel","provideWorkCertificate"]
         const flag =  array.indexOf(point) == -1
         return (
             <View style={[this.props.style,styles.wrap]}>
 
-                {flag && point !=  "birthday" && point != 'EntryDate'
+                {flag && point !=  "birthday" && point != 'entryDate'
                 && this.__renderInputRow(this.props.scene.route.index, {})}
 
 
@@ -278,7 +296,7 @@ export  default  class UserInfoDetail extends Component {
                         if (point == "homeCity") {
                             arr = ["福州", "厦门"]
                         }
-                        if (point == "marriageStatus") {
+                        if (point == "isMarriage") {
                             arr = ["未婚", "已婚", "离婚"]
                         }
 
@@ -294,10 +312,13 @@ export  default  class UserInfoDetail extends Component {
                             arr = ["20人以下", "20人至50人", "50人至100人","100人以上"]
                         }
 
+                        if(point == "provideWorkCertificate"){
+                            arr = ["否","是"]
+                        }
 
                         this.showActionSheet(title, arr)
                     })}
-                {(point == 'birthday' || point == 'EntryDate') &&
+                {(point == 'birthday' || point == 'entryDate') &&
                 this._renderDatePikcerRow("请选择您的" + this.props.scene.route.index,this.state.clicked)}
             </View>
         );

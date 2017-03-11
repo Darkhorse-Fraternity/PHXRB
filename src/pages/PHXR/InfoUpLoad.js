@@ -9,7 +9,7 @@ import React, {Component, PropTypes} from 'react';
 import {
     View,
     StyleSheet,
-    TextInput
+    TextInput,
 } from 'react-native'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
@@ -18,14 +18,8 @@ import {refresh, pop} from '../../redux/nav'
 //static displayName = AptDetail
 import {ImagePicker, Button} from 'antd-mobile';
 
+import {Toast} from '../../util'
 
-const data = [{
-    url: 'https://zos.alipayobjects.com/rmsportal/PZUUCKTRIHWiZSY.jpeg',
-    id: '2121',
-}, {
-    url: 'https://zos.alipayobjects.com/rmsportal/hqQWgTXdrlmVVYi.jpeg',
-    id: '2122',
-}];
 
 @connect(
     state =>({
@@ -33,13 +27,54 @@ const data = [{
     }),
     dispatch =>({
         //...bindActionCreators({},dispatch),
+        upload:(files)=>{
+            dispatch(async (dispatch,getState)=>{
+
+                try{
+                    const body = new FormData()
+                    files.map((item)=>{
+                        const file = {
+                            uri:item.url,
+                            name:item.filename,
+                            type:"image/png",
+                            height:item.height,
+                            width:item.width,
+                        }
+                        body.append('file', file)
+                    })
+
+
+                    console.log('test:', body);
+
+                    // const url = 'http://10.1.1.221:8088/uploadImage'
+                    const url = 'http://192.168.1.101:8080/uploadImage'
+                    // const url = 'http://103.236.253.138:8088/uploadImage'
+                    const response = await  fetch(url, {
+                        method: 'POST',
+                        body,
+                        headers:{'Content-Type': 'multipart/form-data; charset=utf-8' }
+                    })
+                    console.log('response:', response.status);
+                    Toast.show("statu:"+response.status )
+
+                }catch (e){
+                    console.log('test:', e.message());
+                }
+
+
+
+
+
+
+            })
+        }
     })
 )
 export  default  class AptDetail extends Component {
     constructor(props: Object) {
         super(props);
         this.state = {
-            files: data,
+            files: [],
         }
     }
 
@@ -69,8 +104,9 @@ export  default  class AptDetail extends Component {
     //     return !immutable.is(this.props.data, nextProps.data)
     // }
 
-    __tapRight() {
-        pop()
+    __tapRight=()=> {
+        this.props.upload(this.state.files);
+        // pop()
     }
 
     componentDidMount() {
@@ -104,7 +140,7 @@ export  default  class AptDetail extends Component {
         const {files} = this.state;
         return (
             <View style={[this.props.style,styles.wrap]}>
-                {/*{this.__renderInputRow()}*/}
+                {this.__renderInputRow()}
                 <ImagePicker
                     files={files}
                     onChange={this.onChange.bind(this)}
