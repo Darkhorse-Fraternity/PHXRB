@@ -8,13 +8,14 @@ export const REQUEST_LOAD = 'REQUEST_LOAD'
 export const REQUEST_SUCCEEED = 'REQUEST_SUCCEEED'
 export const REQUEST_FAILED = 'REQUEST_FAILED'
 import {Toast} from '../../util'
-export function request(key: string, params: Object): Function {
+export function request(key: string, params: Object,callbacll:Function): Function {
 
     return (dispatch) => {
         dispatch(requestStart(key));//当page 不为0 的时候则表示不是加载多页。
         send(params).then(response => {
+            callbacll && callbacll(response)
             console.log('response:',response);
-            if(response.rspCode){
+            if(response.rspCode == "0000"){
                 dispatch(requestSucceed(key, response.result))
             }else{
                 Toast.show(response.rspMsg+"")

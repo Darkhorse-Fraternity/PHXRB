@@ -49,7 +49,7 @@ export function renderNavSenderButton(tap:Function) {
             styleDisabled={{color:lightContainingColor}}
             containerStyle= {styles.rightButton}
             disabled ={disabled}>
-          发送
+          保存
         </WBButton>
     )
   }

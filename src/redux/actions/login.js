@@ -88,8 +88,8 @@ export function login(state: Object): Function {
         return request(parame, (response)=> {
 
             console.log('test:', response.data);
-            console.log('test:', response.data.rspCode);
-            if (response.data.rspCode) {
+            // console.log('test:', response.data.rspCode);
+            if (response.data.rspCode == "0000") {
                 //加入sessionToken
                 console.log('test:', '1111');
                 dispatch(_loginSucceed(response.data.result));
@@ -121,7 +121,7 @@ export function register(state: Object): Function {
         dispatch(_loginRequest());
 
         request(params, function (response) {
-            if (response.data.rspCode) {
+            if (response.data.rspCode == "0000") {
                 dispatch(_loginSucceed(response));
                 Toast.show('注册成功')
                 dispatch(navigatePop());
@@ -144,7 +144,7 @@ export function iForgot(state:Object):Function {
 
         return request(parame, (response)=> {
 
-            if (response.data.rspCode) {
+            if (response.data.rspCode == "0000") {
                 //加入sessionToken
                 dispatch(_loginSucceed(response.data.result));
                 Toast.show('将密码发送至您手机，请查收')

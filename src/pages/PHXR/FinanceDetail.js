@@ -45,7 +45,11 @@ import {Toast} from '../../util'
                 // const uid = getState().login.data.userId
                 const params = phxr_query_financing_detail(props.scene.route.businessId,
                     props.scene.route.userId)
-                await dispatch(request('phxr_query_financing_detail', params))
+                await dispatch(request('phxr_query_financing_detail', params,(res)=>{
+                    if(res.rspCode == "3010"){
+                        pop()
+                    }
+                }))
 
             })
         },
@@ -73,7 +77,7 @@ import {Toast} from '../../util'
             // console.log('test:', params);
             const res = await send(params)
             //
-            if(res.rspCode ){
+            if(res.rspCode=="0000" ){
                 Toast.show('提交成功!')
                 pop()
             }else{

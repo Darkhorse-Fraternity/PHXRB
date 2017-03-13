@@ -478,4 +478,18 @@ export function phxr_query_config(dictId,dictNote,classId,classNote,subclass,sub
 
 
 
+/*
+ *   4.31 咨询顾问账号激活
+ *
+ */
+export function phxr_account_active(userId,accountType) {
+    return {
+        path:'/phxr_account_active',
+        method:methodType.post,
+        params:{
+            userId,
+            accountType,
+        },
+    }
+}
 

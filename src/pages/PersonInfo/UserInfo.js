@@ -68,10 +68,11 @@ export  default  class Account extends Component {
 
 
     _renderRow(title: string, des: string,point:string,onPress: Function) {
+        const flag = title != "业务代码"
         return (
             <View>
                 <TouchableHighlight onPress={()=>{
-                    push({key:'UserInfoDetail',index:title,point})
+                   flag  && push({key:'UserInfoDetail',index:title,point,des:des + ""})
                 }}>
                     <View style={styles.row}>
                         <Text style={styles.rowText}>
@@ -81,7 +82,7 @@ export  default  class Account extends Component {
                             <Text style={styles.rowDesText}>
                                 {des||"未填写"}
                             </Text>
-                            <View style={styles.arrowView}/>
+                            {flag && (<View style={styles.arrowView}/>)}
                         </View>
                     </View>
 
@@ -104,14 +105,14 @@ export  default  class Account extends Component {
                 {this._renderRow('姓名', data.name, "name",() => {
                 })}
 
-                {this._renderRow('性别', data.sex=="1"?"男":"女", "sex",() => {
+                {this._renderRow('性别', data.sex=="0"?"男":"女", "sex",() => {
                 })}
                 {this._renderRow('身份证', data.cardNum,"cardNum", () => {
                 })}
                 {this._renderRow('联系方式',  data.telNum, "telNum",() => {})}
                 {this._renderRow('邮箱', data.email, "email",() => {})}
                 {this._renderRow('城市',  data.homeCity=="591"?"福州":"厦门","homeCity" ,() => {})}
-                {this._renderRow('婚姻状况', data.isMarriage?"已婚":"未婚","isMarriage", () => {})}
+                {this._renderRow('婚姻状况',["未婚","已婚","离婚"][data.isMarriage],"isMarriage", () => {})}
                 {this._renderRow('出生日期', data.birthday, "birthday",() => {})}
                 {this._renderRow('家庭地址', data.userAddr,"userAddr",() => {})}
                 {this._renderRow('邮编', data.postCodes,"postCodes", () => {})}

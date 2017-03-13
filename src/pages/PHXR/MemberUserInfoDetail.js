@@ -44,7 +44,7 @@ import {Toast, checkPhoneNum, checkIDCard} from '../../util'
                 // send(param).then(())
                 try {
                     const response = await send(params)
-                    if (response.rspCode) {
+                    if (response.rspCode == "0000") {
                         // console.log('response:', response.result);
                         Toast.show("修改成功");
                         const params1 = phxr_query_person_info(props.scene.route.userId)
@@ -90,6 +90,8 @@ export  default  class UserInfoDetail extends Component {
         return !immutable.is(this.props, nextProps) || !immutable.is(this.state, nestState)
     }
 
+
+
     __tapRight = ()=> {
 
         //做验证
@@ -101,8 +103,8 @@ export  default  class UserInfoDetail extends Component {
         }
 
         if (point == "sex") {
-            if (clicked == "男") clicked = "1"
-            if (clicked == "女") clicked = "2"
+            if (clicked == "男") clicked = "0"
+            if (clicked == "女") clicked = "1"
         }
 
         if (point == 'telNum' && !checkPhoneNum(clicked)) {
@@ -177,6 +179,7 @@ export  default  class UserInfoDetail extends Component {
             rightButtonDisabled: false,
             rightButtonIsLoad: false
         });
+        this.props.scene.route.des && this.setState({clicked:this.props.scene.route.des})
     }
 
     __renderInputRow(name, props): ReactElement<any> {
@@ -191,6 +194,7 @@ export  default  class UserInfoDetail extends Component {
             <View style={styles.row}>
                 <Text style={styles.textStyle}>{name}</Text>
                 <TextInput
+                    value = {this.state.clicked}
                     style={styles.textInputStyle}
                     placeholder={"请输入您的" + name}
                     keyboardType={keyboardType}
@@ -222,7 +226,7 @@ export  default  class UserInfoDetail extends Component {
     }
 
     _renderDatePikcerRow(title: string, dex: string, onPress: Function) {
-        const zhNow = moment().locale('zh-cn').utcOffset(8);
+        const zhNow = moment();
         return (
             <DatePicker
                 mode="date"

@@ -36,7 +36,7 @@ import {Toast} from '../../util'
                         const file = {
                             uri:item.url,
                             name:item.filename,
-                            type:"image/png",
+                            type:"image/jpg",
                             height:item.height,
                             width:item.width,
                         }
@@ -47,8 +47,8 @@ import {Toast} from '../../util'
                     console.log('test:', body);
 
                     // const url = 'http://10.1.1.221:8088/uploadImage'
-                    const url = 'http://192.168.1.101:8080/uploadImage'
-                    // const url = 'http://103.236.253.138:8088/uploadImage'
+                    // const url = 'http://192.168.1.101:8080/uploadImage'
+                    const url = 'http://103.236.253.138:8088/uploadImage'
                     const response = await  fetch(url, {
                         method: 'POST',
                         body,

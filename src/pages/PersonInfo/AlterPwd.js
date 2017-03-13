@@ -106,7 +106,7 @@ import {navigatePop,navigateRefresh} from '../../redux/actions/nav'
       // pwdRequest.params.new_password = this.state.newPwd;
       const param = phxr_modify_pwd(this.props.data.userAccount,this.state.oldPwd,this.state.newPwd)
       let handle = request(param, function(response){
-           if(response.data.rspCode){
+           if(response.data.rspCode == "0000"){
             self.props.pop();
            Toast.show('修改成功')
            }

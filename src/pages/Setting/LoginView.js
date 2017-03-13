@@ -61,7 +61,7 @@ class RegPhone extends Component {
         var self = this;
         const param = phxr_verification_code(this.state.phone, '6')
         this.requestHandle = request(param, function (response) {
-            if (response.data.rspCode) {
+            if (response.data.rspCode == "0000") {
                 //console.log('test:', response)
                 Toast.show("发送成功!");
                 self.refs[2] && self.refs[2].focus()

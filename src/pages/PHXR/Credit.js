@@ -47,7 +47,7 @@ import {Toast} from '../../util'
                         userId,{[key]:value})
                     console.log('test:', params);
                     const response = await send(params)
-                    if(response.rspCode){
+                    if(response.rspCode =="0000"){
                         const params = phxr_query_person_credit(userId)
                         dispatch(request('phxr_query_person_credit', params))
                     }else{

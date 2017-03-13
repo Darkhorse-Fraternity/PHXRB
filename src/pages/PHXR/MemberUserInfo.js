@@ -86,7 +86,7 @@ export  default  class Account extends Component {
         return (
             <View>
                 <TouchableOpacity onPress={()=>{
-                    push({key:'MemberUserInfoDetail',index:title,point,
+                    push({key:'MemberUserInfoDetail',index:title,point,des:des + "",
                     userId:this.props.scene.route.userId})
                 }}>
                     <View style={styles.row}>
@@ -120,7 +120,7 @@ export  default  class Account extends Component {
                     {/*console.log('test:', '11111');*/}
                 })}
 
-                {this._renderRow('性别', data.sex == "1"?"男":"女", "sex",() => {
+                {this._renderRow('性别', data.sex == "0"?"男":"女", "sex",() => {
                 })}
                 {this._renderRow('出生日期', data.birthday,"birthday",() => {
                 })}

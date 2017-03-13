@@ -34,7 +34,7 @@ import {Toast} from '../../util'
                 // request('phxr_query_person_info',param)
                 // send(param).then(())
                 send(params).then(response => {
-                    if(response.rspCode){
+                    if(response.rspCode == "0000"){
                         updateUserData(response.result)
                     }else {
                         Toast.show(response.rspMsg)

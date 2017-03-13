@@ -54,7 +54,7 @@ function _requestlist(page:number,key:string,params:Object):Function {
             dispatch(_listStart(page != 0,load == undefined,key));//当page 不为0 的时候则表示不是加载多页。
             send(params).then(response => {
                 // console.log('res:', response);
-                if(response.rspCode){
+                if(response.rspCode == '0000'){
                     console.log('response:', response);
                     dispatch(_listSucceed(response.result,page,key));
                 }else {

@@ -7,7 +7,7 @@
 import {backViewColor, blackFontColor, grayFontColor} from '../../configure';
 import * as immutable from 'immutable';
 import React, {Component, PropTypes} from 'react';
-import {phxr_act_account} from '../../request/qzapi'
+import {phxr_account_active} from '../../request/qzapi'
 import {
     View,
     StyleSheet,
@@ -18,7 +18,9 @@ import {
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
 import {pop} from '../../redux/nav'
-
+import {send} from '../../request'
+import {Toast} from '../../util'
+import {updateUserData} from '../../redux/actions/login'
 //static displayName = Account
 @connect(
     state =>({
@@ -27,8 +29,25 @@ import {pop} from '../../redux/nav'
     }),
     dispatch =>({
         //...bindActionCreators({},dispatch),
-        load:()=>{
-            const params = phxr_act_account()
+
+        activety: ()=> {
+
+            return dispatch(async(dispatch, getState)=> {
+
+                const uid = getState().login.data.userId
+                const params = phxr_account_active(uid, "1")
+                const res = await send(params)
+                if (res.rspCode == "0000") {
+                    Toast.show('激活成功!')
+                    // pop()
+                    dispatch(updateUserData({status:1}))
+                } else {
+                    Toast.show(res.rspMsg)
+                }
+            })
+        },
+        test:()=>{
+            dispatch(updateUserData({status:0}))
         }
     })
 )
@@ -44,6 +63,9 @@ export  default  class Account extends Component {
     static propTypes = {};
     static defaultProps = {};
 
+    componentDidMount() {
+        // this.props.test()
+    }
 
     _renderRow(title: string, des: string, onPress: Function) {
         return (
@@ -64,8 +86,13 @@ export  default  class Account extends Component {
         );
     }
 
-    __activate=()=>{
-        pop()
+    __activate = ()=> {
+        if (this.props.userData.status) {
+            pop()
+        } else {
+            this.props.activety()
+        }
+
     }
 
     render(): ReactElement<any> {
@@ -80,11 +107,11 @@ export  default  class Account extends Component {
                 {this._renderRow('类型', "咨询顾问", () => {
                 })}
                 <View style={styles.separator}/>
-                {this._renderRow('状态', this.props.userData?"已激活":"未激活", () => {
+                {this._renderRow('状态', this.props.userData.status == 1 ? "已激活" : "未激活", () => {
                 })}
 
                 <TouchableOpacity style={styles.btn} onPress={this.__activate}>
-                    <Text style={styles.btnText}>返回</Text>
+                    <Text style={styles.btnText}>{this.props.userData.status==1 ? "返回" : "激活"}</Text>
                 </TouchableOpacity>
 
             </View>
@@ -117,9 +144,9 @@ const styles = StyleSheet.create({
         // fontWeight: '500',
         color: blackFontColor,
     },
-    rowDesText:{
-        fontSize:13,
-        color:'rgb(150,150,150)'
+    rowDesText: {
+        fontSize: 13,
+        color: 'rgb(150,150,150)'
     },
     separator: {
         backgroundColor: '#bbbbbb',
@@ -132,11 +159,11 @@ const styles = StyleSheet.create({
         borderWidth: StyleSheet.hairlineWidth,
         padding: 10,
         borderRadius: 10,
-        width:100,
-        height:40,
-        alignSelf:'center',
-        alignItems:'center',
-        justifyContent:'center',
+        width: 100,
+        height: 40,
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     btnText: {
         color: 'blue',

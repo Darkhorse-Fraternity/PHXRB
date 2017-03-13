@@ -41,7 +41,7 @@ import {Toast, checkPhoneNum, checkIDCard} from '../../util'
                 // send(param).then(())
                  try {
                     const response = await send(params)
-                     if (response.rspCode) {
+                     if (response.rspCode == "0000") {
                          // console.log('response:', response.result);
                          Toast.show("修改成功");
                          const params1 = phxr_query_advisers_info(userId)
@@ -81,6 +81,20 @@ export  default  class UserInfoDetail extends Component {
     shouldComponentUpdate(nextProps: Object, nestState) {
         return !immutable.is(this.props, nextProps) || !immutable.is(this.state, nestState)
     }
+    componentDidMount() {
+
+        const rightBtn = renderNavSenderButton(this.__tapRight)
+        refresh({
+            renderRightComponent: rightBtn,
+            rightButtonDisabled: false,
+            rightButtonIsLoad: false
+        });
+
+
+        this.props.scene.route.des && this.setState({clicked:this.props.scene.route.des})
+    }
+
+
 
     __tapRight = ()=> {
 
@@ -127,15 +141,7 @@ export  default  class UserInfoDetail extends Component {
 
     }
 
-    componentDidMount() {
 
-        const rightBtn = renderNavSenderButton(this.__tapRight)
-        refresh({
-            renderRightComponent: rightBtn,
-            rightButtonDisabled: false,
-            rightButtonIsLoad: false
-        });
-    }
 
     __renderInputRow(name, props): ReactElement<any> {
         const point = this.props.scene.route.point
@@ -147,6 +153,7 @@ export  default  class UserInfoDetail extends Component {
             <View style={styles.row}>
                 <Text style={styles.textStyle}>{name}</Text>
                 <TextInput
+                    value = {this.state.clicked}
                     style={styles.textInputStyle}
                     placeholder={"请输入您的" + name}
                     keyboardType={keyboardType}
@@ -178,7 +185,7 @@ export  default  class UserInfoDetail extends Component {
     }
 
     _renderDatePikcerRow(title: string, dex: string, onPress: Function) {
-        const zhNow = moment().locale('zh-cn').utcOffset(8);
+        const zhNow = moment();
         return (
             <DatePicker
                 mode="date"
