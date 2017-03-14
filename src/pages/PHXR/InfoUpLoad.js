@@ -10,6 +10,8 @@ import {
     View,
     StyleSheet,
     TextInput,
+    TouchableOpacity,
+    Text
 } from 'react-native'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
@@ -18,55 +20,49 @@ import {refresh, pop} from '../../redux/nav'
 //static displayName = AptDetail
 import {ImagePicker, Button} from 'antd-mobile';
 
+import {phxr_deal_files,phxr_query_files_list} from '../../request/qzapi'
 import {Toast} from '../../util'
-
-
+import {uploadPHXRImage} from '../../util/uploadAVImage'
+import {send} from '../../request'
+import {ActionSheet} from 'antd-mobile';
+import {documentaryFiles} from '../../configure/phxr'
+import {listLoad, listLoadMore} from '../../redux/actions/list'
+import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
+import {request} from '../../redux/actions/req'
 @connect(
     state =>({
         //state:state.util.get()
     }),
-    dispatch =>({
+    (dispatch,props) =>({
         //...bindActionCreators({},dispatch),
-        upload:(files)=>{
-            dispatch(async (dispatch,getState)=>{
+        upload: async(files,fileName)=> {
+            dispatch(async (dispatch, getState)=> {
+                try {
+                    const res = await uploadPHXRImage(files)
+                    const data  =  await res.text()
+                    console.log('res:', data);
+                    if (res) {
+                        const personId = props.scene.route.userId
+                        const userID = getState().login.data.userId
+                        const params = phxr_deal_files(personId,'1',fileName,undefined,"0",
+                            "文件类型描述",data,userID)
+                        // console.log('test:', params);
+                        const res = await send(params)
+                        if(res.rspCode == '0000'){
 
-                try{
-                    const body = new FormData()
-                    files.map((item)=>{
-                        const file = {
-                            uri:item.url,
-                            name:item.filename,
-                            type:"image/jpg",
-                            height:item.height,
-                            width:item.width,
+                            const params = phxr_query_files_list(personId)
+                            dispatch(listLoad("fiels_listKey_person",params))
+                            Toast.show("提交成功")
+                            pop()
                         }
-                        body.append('file', file)
-                    })
-
-
-                    console.log('test:', body);
-
-                    // const url = 'http://10.1.1.221:8088/uploadImage'
-                    // const url = 'http://192.168.1.101:8080/uploadImage'
-                    const url = 'http://103.236.253.138:8088/uploadImage'
-                    const response = await  fetch(url, {
-                        method: 'POST',
-                        body,
-                        headers:{'Content-Type': 'multipart/form-data; charset=utf-8' }
-                    })
-                    console.log('response:', response.status);
-                    Toast.show("statu:"+response.status )
-
-                }catch (e){
-                    console.log('test:', e.message());
+                    }
+                } catch (e) {
+                    Toast.show(e.message)
                 }
 
 
-
-
-
-
             })
+
         }
     })
 )
@@ -75,6 +71,8 @@ export  default  class AptDetail extends Component {
         super(props);
         this.state = {
             files: [],
+            fileName:"",
+            fileNameShow:"",
         }
     }
 
@@ -85,6 +83,8 @@ export  default  class AptDetail extends Component {
 
     onChange(files, type, index) {
         console.log(files, type, index);
+        // if(this.state.files.length ==)
+
         this.setState({
             files,
         });
@@ -104,8 +104,19 @@ export  default  class AptDetail extends Component {
     //     return !immutable.is(this.props.data, nextProps.data)
     // }
 
-    __tapRight=()=> {
-        this.props.upload(this.state.files);
+    __tapRight = ()=> {
+        if (this.state.files.length == 0) {
+            Toast.show("图片不能为空")
+            return
+        }
+
+        if (this.state.fileName.length == 0) {
+            Toast.show("文件类型不能为空")
+            return
+        }
+
+
+        this.props.upload(this.state.files,this.state.fileName);
         // pop()
     }
 
@@ -120,6 +131,27 @@ export  default  class AptDetail extends Component {
     }
 
 
+    showActionSheet(message: string, op: any) {
+        const wrapProps = {onTouchStart: e => e.preventDefault()}
+        const BUTTONS = op.concat('取消')
+        ActionSheet.showActionSheetWithOptions({
+                options: BUTTONS,
+                // title: '标题',
+                cancelButtonIndex: BUTTONS.length - 1,
+                message,
+                maskClosable: true,
+                'data-seed': 'logId',
+                wrapProps,
+            },
+            (buttonIndex) => {
+                if (buttonIndex != BUTTONS.length - 1) {
+                    const key = Object.keys(documentaryFiles)
+                    this.setState({fileNameShow: BUTTONS[buttonIndex],fileName:key[buttonIndex]});
+                }
+
+            });
+    }
+
     __renderInputRow(): ReactElement<any> {
         return (
             <View style={styles.row}>
@@ -131,22 +163,44 @@ export  default  class AptDetail extends Component {
                     clearButtonMode='while-editing'
                     enablesReturnKeyAutomatically={true}
                     onSubmitEditing={() => {}}
+                    onChangeText={(fileName)=>{this.setState({fileName})}}
                 />
             </View>
         )
     }
 
+
+    _renderRow(title: string, dex: string, onPress: Function) {
+        return (
+            <TouchableOpacity onPress={()=>onPress(title)}>
+                <View style={styles.rowx}>
+                    <Text style={[styles.rowText,{marginRight:15}]}>
+                        {title}
+                    </Text>
+                    <View style={styles.row2}>
+                        <Text style={styles.dex}>{dex}</Text>
+                        <View style={styles.arrowView}/>
+                    </View>
+                </View>
+            </TouchableOpacity>
+        );
+    }
+
     render(): ReactElement<any> {
         const {files} = this.state;
+        const names = Object.values(documentaryFiles)
         return (
             <View style={[this.props.style,styles.wrap]}>
-                {this.__renderInputRow()}
+                {/*{this.__renderInputRow()}*/}
+                {this._renderRow("选择文件类型",this.state.fileNameShow,(title)=>{
+                    this.showActionSheet(title, names)
+                })}
                 <ImagePicker
                     files={files}
                     onChange={this.onChange.bind(this)}
                     onImageClick={(index, fs) => console.log(index, fs)}
                     onAddImageClick={this.onAddImageClick.bind(this)}
-                    selectable={files.length < 5}
+                    selectable={files.length < 2}
                 />
             </View>
         );
@@ -159,21 +213,51 @@ const styles = StyleSheet.create({
         padding: 15,
     },
     row: {
-        marginTop:10,
-        flexDirection:'row',
-        backgroundColor:'white',
-        height:40,
-        justifyContent:'center',
-        alignItems:'center',
-        marginBottom:20,
+        marginTop: 10,
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
     },
     textInputStyle: {
         // width:200,
-        flex:1,
-        marginLeft:10,
+        flex: 1,
+        marginLeft: 10,
         textAlign: 'left',
         fontSize: 14,
         color: 'black',
 
+    },
+    rowx: {
+        marginTop: 10,
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        height: 40,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 15,
+        marginBottom: 10,
+
+    },
+    row2: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    rowText: {
+        fontSize: 14,
+        // fontWeight: '500',
+        color: blackFontColor,
+    },
+    arrowView: {
+        borderBottomWidth: StyleSheet.hairlineWidth * 2,
+        borderRightWidth: StyleSheet.hairlineWidth * 2,
+        borderColor: '#8c8c85',
+        transform: [{rotate: '315deg'}],
+        marginLeft: 5,
+        width: 10,
+        height: 10,
     },
 })

@@ -18,10 +18,14 @@ import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../con
 import {connect} from 'react-redux'
 import {ActionSheet} from 'antd-mobile';
 import {bindActionCreators} from 'redux';
-import {phxr_submit_person_house, phxr_query_person_assets_list} from '../../request/qzapi'
+import {phxr_submit_person_house,
+    phxr_query_person_house,
+    phxr_query_person_assets_list
+} from '../../request/qzapi'
 import {request} from '../../redux/actions/req'
 import {renderNavSenderButton} from '../../util/viewUtil'
-import {refresh} from '../../redux/nav'
+import {pop,refresh} from '../../redux/nav'
+import {send} from '../../request'
 import {Toast} from '../../util'
 //static displayName = AddHouse
 
@@ -29,6 +33,7 @@ const isEmpty = value => value === undefined || value === null || value === '';
 @connect(
     state =>({
         //state:state.util.get()
+        data:state.req.get("phxr_query_person_house")
     }),
     (dispatch, props) =>({
         //...bindActionCreators({},dispatch),
@@ -74,21 +79,33 @@ const isEmpty = value => value === undefined || value === null || value === '';
                     ifShare:["否","是"].indexOf(state.ifShare)+""
                 }
                 const param = {
+                    ...state,
+                    ...newState,
                     userId,
                     actType: props.scene.route.actType||"0",
-                    ...state,
-                    ...newState
+                    houseId:props.scene.route.assetsId,
                 }
                 try {
                     const params = phxr_submit_person_house(param)
-                    await dispatch(request('phxr_submit_person_house', params))
+                    const res = await send(params)
+                    if(res.rspCode != '0000') return
                     const params2 = phxr_query_person_assets_list(userId)
-                    await dispatch(request('phxr_query_person_assets_list', params2))
+                    await dispatch(request('phxr_query_person_assets_list', params2,(res)=>{
+                        if(res.rspCode = '0000'){
+                            Toast.show("提交成功")
+                            pop()
+                        }
+                    }))
                 } catch (e) {
                     Toast.show(e.message)
                 }
 
             })
+        },
+        load:()=>{
+            const userId = props.scene.route.userId
+            const params =phxr_query_person_house(userId,props.scene.route.assetsId)
+            dispatch(request('phxr_query_person_house', params))
         }
     })
 )
@@ -129,7 +146,36 @@ export  default  class AddHouse extends Component {
     componentDidMount() {
         const rightBtn = renderNavSenderButton(this._tapRight.bind(this))
         refresh({renderRightComponent: rightBtn});
+        if(this.props.scene.route.assetsId){
+            console.log('test:', 'xxxxx');
+            this.props.load()
+        }
+        if(this.props.scene.route.assetsId){
+            refresh({title: "修改房产"});
+        }
     }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.data && this.props.scene.route.assetsId){
+            let data =  nextProps.data.toJS().data
+            console.log('nextProps.data:', data);
+            console.log('test:', 'mmmm');
+            if(data){
+                data = {
+                    ...data,
+                    houseCity:data.houseCity == "591"?"福州":"厦门",
+                    houseType:["个人住宅(70年产权)", "商住两用", "商铺", "写字楼",
+                        "别墅", "停车位", "自建房", "动迁房", "经济适用房", "预算房"][data.houseType],
+                    ifElevator:["否","是"][data.ifElevator],
+                    ifShare:["否","是"][data.ifShare]
+                }
+                this.setState(data)
+            }
+            //
+        }
+
+    }
+
 
     showActionSheet(message: string, key, op: any) {
         const wrapProps = {onTouchStart: e => e.preventDefault()}
@@ -160,6 +206,7 @@ export  default  class AddHouse extends Component {
                 <Text style={styles.textStyle}>{title}</Text>
                 <TextInput
                     ref={ref}
+                    value={this.state[key]+""}
                     placeholderTextColor="rgba(180,180,180,1)"
                     selectionColor={mainColor}
                     returnKeyType='next'

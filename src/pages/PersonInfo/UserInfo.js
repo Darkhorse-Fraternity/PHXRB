@@ -69,10 +69,11 @@ export  default  class Account extends Component {
 
     _renderRow(title: string, des: string,point:string,onPress: Function) {
         const flag = title != "业务代码"
+        const dess = des?des + "":""
         return (
             <View>
                 <TouchableHighlight onPress={()=>{
-                   flag  && push({key:'UserInfoDetail',index:title,point,des:des + ""})
+                   flag  && push({key:'UserInfoDetail',index:title,point,des:dess})
                 }}>
                     <View style={styles.row}>
                         <Text style={styles.rowText}>

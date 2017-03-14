@@ -20,8 +20,12 @@ import * as immutable from 'immutable';
 import BaseListView from '../../components/Base/BaseListView';
 import {listLoad, listLoadMore} from '../../redux/actions/list'
 import {renderNavAddButton} from '../../util/viewUtil'
-
-import {phxr_query_person_assets_list} from '../../request/qzapi'
+import {send} from '../../request'
+import {
+    phxr_query_person_assets_list,
+    phxr_del_person_car,
+    phxr_del_person_house
+} from '../../request/qzapi'
 import {request} from '../../redux/actions/req'
 import {Button, WingBlank} from 'antd-mobile';
 import {Toast} from '../../util'
@@ -39,7 +43,7 @@ function myListLoad(id, more: bool = false) {
         //state:state.util.get()
         data: state.req.get('phxr_query_person_assets_list')
     }),
-    (dispatch,props) =>({
+    (dispatch, props) =>({
         //...bindActionCreators({},dispatch),
         load: ()=> {
 
@@ -48,14 +52,40 @@ function myListLoad(id, more: bool = false) {
                 try {
                     const params = phxr_query_person_assets_list(props.scene.route.userId)
                     await dispatch(request('phxr_query_person_assets_list', params))
-                }catch (e){
+                } catch (e) {
+                    Toast.show(e.message)
+                }
+
+            })
+        },
+        delete:(id,beHouse)=>{
+            dispatch(async(dispatch, getState)=> {
+                // const uid = getState().login.data.userId
+                let params = {}
+                try {
+                    if(beHouse){
+                        params =  phxr_del_person_house(props.scene.route.userId,id)
+                    }else {
+                        params =  phxr_del_person_car(props.scene.route.userId,id)
+                    }
+
+                    const res = await send(params)
+
+                    if(res.rspCode == '0000'){
+                        const params = phxr_query_person_assets_list(props.scene.route.userId)
+                         dispatch(request('phxr_query_person_assets_list', params))
+                    }
+
+                } catch (e) {
                     Toast.show(e.message)
                 }
 
             })
 
 
+
         }
+
     })
 )
 
@@ -106,21 +136,28 @@ export default class List extends Component {
     renderRow(itme: Object, sectionID: number, rowID: number) {
 
         return (
-            <TouchableOpacity
+            <View
                 style={{marginTop:10}}
-                onPress={()=>{
-                    push({key:'AssetsInfo',item:itme})
-            }}>
+            >
                 <View style={styles.row}>
-                    <Text>{itme.assetsName}</Text>
+                    <Text style={{textDecorationLine:"underline"}} onPress={()=>{
+                        const userId = this.props.scene.route.userId
+                        if(itme.assetsType == 11){
+                            push({key:'AddHouse',userId,assetsId:itme.assetsId,actType:"1"})
+                        }else{
+                            push({key:'AddCar',userId,assetsId:itme.assetsId,actType:"1"})
+                        }
+            }}>{itme.assetsName}</Text>
                     <View style={styles.row2}>
-                        <Text  onPress={()=>{
+                        <Text onPress={()=>{
                              Alert.alert(
                         '确定要删除吗？',
                            "",
                         [
                             {text: '取消', onPress: () => {}},
-                            {text: '确定', onPress: () =>{}},
+                            {text: '确定', onPress: () =>{
+                                this.props.delete(itme.assetsId,itme.assetsType == 11)
+                            }},
                         ])
 
                         }}>删除 </Text>
@@ -128,7 +165,7 @@ export default class List extends Component {
                     </View>
 
                 </View>
-            </TouchableOpacity>
+            </View>
         )
     }
 
@@ -194,9 +231,9 @@ const styles = StyleSheet.create({
         width: 10,
         height: 10,
     },
-    row2:{
-        flexDirection:'row',
-        alignItems:'center'
+    row2: {
+        flexDirection: 'row',
+        alignItems: 'center'
     },
 
 })

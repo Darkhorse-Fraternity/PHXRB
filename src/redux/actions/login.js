@@ -112,7 +112,7 @@ export function login(state: Object): Function {
 export function register(state: Object): Function {
 
 // userName,phoneNo,pwd,registType,hasAdvisersCode,advisersCode,Province,city
-    const cityCode = state.clicked == '厦门' ? '0592' : '0591'
+    const cityCode = state.clicked == '厦门' ? '592' : '591'
 
     const params = phxr_register(state.userName, state.phone,
         state.password, "1", "0", '', "0", cityCode);

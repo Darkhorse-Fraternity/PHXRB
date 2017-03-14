@@ -112,10 +112,10 @@ export  default  class UserInfoDetail extends Component {
             return;
         }
 
-        if (point == 'cardNum' && !checkIDCard(clicked)) {
-            Toast.show("不是正确的身份证号码");
-            return;
-        }
+        // if (point == 'cardNum' && !checkIDCard(clicked)) {
+        //     Toast.show("不是正确的身份证号码");
+        //     return;
+        // }
 
         if (point == 'homeCity') {
             if (clicked == "福州") clicked = "591"
@@ -157,7 +157,7 @@ export  default  class UserInfoDetail extends Component {
         }
 
         const ids = ["spouseIdCardNo","cardNum"]
-        if(ids.indexOf(point) != -1 && !checkPhoneNum(clicked)){
+        if(ids.indexOf(point) != -1 && !checkIDCard(clicked)){
             Toast.show("不是正确的身份证号码")
             return
         }

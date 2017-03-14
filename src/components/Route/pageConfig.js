@@ -69,7 +69,8 @@ export const pageConfig = {
     "AddCar":{title:"新增汽车"},
     "AddHouse":{title:"新增房产"},
     "MemberUserInfo":{title:"会员信息"},
-    "MemberUserInfoDetail":{title:"修改会员信息"}
+    "MemberUserInfoDetail":{title:"修改会员信息"},
+    "FilesScan":{title:"文件查看"}
 }
 
 export function config(key: string): Object {

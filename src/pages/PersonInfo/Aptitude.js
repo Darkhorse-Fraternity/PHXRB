@@ -19,18 +19,19 @@ import {connect} from 'react-redux'
 import * as immutable from 'immutable';
 import BaseListView from '../../components/Base/BaseListView';
 import {listLoad, listLoadMore} from '../../redux/actions/list'
-import {phxr_query_files_list,phxr_deal_files} from  '../../request/qzapi'
-import {refresh,push} from '../../redux/nav'
+import {phxr_query_files_list, phxr_deal_files} from  '../../request/qzapi'
+import {refresh, push} from '../../redux/nav'
 import {bindActionCreators} from 'redux';
+import {send} from '../../request'
 import {renderNavAddButton} from '../../util/viewUtil'
-
+import {Toast} from '../../util'
 const listKey = 'fiels_listKey'
 function myListLoad(more: bool = false) {
     return (dispatch, getState) => {
         const id = getState().login.data.userId
         const params = phxr_query_files_list(id)
-        more?dispatch(listLoadMore(listKey,params)):dispatch(listLoad(listKey,params))
-     }
+        more ? dispatch(listLoadMore(listKey, params)) : dispatch(listLoad(listKey, params))
+    }
 }
 
 //我的资料
@@ -42,6 +43,26 @@ function myListLoad(more: bool = false) {
         //...bindActionCreators({},dispatch),
         load: ()=>dispatch(myListLoad()),
         loadMore: ()=>dispatch(myListLoad(true)),
+        delete: (fileId)=> {
+            dispatch(async(dispatch, getState)=> {
+
+
+                try {
+                    const userID = getState().login.data.userId
+                    const param = phxr_deal_files(userID, "3", undefined, fileId, undefined, undefined, undefined, userID)
+                    const res = await send(param)
+                    if (res.rspCode == "0000") {
+                        dispatch(myListLoad())
+                    } else {
+                        Toast.show(res.rspMsg)
+                    }
+                } catch (e) {
+                    Toast.show(e.message)
+                }
+            })
+
+
+        }
     })
 )
 
@@ -55,9 +76,9 @@ export default class FilesList extends Component {
         loadMore: PropTypes.func.isRequired,
     };
     static defaultProps = {
-        data:immutable.fromJS({
-            listData:{},
-            loadStatu:'LIST_NORMAL',
+        data: immutable.fromJS({
+            listData: {},
+            loadStatu: 'LIST_NORMAL',
         })
     };
 
@@ -66,40 +87,46 @@ export default class FilesList extends Component {
     }
 
 
-    __tapRight(){
+    __tapRight() {
         push('AptDetail')
     }
 
     componentDidMount() {
 
         const rightBtn = renderNavAddButton(this.__tapRight)
-        refresh({renderRightComponent:rightBtn,
-            rightButtonDisabled:false,
-            rightButtonIsLoad:false});
+        refresh({
+            renderRightComponent: rightBtn,
+            rightButtonDisabled: false,
+            rightButtonIsLoad: false
+        });
     }
 
     renderRow(itme: Object, sectionID: number, rowID: number) {
 
         return (
-            <TouchableOpacity
-                style={{marginTop:10}}
-                onPress={()=>{
-                    {/*push('AssetsInfo')*/}
+            <View style={[styles.row,{marginTop:10}]}>
+                <Text style={{textDecorationLine:"underline"}} onPress={()=>{
+                        push({key:'FilesScan',url:itme.filePath})
+                    }}>
+                    {itme.fileTypeDesc}
+                </Text>
+                {/*<View style={styles.arrowView}/>*/}
+                <Text onPress={()=>{
+
                          Alert.alert(
                         '确定要删除吗？',
                            "",
                         [
                             {text: '取消', onPress: () => {}},
-                            {text: '确定', onPress: () =>{}},
+                            {text: '确定', onPress: () =>{
+                                this.props.delete(itme.id)
+                            }},
                         ])
 
-            }}>
-                <View style={styles.row}>
-                    <Text>资料证明文件</Text>
-                    {/*<View style={styles.arrowView}/>*/}
-                    <Text>删除</Text>
-                </View>
-            </TouchableOpacity>
+                      }}>
+                    删除
+                </Text>
+            </View>
         )
     }
 
@@ -107,8 +134,7 @@ export default class FilesList extends Component {
 
         const loadStatu = this.props.data.get('loadStatu')
         console.log('test:', this.props.data.get('listData'));
-        let listData =  this.props.data.get('listData').toJS()
-        listData = ['111', '222']
+        let listData = this.props.data.get('listData').toJS().content
         return (
             <BaseListView
                 //renderHeader={this._renderHeader}
@@ -154,8 +180,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         paddingHorizontal: 18,
         paddingVertical: 18,
-        flexDirection:'row',
-        justifyContent:'space-between'
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     arrowView: {
         borderBottomWidth: StyleSheet.hairlineWidth * 2,

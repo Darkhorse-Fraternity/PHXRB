@@ -86,7 +86,7 @@ export  default  class Account extends Component {
         return (
             <View>
                 <TouchableOpacity onPress={()=>{
-                    push({key:'MemberUserInfoDetail',index:title,point,des:des + "",
+                    push({key:'MemberUserInfoDetail',index:title,point,des:des?des + "":"",
                     userId:this.props.scene.route.userId})
                 }}>
                     <View style={styles.row}>

@@ -19,19 +19,24 @@ import {connect} from 'react-redux'
 import moment from 'moment';
 import { ActionSheet ,DatePicker} from 'antd-mobile';
 import {bindActionCreators} from 'redux';
-import {phxr_submit_person_car, phxr_query_person_assets_list} from '../../request/qzapi'
+import {phxr_submit_person_car,
+    phxr_query_person_car,
+    phxr_query_person_assets_list} from '../../request/qzapi'
 import {request} from '../../redux/actions/req'
 import {renderNavSenderButton} from '../../util/viewUtil'
-import {refresh} from '../../redux/nav'
+import {pop,refresh} from '../../redux/nav'
+import {send} from '../../request'
+import {Toast} from '../../util'
 //static displayName = AddHouse
+const isEmpty = value => value === undefined || value === null || value === '';
 @connect(
     state =>({
-        //state:state.util.get()
+        data:state.req.get("phxr_query_person_car")
     }),
     (dispatch, props) =>({
         //...bindActionCreators({},dispatch),
         submit: (state)=> {
-            dispatch(async(dispatch, getState)=> {
+            dispatch(async (dispatch, getState)=> {
                 const userId = props.scene.route.userId
                 //做验证
                 //0、多选转化
@@ -66,31 +71,48 @@ import {refresh} from '../../redux/nav'
 
 
                 const newState ={
-                    useType:["非营运","营运"].indexOf(state.useType),
-                    carType:["乘用车", "客车", "货车", "牵引汽车"].indexOf(state.carType),
-                    pledge:["否","是"].indexOf(state.pledge),
-                    seized:["否","是"].indexOf(state.seized),
-                    annualVerification:["否","是"].indexOf(state.annualVerification),
-                    registerCompany:["否","是"].indexOf(state.registerCompany),
-                    blackPlate:["否","是"].indexOf(state.blackPlate),
-                    owner:["否","是"].indexOf(state.owner),
+                    useType:["非营运","营运"].indexOf(state.useType)+"",
+                    carType:["乘用车", "客车", "货车", "牵引汽车"].indexOf(state.carType)+"",
+                    pledge:["否","是"].indexOf(state.pledge)+"",
+                    seized:["否","是"].indexOf(state.seized)+"",
+                    annualVerification:["否","是"].indexOf(state.annualVerification)+"",
+                    registerCompany:["否","是"].indexOf(state.registerCompany)+"",
+                    blackPlate:["否","是"].indexOf(state.blackPlate)+"",
+                    owner:["否","是"].indexOf(state.owner)+"",
                 }
+
+                // console.log('props.scene.route.actType:', props.scene.route.actType);
                 const param = {
+                    ...state,
                     userId,
                     actType: props.scene.route.actType||"0",
-                    ...state,
+
+                    carId:props.scene.route.assetsId,
                     ...newState
                 }
                 try {
                     const params = phxr_submit_person_car(param)
-                    await dispatch(request('phxr_submit_person_house', params))
-                    const params2 = phxr_query_person_assets_list(userId)
-                    await dispatch(request('phxr_query_person_assets_list', params2))
+                    const res = await send(params)
+                    // console.log('res:', res);
+                    if(res.rspCode == "0000"){
+                        const params2 = phxr_query_person_assets_list(userId)
+                        dispatch(request('phxr_query_person_assets_list', params2))
+                        Toast.show("提交成功")
+                        pop()
+                    }else {
+                        Toast.show(res.rspMsg)
+                    }
+
                 } catch (e) {
                     Toast.show(e.message)
                 }
 
             })
+        },
+        load:()=>{
+            const userId = props.scene.route.userId
+            const params =phxr_query_person_car(userId,props.scene.route.assetsId)
+            dispatch(request('phxr_query_person_car', params))
         }
     })
 )
@@ -98,7 +120,6 @@ export  default  class AddCar extends Component {
     constructor(props: Object) {
         super(props);
         this.state={
-            carId:"乘用车",
             brand:"",
             useType:"非营运",
             carType:"乘用车",
@@ -139,6 +160,35 @@ export  default  class AddCar extends Component {
     componentDidMount() {
         const rightBtn = renderNavSenderButton(this._tapRight.bind(this))
         refresh({renderRightComponent: rightBtn});
+        if(this.props.scene.route.assetsId){
+            this.props.load()
+        }
+        if(this.props.scene.route.assetsId){
+            refresh({title: "修改车辆信息"});
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.data && this.props.scene.route.assetsId){
+            let data =  nextProps.data.toJS().data
+            // console.log('nextProps.data:', data);
+            if(data){
+                data = {
+                    ...data,
+                    useType:["非营运","营运"][data.useType],
+                    carType:["乘用车", "客车", "货车", "牵引汽车"][data.carType],
+                    pledge:["否","是"][data.pledge],
+                    seized:["否","是"][data.seized],
+                    annualVerification:["否","是"][data.annualVerification],
+                    registerCompany:["否","是"][data.registerCompany],
+                    blackPlate:["否","是"][data.blackPlate],
+                    owner:["否","是"][data.owner],
+                }
+                this.setState(data)
+            }
+            //
+        }
+
     }
 
     showActionSheet(message: string, key, op: any) {
@@ -169,6 +219,7 @@ export  default  class AddCar extends Component {
             <View style={styles.rowMainStyle}>
                 <Text style={styles.textStyle}>{title}</Text>
                 <TextInput
+                    value={this.state[key]+""}
                     ref={ref}
                     placeholderTextColor="rgba(180,180,180,1)"
                     selectionColor={mainColor}
@@ -234,8 +285,8 @@ export  default  class AddCar extends Component {
                 keyboardShouldPersistTaps="always"
                 keyboardDismissMode='interactive'>
 
-                {this._renderRow('机动车类型:', this.state.carId, (title) => {
-                    this.showActionSheet(title,"carId", ["乘用车", "客车","货车","牵引汽车",
+                {this._renderRow('机动车类型:', this.state.carType, (title) => {
+                    this.showActionSheet(title,"carType", ["乘用车", "客车","货车","牵引汽车",
                         ])
                 })}
 

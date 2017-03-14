@@ -399,14 +399,16 @@ export function phxr_deal_files(userId,actFile,fileType,id,fileClass,fileName,fi
         path:'/phxr_deal_files',
         method:methodType.post,
         params:{
-            userId,
             actFile,
-            fileType,
-            id,
-            fileClass,
-            fileName,
-            filePath,
-            operatorId
+            fileInfo:{
+                userId,
+                fileType,
+                id,
+                fileClass,
+                fileName,
+                filePath,
+                operatorId
+            }
         },
     }
 }

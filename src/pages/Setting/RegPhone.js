@@ -24,7 +24,7 @@ import {navigateReplaceIndex, navigatePush} from '../../redux/actions/nav'
 import {register} from '../../redux/actions/login'
 import {checkPhoneNum, Toast} from '../../util'
 
-const webUrl = 'https://static.dayi.im/static/fudaojun/rule.html?version=20160603182000';
+const webUrl = 'http://103.236.253.138:8088/declare.html';
 import {ActionSheet} from 'antd-mobile';
 class RegPhone extends Component {
     constructor(props: Object) {

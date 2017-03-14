@@ -17,6 +17,7 @@
     "react-native-debugger-open": "^0.3.2",
     "react-native-device-info": "git+https://github.com/Darkhorse-Fraternity/react-native-device-info.git",
     "react-native-dialogs": "0.0.19",
+    "react-native-fit-image": "^1.4.7",
     "react-native-image-picker": "0.25.1",
     "react-native-leancloud-push": "git+https://github.com/liaoyuan-io/react-native-leancloud-push.git",
     "react-native-push-notification": "^2.2.1",

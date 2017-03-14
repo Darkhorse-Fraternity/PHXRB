@@ -40,8 +40,10 @@ import AddHouse from '../../pages/PHXR/AddHouse'
 import MemberUserInfo from '../../pages/PHXR/MemberUserInfo'
 import MemberUserInfoDetail from '../../pages/PHXR/MemberUserInfoDetail'
 import FinanceTip from '../../pages/PHXR/FinanceTip'
+import FilesScan from '../../pages/PHXR/FilesScan'
 export  const PageMap =
 {
+  FilesScan,
   FinanceTip,
   MemberUserInfoDetail,
   MemberUserInfo,
