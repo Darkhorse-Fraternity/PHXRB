@@ -7,7 +7,7 @@
 
 import {request} from '../../request';
 // import {requestLogin, requestUsersByMobilePhone,getUserByID} from '../../request/leanCloud';
-import  {phxr_register,phxr_login} from '../../request/qzapi'
+import  {phxr_register,phxr_login,phxr_forget_pwd} from '../../request/qzapi'
 import {saveAccount, saveUserData, loadAccount, clearUserData} from '../../util/XGlobal'
 import {
     navigatePush,

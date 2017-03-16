@@ -41,7 +41,12 @@ export  default  class FilesScan extends Component {
     render(): ReactElement<any> {
         return (
             <ScrollView style={[this.props.style,styles.wrap]}>
-                <FitImage style={styles.image} source={{uri:this.props.scene.route.url}}/>
+                <FitImage  indicator
+                          indicatorColor="white" // react native colors or color codes like #919191
+                          indicatorSize="large"
+                          originalHeight={500}
+                          originalWidth={320}
+                          source={{uri:this.props.scene.route.url}}/>
             </ScrollView>
         );
     }
@@ -51,8 +56,8 @@ const styles = StyleSheet.create({
     wrap: {
         flex: 1,
     },
-    image:{
-        marginTop:20,
-        flex:1,
-    }
+    // image:{
+    //     width:Dimensions.get('window').width,
+    //     height:
+    // }
 })

@@ -186,12 +186,14 @@ export  default  class UserInfoDetail extends Component {
 
     _renderDatePikcerRow(title: string, dex: string, onPress: Function) {
         const zhNow = moment();
+        const minDate = moment("1950-01-01");
         return (
             <DatePicker
                 mode="date"
                 title="选择日期"
                 visible={this.state.visible}
                 maxDate={zhNow}
+                minDate={minDate}
                 onOk={() => {this.setState({visible:false})}}
                 onChange={(monmet)=>{
                     const text = monmet.format("YYYY-MM-DD")

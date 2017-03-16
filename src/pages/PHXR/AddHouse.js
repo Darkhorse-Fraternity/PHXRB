@@ -198,6 +198,7 @@ export  default  class AddHouse extends Component {
     }
 
     _renderRowMain(title: string, placeholder: string, key: string, boardType: PropTypes.oneOf = 'default',
+                   unit:string ='',
                    autoFocus: bool = false, maxLength: number = 40,
                    ref: string) {
 
@@ -220,6 +221,7 @@ export  default  class AddHouse extends Component {
                     enablesReturnKeyAutomatically={true}
                     //onSubmitEditing={() =>this.focusNextField(ref)}
                     onChangeText={(text)=>{this.setState({ [key]: text});}}/>
+                <Text style={styles.textStyle}>{unit}</Text>
             </View>
         )
     }
@@ -260,19 +262,19 @@ export  default  class AddHouse extends Component {
                 })}
 
 
-                {this._renderRow('请选择所在城市:', this.state.houseType, (title) => {
+                {this._renderRow('请选房地产类型:', this.state.houseType, (title) => {
                     this.showActionSheet(title, "houseType", ["个人住宅(70年产权)", "商住两用", "商铺", "写字楼",
                         "别墅", "停车位", "自建房", "动迁房", "经济适用房", "预算房"])
                 })}
-                {this._renderRowMain('已用年限:', '', "serviceYears","numeric"
+                {this._renderRowMain('已用年限:', '', "serviceYears","numeric","年"
                 )}
-                {this._renderRowMain('产权面积:', '', "propertyArea","numeric"
+                {this._renderRowMain('产权面积:', '', "propertyArea","numeric","平方"
                 )}
-                {this._renderRowMain('实际使用面积:', '', "useArea","numeric"
+                {this._renderRowMain('实际使用面积:', '', "useArea","numeric","平方"
                 )}
-                {this._renderRowMain('所在建筑总层数:', '', "totalFloor","numeric"
+                {this._renderRowMain('所在建筑总层数:', '', "totalFloor","numeric","层"
                 )}
-                {this._renderRowMain('所处层数:', '', "positionFloor","numeric"
+                {this._renderRowMain('所处层数:', '', "positionFloor","numeric","层"
                 )}
                 {this._renderRow('是否有电梯:', this.state.ifElevator, (title) => {
                     this.showActionSheet(title, "ifElevator", ["是", "否"])

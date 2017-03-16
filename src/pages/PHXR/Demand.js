@@ -23,7 +23,6 @@ import {bindActionCreators} from 'redux';
 //static displayName = MemberInfo
 
 
-const zhNow = moment().locale('zh-cn').utcOffset(8);
 const maxDate = moment('2018-12-03 +0800', 'YYYY-MM-DD Z').utcOffset(8);
 const minDate = moment('2015-08-06 +0800', 'YYYY-MM-DD Z').utcOffset(8);
 

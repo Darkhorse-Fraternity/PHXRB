@@ -11,14 +11,15 @@ import {
     StyleSheet,
     TextInput,
     TouchableOpacity,
-    Text
+    Text,
+    Platform
 } from 'react-native'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
 import {renderNavRightButton} from '../../util/viewUtil'
 import {refresh, pop} from '../../redux/nav'
 //static displayName = AptDetail
-import {ImagePicker, Button} from 'antd-mobile';
+import { Button} from 'antd-mobile';
 
 import {phxr_deal_files,phxr_query_files_list} from '../../request/qzapi'
 import {Toast} from '../../util'
@@ -27,8 +28,11 @@ import {send} from '../../request'
 import {ActionSheet} from 'antd-mobile';
 import {documentaryFiles} from '../../configure/phxr'
 import {listLoad, listLoadMore} from '../../redux/actions/list'
+import LoadToast from '../../components/Pop/LoadToast'
 import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
 import {request} from '../../redux/actions/req'
+import ImageSelectView from '../../components/ImageSelectView'
+import ActionSheetAndroid  from '../../components/ActionSheetLoacal'
 @connect(
     state =>({
         //state:state.util.get()
@@ -47,11 +51,13 @@ import {request} from '../../redux/actions/req'
                         const params = phxr_deal_files(personId,'1',fileName,undefined,"0",
                             "文件类型描述",data,userID)
                         // console.log('test:', params);
+                        LoadToast.show("文件上传中")
                         const res = await send(params)
                         if(res.rspCode == '0000'){
 
                             const params = phxr_query_files_list(personId)
                             dispatch(listLoad("fiels_listKey_person",params))
+                            LoadToast.hide()
                             Toast.show("提交成功")
                             pop()
                         }
@@ -134,7 +140,8 @@ export  default  class AptDetail extends Component {
     showActionSheet(message: string, op: any) {
         const wrapProps = {onTouchStart: e => e.preventDefault()}
         const BUTTONS = op.concat('取消')
-        ActionSheet.showActionSheetWithOptions({
+        const Action = Platform.OS == 'ios' ? ActionSheet : ActionSheetAndroid
+        Action.showActionSheetWithOptions({
                 options: BUTTONS,
                 // title: '标题',
                 cancelButtonIndex: BUTTONS.length - 1,
@@ -195,12 +202,17 @@ export  default  class AptDetail extends Component {
                 {this._renderRow("选择文件类型",this.state.fileNameShow,(title)=>{
                     this.showActionSheet(title, names)
                 })}
-                <ImagePicker
+                {/*<ImagePicker*/}
+                    {/*files={files}*/}
+                    {/*onChange={this.onChange.bind(this)}*/}
+                    {/*onImageClick={(index, fs) => console.log(index, fs)}*/}
+                    {/*onAddImageClick={this.onAddImageClick.bind(this)}*/}
+                    {/*selectable={files.length < 2}*/}
+                {/*/>*/}
+                <ImageSelectView
+                    maxImage={1}
                     files={files}
                     onChange={this.onChange.bind(this)}
-                    onImageClick={(index, fs) => console.log(index, fs)}
-                    onAddImageClick={this.onAddImageClick.bind(this)}
-                    selectable={files.length < 2}
                 />
             </View>
         );
@@ -219,7 +231,7 @@ const styles = StyleSheet.create({
         height: 40,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 20,
+        // marginBottom: 20,
     },
     textInputStyle: {
         // width:200,
@@ -238,7 +250,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 15,
-        marginBottom: 10,
+        // marginBottom: 10,
 
     },
     row2: {

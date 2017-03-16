@@ -13,11 +13,9 @@ export function uploadPHXRImage(files) {
     const body = new FormData()
     files.map((item)=> {
         const file = {
-            uri: item.url,
-            name: item.filename,
+            uri: item.uri,
+            name: item.filename||( Math.random()*700 + Date.parse(new Date()) + "_IMG.JPG"),
             type: "image/jpg",
-            height: item.height,
-            width: item.width,
         }
         body.append('file', file)
     })

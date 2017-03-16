@@ -11,7 +11,8 @@ import {
     StyleSheet,
     TextInput,
     TouchableOpacity,
-    Text
+    Text,
+    Platform
 } from 'react-native'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
@@ -20,7 +21,7 @@ import {refresh, pop} from '../../redux/nav'
 //static displayName = AptDetail
 import {ImagePicker, Button} from 'antd-mobile';
 
-import {phxr_deal_files,phxr_query_files_list} from '../../request/qzapi'
+import {phxr_deal_files, phxr_query_files_list} from '../../request/qzapi'
 import {Toast} from '../../util'
 import {uploadPHXRImage} from '../../util/uploadAVImage'
 import {send} from '../../request'
@@ -29,29 +30,35 @@ import {documentaryFiles} from '../../configure/phxr'
 import {listLoad, listLoadMore} from '../../redux/actions/list'
 import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
 import {request} from '../../redux/actions/req'
+import ImageSelectView from '../../components/ImageSelectView'
+import LoadToast from '../../components/Pop/LoadToast'
+// import {showSelector} from '../../components/Selector'
+import ActionSheetAndroid  from '../../components/ActionSheetLoacal'
 @connect(
     state =>({
         //state:state.util.get()
     }),
     dispatch =>({
         //...bindActionCreators({},dispatch),
-        upload: async(files,fileName)=> {
-            dispatch(async (dispatch, getState)=> {
+        upload: async(files, fileName)=> {
+            dispatch(async(dispatch, getState)=> {
                 try {
                     const res = await uploadPHXRImage(files)
-                    const data  =  await res.text()
-                    console.log('res:', data);
+                    const data = await res.text()
                     if (res) {
                         const userID = getState().login.data.userId
-                        const params = phxr_deal_files(userID,'1',fileName,undefined,"0",
-                            "文件类型描述",data,userID)
+                        const params = phxr_deal_files(userID, '1', fileName, undefined, "0",
+                            "文件类型描述", data, userID)
                         // console.log('test:', params);
+                        LoadToast.show("文件上传中")
+                        // console.log('test:', LoadToast);
                         const res = await send(params)
-                        if(res.rspCode == '0000'){
 
+                        if (res.rspCode == '0000') {
                             const params = phxr_query_files_list(userID)
-                            dispatch(listLoad("fiels_listKey",params))
+                            dispatch(listLoad("fiels_listKey", params))
                             Toast.show("提交成功")
+                            LoadToast.hide()
                             pop()
                         }
                     }
@@ -70,8 +77,8 @@ export  default  class AptDetail extends Component {
         super(props);
         this.state = {
             files: [],
-            fileName:"",
-            fileNameShow:"",
+            fileName: "",
+            fileNameShow: "",
         }
     }
 
@@ -80,21 +87,10 @@ export  default  class AptDetail extends Component {
     static defaultProps = {};
 
 
-    onChange(files, type, index) {
-        console.log(files, type, index);
+    onChange(files) {
         // if(this.state.files.length ==)
-
         this.setState({
             files,
-        });
-    }
-
-    onAddImageClick() {
-        this.setState({
-            files: this.state.files.concat({
-                url: 'https://zos.alipayobjects.com/rmsportal/hqQWgTXdrlmVVYi.jpeg',
-                id: '3',
-            }),
         });
     }
 
@@ -115,7 +111,7 @@ export  default  class AptDetail extends Component {
         }
 
 
-        this.props.upload(this.state.files,this.state.fileName);
+        this.props.upload(this.state.files, this.state.fileName);
         // pop()
     }
 
@@ -133,7 +129,10 @@ export  default  class AptDetail extends Component {
     showActionSheet(message: string, op: any) {
         const wrapProps = {onTouchStart: e => e.preventDefault()}
         const BUTTONS = op.concat('取消')
-        ActionSheet.showActionSheetWithOptions({
+
+        const Action = Platform.OS == 'ios' ? ActionSheet : ActionSheetAndroid
+
+        Action.showActionSheetWithOptions({
                 options: BUTTONS,
                 // title: '标题',
                 cancelButtonIndex: BUTTONS.length - 1,
@@ -145,10 +144,12 @@ export  default  class AptDetail extends Component {
             (buttonIndex) => {
                 if (buttonIndex != BUTTONS.length - 1) {
                     const key = Object.keys(documentaryFiles)
-                    this.setState({fileNameShow: BUTTONS[buttonIndex],fileName:key[buttonIndex]});
+                    this.setState({fileNameShow: BUTTONS[buttonIndex], fileName: key[buttonIndex]});
                 }
 
             });
+
+
     }
 
     __renderInputRow(): ReactElement<any> {
@@ -191,16 +192,17 @@ export  default  class AptDetail extends Component {
         return (
             <View style={[this.props.style,styles.wrap]}>
                 {/*{this.__renderInputRow()}*/}
-                {this._renderRow("选择文件类型",this.state.fileNameShow,(title)=>{
+                {this._renderRow("选择文件类型", this.state.fileNameShow, (title)=> {
                     this.showActionSheet(title, names)
                 })}
-                <ImagePicker
-                    files={files}
-                    onChange={this.onChange.bind(this)}
-                    onImageClick={(index, fs) => console.log(index, fs)}
-                    onAddImageClick={this.onAddImageClick.bind(this)}
-                    selectable={files.length < 2}
-                />
+                {/*<ImagePicker*/}
+                {/*files={files}*/}
+                {/*onChange={this.onChange.bind(this)}*/}
+                {/*onImageClick={(index, fs) => console.log(index, fs)}*/}
+                {/*onAddImageClick={this.onAddImageClick.bind(this)}*/}
+                {/*selectable={files.length < 2}*/}
+                {/*/>*/}
+                ImageSelectView
             </View>
         );
     }
@@ -237,7 +239,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 15,
-        marginBottom: 10,
 
     },
     row2: {

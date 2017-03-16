@@ -106,7 +106,7 @@ export  default  class Account extends Component {
                 {this._renderRow('姓名', data.name, "name",() => {
                 })}
 
-                {this._renderRow('性别', data.sex=="0"?"男":"女", "sex",() => {
+                {this._renderRow('性别', data.sex=="1"?"男":"女", "sex",() => {
                 })}
                 {this._renderRow('身份证', data.cardNum,"cardNum", () => {
                 })}

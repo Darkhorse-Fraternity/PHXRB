@@ -113,7 +113,7 @@ export default class List extends Component {
 
 
     componentDidMount() {
-        this.props.load()
+        // this.props.load()
     }
 
 

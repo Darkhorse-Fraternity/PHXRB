@@ -230,13 +230,15 @@ export  default  class Account extends Component {
 
 
     _renderDatePikcerRow = (title: string, dex: string, onPress: Function)=> {
-        const zhNow = moment().locale('zh-cn').utcOffset(8);
+        const zhNow = moment();
+        const  maxData =  moment("2100-01-01");
         return (
             <DatePicker
                 mode="date"
                 title="选择日期"
                 visible={this.state.visible}
                 minDate={zhNow}
+                maxData={maxData}
                 onOk={() => {this.setState({visible:false})}}
                 onChange={(monmet)=>{
                     const text = monmet.format("YYYY-MM-DD")

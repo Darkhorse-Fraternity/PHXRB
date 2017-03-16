@@ -191,6 +191,7 @@ export  default  class AddCar extends Component {
 
     }
 
+
     showActionSheet(message: string, key, op: any) {
         const wrapProps = {onTouchStart: e => e.preventDefault()}
         const BUTTONS = op.concat('取消')
@@ -212,6 +213,7 @@ export  default  class AddCar extends Component {
     }
 
     _renderRowMain(title: string, placeholder: string, key: string, boardType: PropTypes.oneOf = 'default',
+                   unit:string ='',
                    autoFocus: bool = false, maxLength: number = 40,
                    ref: string) {
 
@@ -234,6 +236,7 @@ export  default  class AddCar extends Component {
                     enablesReturnKeyAutomatically={true}
                     //onSubmitEditing={() =>this.focusNextField(ref)}
                     onChangeText={(text)=>{this.setState({ [key]: text});}}/>
+                <Text style={styles.textStyle}>{unit}</Text>
             </View>
         )
     }
@@ -257,13 +260,15 @@ export  default  class AddCar extends Component {
     }
 
     _renderDatePikcerRow = (title: string, dex: string,key:string, onPress: Function)=> {
-        const zhNow = moment().locale('zh-cn').utcOffset(8);
+        const zhNow = moment();
+        const minDate = moment("1950-01-01");
         return (
             <DatePicker
                 mode="date"
                 title="选择日期"
                 visible={this.state[key+"_visible"]}
                 maxDate={zhNow}
+                minDate={minDate}
                 onOk={() => {this.setState({[key+"_visible"]:false})}}
                 onChange={(monmet)=>{
                     const text = monmet.format("YYYY-MM-DD")
@@ -301,15 +306,15 @@ export  default  class AddCar extends Component {
                 )}
                 {this._renderRowMain('车牌号:', '',"plateNumber"
                 )}
-                {this._renderRowMain('公里数:', '',"kilometers","numeric"
+                {this._renderRowMain('公里数:', '',"kilometers","numeric","公里"
                 )}
                 {this._renderDatePikcerRow('出产日期:', '',"productionDate")}
                 {this._renderDatePikcerRow('购买日期:', '',"buyDate")}
 
-                {this._renderRowMain('总过户次数:', '',"totalTradeTimes","numeric"
+                {this._renderRowMain('总过户次数:', '',"totalTradeTimes","numeric",'次'
 
                 )}
-                {this._renderRowMain('近一年内过户次数:', '',"tradeTimesOneYear"
+                {this._renderRowMain('近一年内过户次数:', '',"tradeTimesOneYear","numeric","次"
 
                 )}
                 {this._renderRow('车管所抵押:', this.state.pledge, (title) => {

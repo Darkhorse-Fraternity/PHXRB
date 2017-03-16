@@ -86,8 +86,10 @@ export  default  class Account extends Component {
         return (
             <View>
                 <TouchableOpacity onPress={()=>{
-                    push({key:'MemberUserInfoDetail',index:title,point,des:des?des + "":"",
+                    if(point != "advisersCode"){
+                        push({key:'MemberUserInfoDetail',index:title,point,des:des?des + "":"",
                     userId:this.props.scene.route.userId})
+                    }
                 }}>
                     <View style={styles.row}>
                         <Text style={styles.rowText}>
@@ -97,7 +99,7 @@ export  default  class Account extends Component {
                             <Text style={styles.rowDesText}>
                                 {des||"未填写"}
                             </Text>
-                            <View style={styles.arrowView}/>
+                            {point != "advisersCode" && (<View style={styles.arrowView}/>)}
                         </View>
                     </View>
 
@@ -156,7 +158,7 @@ export  default  class Account extends Component {
                     () => {})}
                 {this._renderRow('非配偶直系亲属手机1', data.immediateFamilyPhone2,"immediateFamilyPhone2",
                     () => {})}
-                {this._renderRow('咨询顾问服务代码', data.advisersCode,"immediateFamilyPhone2",
+                {this._renderRow('咨询顾问服务代码', data.advisersCode,"advisersCode",
                     () => {})}
 
 
