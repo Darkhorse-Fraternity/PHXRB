@@ -202,7 +202,11 @@ export  default  class AptDetail extends Component {
                 {/*onAddImageClick={this.onAddImageClick.bind(this)}*/}
                 {/*selectable={files.length < 2}*/}
                 {/*/>*/}
-                ImageSelectView
+                <ImageSelectView
+                    maxImage={1}
+                    files={files}
+                    onChange={this.onChange.bind(this)}
+                />
             </View>
         );
     }
