@@ -302,7 +302,7 @@ export  default  class Account extends Component {
                 })}
 
                 {(data.checkStatus != 0 && data.checkStatus != 2) &&
-                this._renderRow('借款额度', data.financingLimit || 0 + "万元", () => {
+                this._renderRow('借款额度', (data.financingLimit || 0) + " 万元", () => {
                 })}
                 {flag &&
                 this._renderRowMain("借款额度", "请填写", "financingLimit", "numeric", true)}

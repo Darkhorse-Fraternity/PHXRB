@@ -83,7 +83,7 @@ export function login(state: Object): Function {
 
         dispatch(_loginRequest());
 
-        const parame = phxr_login(state.phone,state.password,state.ymCode)
+        const parame = phxr_login(state.phone,state.password,state.ymCode,1)
 
         return request(parame, (response)=> {
 

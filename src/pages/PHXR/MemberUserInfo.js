@@ -141,7 +141,7 @@ export  default  class Account extends Component {
                 {this._renderRow('工作单位', data.companyName,"companyName", () => {})}
                 {this._renderRow('单位地址', data.officeAddr,"officeAddr", () => {})}
                 {this._renderRow('单位性质', data.companyNature, "companyNature",() => {})}
-                {this._renderRow('单位规模', data.companySize, "companySize",() => {})}
+                {/*{this._renderRow('单位规模', data.companySize, "companySize",() => {})}*/}
                 {this._renderRow('单位人员规模', data.companySize,"companySize", () => {})}
                 {this._renderRow('在岗职位', data.job,"job", () => {})}
                 {this._renderRow('职位水平', data.jobLevel,"jobLevel", () => {})}

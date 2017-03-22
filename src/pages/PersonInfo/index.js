@@ -275,6 +275,15 @@ class PersonInfo extends React.Component {
                 <View style={styles.groupSpace}>
                 </View>
                 <View style={styles.group}>
+                    {this._renderRow('关于我们', "", () => {
+                        // NavigationManager.goToPage("AlterPwd");
+                        const webUrl = 'http://103.236.253.138:8088/aboutus.html';
+                        this.props.push({key: 'WebView', title: '关于我们', url: webUrl});
+                    })}
+                </View>
+                <View style={styles.groupSpace}>
+                </View>
+                <View style={styles.group}>
                     {this._renderRow('退出登录', "", () => {
                         // NavigationManager.goToPage("AlterPwd");
                         this.props.logout()

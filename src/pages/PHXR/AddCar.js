@@ -306,7 +306,7 @@ export  default  class AddCar extends Component {
                 )}
                 {this._renderRowMain('车牌号:', '',"plateNumber"
                 )}
-                {this._renderRowMain('公里数:', '',"kilometers","numeric","公里"
+                {this._renderRowMain('公里数:', '',"kilometers","numeric","万公里"
                 )}
                 {this._renderDatePikcerRow('出产日期:', '',"productionDate")}
                 {this._renderDatePikcerRow('购买日期:', '',"buyDate")}
@@ -332,16 +332,16 @@ export  default  class AddCar extends Component {
                 {this._renderRow('黑牌车:',this.state.blackPlate, (title) => {
                     this.showActionSheet(title,"blackPlate" ,["是","否"])
                 })}
-                {this._renderRow('自有机动车:',this.state.owner, (title) => {
-                    this.showActionSheet(title, "owner",["是","否"])
-                })}
+                {/*{this._renderRow('自有机动车:',this.state.owner, (title) => {*/}
+                    {/*this.showActionSheet(title, "owner",["是","否"])*/}
+                {/*})}*/}
                 {this._renderRowMain('所有人的姓名:', '',"ownerName"
                 )}
-                {this._renderRowMain('所有人的身份证:', '',"ownerIdCardNo"
-                )}
-                {this._renderRowMain('所有人的电话:', '',"ownerPhoneNo","numeric"
-                )}
-                {this._renderRowMain('于本人关系:', '',"ownerRelation"
+                {/*{this._renderRowMain('所有人的身份证:', '',"ownerIdCardNo"*/}
+                {/*)}*/}
+                {/*{this._renderRowMain('所有人的电话:', '',"ownerPhoneNo","numeric"*/}
+                {/*)}*/}
+                {this._renderRowMain('车辆所有人与本人关系:', '',"ownerRelation"
                 )}
 
             </ScrollView>
