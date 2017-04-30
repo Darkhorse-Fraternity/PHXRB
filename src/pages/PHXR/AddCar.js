@@ -59,17 +59,27 @@ const isEmpty = value => value === undefined || value === null || value === '';
                     Toast.show("公里数不能为空")
                     return;
                 }
-                if(isEmpty(state.totalTradeTimes)){
-                    Toast.show('总过户数不能为空')
+                // if(isEmpty(state.totalTradeTimes)){
+                //     Toast.show('总过户数不能为空')
+                //     return;
+                // }
+                // if(isEmpty(state.tradeTimesOneYear)){
+                //     Toast.show('近一年内过户次数不能为空')
+                //     return;
+                // }
+
+                if(isEmpty(state.ownerName)){
+                    Toast.show('所有人姓名不能为空')
                     return;
                 }
-                if(isEmpty(state.tradeTimesOneYear)){
-                    Toast.show('近一年内过户次数不能为空')
+
+                if(isEmpty(state.ownerRelation)){
+                    Toast.show('车辆所有人与本人关系不能为空')
                     return;
                 }
 
-
-
+                state.productionDate_visible = undefined
+                state.buyDate_visible = undefined
                 const newState ={
                     useType:["非营运","营运"].indexOf(state.useType)+"",
                     carType:["乘用车", "客车", "货车", "牵引汽车"].indexOf(state.carType)+"",
@@ -82,6 +92,7 @@ const isEmpty = value => value === undefined || value === null || value === '';
                 }
 
                 // console.log('props.scene.route.actType:', props.scene.route.actType);
+
                 const param = {
                     ...state,
                     userId,
@@ -290,26 +301,26 @@ export  default  class AddCar extends Component {
                 keyboardShouldPersistTaps="always"
                 keyboardDismissMode='interactive'>
 
-                {this._renderRow('机动车类型:', this.state.carType, (title) => {
+                {this._renderRow('*机动车类型:', this.state.carType, (title) => {
                     this.showActionSheet(title,"carType", ["乘用车", "客车","货车","牵引汽车",
                         ])
                 })}
 
-                {this._renderRow('使用性质:', this.state.useType, (title) => {
-                    this.showActionSheet(title,"useType" ,["营运", "客车","货车","牵引汽车",
+                {this._renderRow('*使用性质:', this.state.useType, (title) => {
+                    this.showActionSheet(title,"useType" ,["非营运", "营运",
                     ])
                 })}
 
-                {this._renderRowMain('品牌:', '',"brand"
+                {this._renderRowMain('*品牌:', '',"brand"
                 )}
-                {this._renderRowMain('型号:', '',"model"
+                {this._renderRowMain('*型号:', '',"model"
                 )}
-                {this._renderRowMain('车牌号:', '',"plateNumber"
+                {this._renderRowMain('*车牌号:', '',"plateNumber"
                 )}
-                {this._renderRowMain('公里数:', '',"kilometers","numeric","万公里"
+                {this._renderRowMain('*公里数:', '',"kilometers","numeric","万公里"
                 )}
                 {this._renderDatePikcerRow('出产日期:', '',"productionDate")}
-                {this._renderDatePikcerRow('购买日期:', '',"buyDate")}
+                {this._renderDatePikcerRow('*购买日期:', '',"buyDate")}
 
                 {this._renderRowMain('总过户次数:', '',"totalTradeTimes","numeric",'次'
 
@@ -335,13 +346,13 @@ export  default  class AddCar extends Component {
                 {/*{this._renderRow('自有机动车:',this.state.owner, (title) => {*/}
                     {/*this.showActionSheet(title, "owner",["是","否"])*/}
                 {/*})}*/}
-                {this._renderRowMain('所有人的姓名:', '',"ownerName"
+                {this._renderRowMain('*所有人的姓名:', '',"ownerName"
                 )}
                 {/*{this._renderRowMain('所有人的身份证:', '',"ownerIdCardNo"*/}
                 {/*)}*/}
                 {/*{this._renderRowMain('所有人的电话:', '',"ownerPhoneNo","numeric"*/}
                 {/*)}*/}
-                {this._renderRowMain('车辆所有人与本人关系:', '',"ownerRelation"
+                {this._renderRowMain('*车辆所有人与本人关系:', '',"ownerRelation"
                 )}
 
             </ScrollView>

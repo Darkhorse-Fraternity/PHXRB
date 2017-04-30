@@ -57,16 +57,26 @@ const isEmpty = value => value === undefined || value === null || value === '';
                     Toast.show('产权面积不能为空')
                     return;
                 }
-                if(isEmpty(state.useArea)){
-                    Toast.show('实际使用面积不能为空')
-                    return;
-                }
+                // if(isEmpty(state.useArea)){
+                //     Toast.show('实际使用面积不能为空')
+                //     return;
+                // }
                 if(isEmpty(state.totalFloor)){
                     Toast.show('所在建筑总层数不能为空')
                     return;
                 }
                 if(isEmpty(state.positionFloor)){
                     Toast.show('所处层数不能为空')
+                    return;
+                }
+
+                if(isEmpty(state.positionFloor)){
+                    Toast.show('所处层数不能为空')
+                    return;
+                }
+
+                if(isEmpty(state.shareName)){
+                    Toast.show('公有产权人姓名不能为空')
                     return;
                 }
 
@@ -252,37 +262,37 @@ export  default  class AddHouse extends Component {
                 keyboardShouldPersistTaps="always"
                 keyboardDismissMode='interactive'>
 
-                {this._renderRowMain('房产地址:', '请填写', "houseAddress"
+                {this._renderRowMain('*房产地址:', '请填写', "houseAddress"
                 )}
 
                 {/*{this._renderRowMain('城市区号:', '福州:591,厦门:592', "houseCity","numeric"*/}
                 {/*)}*/}
-                {this._renderRow('所在城市:', this.state.houseCity, (title) => {
+                {this._renderRow('*所在城市:', this.state.houseCity, (title) => {
                     this.showActionSheet(title, "houseCity",["福州","厦门"])
                 })}
 
 
-                {this._renderRow('请选房地产类型:', this.state.houseType, (title) => {
+                {this._renderRow('*请选房地产类型:', this.state.houseType, (title) => {
                     this.showActionSheet(title, "houseType", ["个人住宅(70年产权)", "商住两用", "商铺", "写字楼",
                         "别墅", "停车位", "自建房", "动迁房", "经济适用房", "预算房"])
                 })}
-                {this._renderRowMain('已用年限:', '', "serviceYears","numeric","年"
+                {this._renderRowMain('*已用年限:', '', "serviceYears","numeric","年"
                 )}
-                {this._renderRowMain('产权面积:', '', "propertyArea","numeric","平方"
+                {this._renderRowMain('*产权面积:', '', "propertyArea","numeric","平方"
                 )}
                 {this._renderRowMain('实际使用面积:', '', "useArea","numeric","平方"
                 )}
-                {this._renderRowMain('所在建筑总层数:', '', "totalFloor","numeric","层"
+                {this._renderRowMain('*所在建筑总层数:', '', "totalFloor","numeric","层"
                 )}
-                {this._renderRowMain('所处层数:', '', "positionFloor","numeric","层"
+                {this._renderRowMain('*所处层数:', '', "positionFloor","numeric","层"
                 )}
-                {this._renderRow('是否有电梯:', this.state.ifElevator, (title) => {
+                {this._renderRow('*是否有电梯:', this.state.ifElevator, (title) => {
                     this.showActionSheet(title, "ifElevator", ["是", "否"])
                 })}
                 {this._renderRow('是否有共有产权人:', this.state.ifShare, (title) => {
                     this.showActionSheet(title, "ifShare", ["是", "否"])
                 })}
-                {this._renderRowMain('公有产权人姓名:', '', "shareName"
+                {this._renderRowMain('*公有产权人姓名:', '', "shareName"
                 )}
                 {this._renderRowMain('共有产权人的身份证:', '', "shareIdCardNo"
                 )}

@@ -62,7 +62,7 @@ export  default  class Account extends Component {
 
         let arr = []
         if (point == 'marriageStatus') {
-            arr = ["未婚", "已婚", "离婚"]
+            arr = ["未婚", "已婚", "离婚",'其他']
             des =  arr[des]
         }
 
@@ -118,45 +118,45 @@ export  default  class Account extends Component {
                 {/*{this._renderRow('账号',this.props.userData.mobilePhoneNumber ,() => {
 
                  })}*/}
-                {this._renderRow('姓名', data.customerName,'customerName', () => {
+                {this._renderRow('*姓名', data.customerName,'customerName', () => {
                     {/*console.log('test:', '11111');*/}
                 })}
 
-                {this._renderRow('性别', data.sex == "0"?"男":"女", "sex",() => {
+                {this._renderRow('*性别', data.sex == "0"?"男":"女", "sex",() => {
                 })}
-                {this._renderRow('出生日期', data.birthday,"birthday",() => {
+                {this._renderRow('*出生日期', data.birthday,"birthday",() => {
                 })}
-                {this._renderRow('身份证', data.cardNum, "cardNum",() => {})}
-                {this._renderRow('联系方式', data.telNum, "telNum",() => {})}
-                {this._renderRow('邮箱', data.email, "email",() => {})}
-                {this._renderRow('城市', data.homeCity == 591?"福州":"厦门","homeCity", () => {})}
-                {this._renderRow('婚姻状态', ["未婚","已婚","离婚"][data.isMarriage],
+                {this._renderRow('*身份证', data.cardNum, "cardNum",() => {})}
+                {this._renderRow('*联系方式', data.telNum, "telNum",() => {})}
+                {this._renderRow('*邮箱', data.email, "email",() => {})}
+                {this._renderRow('*城市', data.homeCity == 591?"福州":"厦门","homeCity", () => {})}
+                {this._renderRow('*婚姻状态', ["未婚","已婚","离婚","其他"][data.isMarriage],
                     "isMarriage", () => {})}
                 {this._renderRow('配偶姓名', data.spouseName,"spouseName", () => {})}
                 {this._renderRow('配偶身份证', data.spouseIdCardNo,"spouseIdCardNo" ,() => {})}
                 {this._renderRow('配偶电话', data.spouseTelNum, "spouseTelNum" ,() => {})}
-                {this._renderRow('居住地址', data.userAddr,"userAddr" ,() => {})}
+                {this._renderRow('*居住地址', data.userAddr,"userAddr" ,() => {})}
                 {this._renderRow('邮编', data.postCodes,"postCodes",() => {})}
-                {this._renderRow('户籍地址', data.familyRegisterAddr,"familyRegisterAddr", () => {})}
-                {this._renderRow('工作单位', data.companyName,"companyName", () => {})}
-                {this._renderRow('单位地址', data.officeAddr,"officeAddr", () => {})}
+                {this._renderRow('*户籍地址', data.familyRegisterAddr,"familyRegisterAddr", () => {})}
+                {this._renderRow('*工作单位', data.companyName,"companyName", () => {})}
+                {this._renderRow('*单位地址', data.officeAddr,"officeAddr", () => {})}
                 {this._renderRow('单位性质', data.companyNature, "companyNature",() => {})}
                 {/*{this._renderRow('单位规模', data.companySize, "companySize",() => {})}*/}
                 {this._renderRow('单位人员规模', data.companySize,"companySize", () => {})}
                 {this._renderRow('在岗职位', data.job,"job", () => {})}
                 {this._renderRow('职位水平', data.jobLevel,"jobLevel", () => {})}
                 {this._renderRow('入职时间', data.entryDate, "entryDate",() => {})}
-                {this._renderRow('月工资水平', data.monthlyWages,"monthlyWages", () => {})}
+                {this._renderRow('*月工资水平', data.monthlyWages+" 元","monthlyWages", () => {})}
                 {this._renderRow('提供工作证明文件', data.provideWorkCertificate?"是":"否",
                     "provideWorkCertificate",
                     () => {})}
-                {this._renderRow('非配偶直系亲属姓名1', data.immediateFamilyName1,"immediateFamilyName1",
+                {this._renderRow('直系亲属姓名1', data.immediateFamilyName1,"immediateFamilyName1",
                     () => {})}
-                {this._renderRow('非配偶直系亲属手机1', data.immediateFamilyPhone1,"immediateFamilyPhone1",
+                {this._renderRow('直系亲属手机1', data.immediateFamilyPhone1,"immediateFamilyPhone1",
                     () => {})}
-                {this._renderRow('非配偶直系亲属姓名2', data.immediateFamilyName2,"immediateFamilyName2",
+                {this._renderRow('直系亲属姓名2', data.immediateFamilyName2,"immediateFamilyName2",
                     () => {})}
-                {this._renderRow('非配偶直系亲属手机1', data.immediateFamilyPhone2,"immediateFamilyPhone2",
+                {this._renderRow('直系亲属手机1', data.immediateFamilyPhone2,"immediateFamilyPhone2",
                     () => {})}
                 {this._renderRow('咨询顾问服务代码', data.advisersCode,"advisersCode",
                     () => {})}

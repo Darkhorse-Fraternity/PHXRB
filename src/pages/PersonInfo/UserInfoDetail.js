@@ -258,7 +258,7 @@ export  default  class UserInfoDetail extends Component {
                             arr = ["福州", "厦门"]
                         }
                         if (point == "isMarriage") {
-                            arr = ["未婚", "已婚", "离婚"]
+                            arr = ["未婚", "已婚", "离婚","其他"]
                         }
                         this.showActionSheet(title, arr)
                     })}
