@@ -10,7 +10,8 @@
 
 export const pageConfig = {
     'TabView': {
-        title: '普惠信融', hideBackBtn: true, gestureResponseDistance: 0.0001,direction: 'vertical'
+        title: '普惠信融', hideBackBtn: true,
+        gestureResponseDistance: 0.0001,direction: 'vertical',hideNavBar:true
     },
     'LoginView': {
         title: '登录', hideNavBar: true, gestureResponseDistance: 0.0001,
@@ -24,7 +25,7 @@ export const pageConfig = {
     "LessonEvaluateView": {title: "课程评价",},
     "PersonInfo": {title: "设置",},
     "MyOrder": {title: "我的订单",},
-    "Setting": {title: "设置",},
+    "Setting": {title: "设置",hideNavBar:false},
     "FindPwd": {title: "找回密码",},
     'Feedback': {title: "意见反馈",},
     "ClassRecord": {title: "课时流水",},
@@ -48,7 +49,7 @@ export const pageConfig = {
     'iRate': {title: '评价'},
     'introDetail': {title: '回复'},
     'About': {title: '关于我们'},
-    'Home': {title: "普汇信融", direction: 'vertical'},
+    'Home': {title: "普汇信融", direction: 'vertical',hideNavBar:true},
     "Account": {title: '账户信息'},
     "UserInfo": {title: '我的信息'},
     "AssetsInfo": {title: "资产信息"},
@@ -59,8 +60,8 @@ export const pageConfig = {
     "Aptitude": {title: '我的资料'},
     "AptDetail": {title: '新增资料'},
     "Business": {title:"需求确认"},
-    "BusinessList":{title:'业务列表'},
-    "MemberList":{title:'会员列表'},
+    "BusinessList":{title:'业务列表',hideNavBar:false},
+    "MemberList":{title:'会员列表',hideNavBar:false,},
     "MemberInfo":{title:'会员信息'},
     "Demand":{title:"需求详情"},
     "Credit":{title:"信用信息"},

@@ -103,40 +103,40 @@ class RegPhone extends Component {
         // 判断手机号的正则
         if (this.state.phone.length == 0) {
             Toast.show('用户名或手机号码不能为空');
-            this.refs['2'].focus();
+            this.refs['0'].focus();
             return;
         }
 
 
-        if(this.state.idCardNo.length == 0){
-           const msg = "因为您没有登记身份证信息，无法使用该功能，如需要找回密码，请拨打服务热线：0591-87668360"
+        // if(this.state.idCardNo.length == 0){
+        //    const msg = "因为您没有登记身份证信息，无法使用该功能，如需要找回密码，请拨打服务热线：0591-87668360"
+        //
+        //     if(Platform.OS == 'ios'){
+        //        alert(msg)
+        //     }else {
+        //         Alert.alert(
+        //             '提示',
+        //             msg,
+        //             [
+        //                 {text: '确定', onPress: () =>{
+        //                 }},
+        //             ])
+        //     }
+        //     return;
+        // }
 
-            if(Platform.OS == 'ios'){
-               alert(msg)
-            }else {
-                Alert.alert(
-                    '提示',
-                    msg,
-                    [
-                        {text: '确定', onPress: () =>{
-                        }},
-                    ])
-            }
-            return;
-        }
 
-
-        if(!checkIDCard(this.state.idCardNo)){
-            Toast.show('不是正确的身份证验证码');
-            this.refs['2'].focus();
-            return;
-        }
+        // if(!checkIDCard(this.state.idCardNo)){
+        //     Toast.show('不是正确的身份证验证码');
+        //     this.refs['2'].focus();
+        //     return;
+        // }
         //判断验证码的正则
         const reg = /^\d{6}$/;
         const flag = reg.test(this.state.ymCode)
         if (!flag) {
             Toast.show('不是正确验证码');
-            this.refs['2'].focus();
+            this.refs['1'].focus();
             return;
         }
 
@@ -153,11 +153,9 @@ class RegPhone extends Component {
 
     focusNextField(nextField: string) {
 
-        if (nextField == '1') {
-            this.refs['2'].focus();
-        } else if (nextField == '2') {
-            this.refs['3'].focus();
-        }else {
+        if (nextField == '0') {
+            this.refs['1'].focus();
+        } else if (nextField == '1') {
             this._goRegist()
         }
     }
@@ -201,7 +199,7 @@ class RegPhone extends Component {
                 keyboardDismissMode='on-drag'>
 
                 {this._renderRowMain('手机号:', '请填入手机号码或用户名',
-                    (text) => this.setState({phone: text}), 'default', true, 11, "1"
+                    (text) => this.setState({phone: text}), 'default', true, 11, "0"
                 )}
 
 
@@ -211,7 +209,7 @@ class RegPhone extends Component {
                             this.setState({ymCode: text})
                         },
                         'numeric'
-                        , false, 6, "3"
+                        , false, 6, "1"
                     )}
 
                     <BCButton containerStyle={styles.buttonContainerStyle}
@@ -226,9 +224,9 @@ class RegPhone extends Component {
                     </BCButton>
                 </View>
 
-                {this._renderRowMain('身份证:', '请填入身份证',
-                    (text) => this.setState({idCardNo: text}), 'numeric', false, 50, "2"
-                )}
+                {/*{this._renderRowMain('身份证:', '请填入身份证',*/}
+                    {/*(text) => this.setState({idCardNo: text}), 'numeric', false, 50, "2"*/}
+                {/*)}*/}
 
                 <BCButton
                     disabled={!flag}

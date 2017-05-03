@@ -14,22 +14,39 @@ import {
     TouchableOpacity,
     Alert,
     ScrollView,
+    Platform,
+    Dimensions
 } from 'react-native'
+import Swiper from 'react-native-swiper'
+import * as immutable from 'immutable';
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
 import {placeholder} from '../../../source/'
-import {push, refresh} from '../../redux/nav'
+import {push} from '../../redux/nav'
 import {renderNavImageButton} from '../../util/viewUtil'
 //static displayName = Home
 import {Button, WhiteSpace} from 'antd-mobile';
 import {icon_class} from '../../../source'
 import {logo} from '../../../source'
+import {phxr_app_home} from '../../request/qzapi'
+import {request} from '../../redux/actions/req'
+var DeviceInfo = require('react-native-device-info');
 @connect(
     state =>({
-        //state:state.util.get()
+        data: state.req.get('phxr_app_home')
     }),
-    dispatch =>({
+    (dispatch, props) =>({
         //...bindActionCreators({},dispatch),
+        load: ()=> {
+            dispatch(async(dispatch, getState)=> {
+
+                // const uid = getState().login.data.userId
+                const params = phxr_app_home(DeviceInfo.getBuildNumber(), Platform.OS)
+                await dispatch(request('phxr_app_home', params))
+
+            })
+
+        }
     })
 )
 export  default  class Home extends Component {
@@ -37,39 +54,159 @@ export  default  class Home extends Component {
         super(props);
     }
 
-    static propTypes = {};
-    static defaultProps = {};
+    static propTypes = {
+        load: PropTypes.func.isRequired,
+    };
+    static defaultProps = {
+        data: immutable.fromJS({})
+    };
+
+    shouldComponentUpdate(nextProps: Object) {
+        return !immutable.is(this.props.data, nextProps.data)
+    }
 
     componentDidMount() {
         // const renderLeftComponent = renderNavImageButton(icon_class, 'left',
         //     ()=>push('PersonInfo'))
         // refresh({renderLeftComponent})
+        this.props.load()
     }
 
-    __gofinancing = ()=> {
 
-        push('MemberList')
+    __renderclassifyArea(classifyArea, i) {
+        return (
+            <TouchableOpacity
+                onPress={()=>{
+                         push({key:'WebView',url:classifyArea.activityUrl})
+                     }}
+                style={{marginLeft:30}}
+                key={'key_'+i}>
+                {classifyArea.ifRedShow == 1 && (<View style={styles.redTip}/>)}
+                <Image
+                    style={styles.classfyAreaImage}
+                    source={{uri: classifyArea.logoUrl}}/>
+                <View style={{flexDirection:'row', alignSelf: 'center',}}>
+                    <Text style={styles.classfyAreaText}>
+                        {classifyArea.activityName}
+                    </Text>
+
+                </View>
+            </TouchableOpacity>
+        )
     }
 
-    __myfinanced = ()=> {
-        push('BusinessList')
+    __renderHotArea(classifyArea, i) {
+        return (
+            <TouchableOpacity
+                style={{backgroundColor:'white',alignItems:'center'}}
+                onPress={()=>{
+                         push({key:'WebView',url:classifyArea.activityUrl})
+                     }}
+                key={'key_'+i}>
+                {classifyArea.ifRedShow == 1 && (<View style={[styles.redTip,{top:-6,right:6,}]}/>)}
+                <Image
+                    style={[styles.hotAreaImage]}
+                    source={{uri: classifyArea.logoUrl}}/>
+                <View style={{flexDirection:'row', alignSelf: 'center',}}>
+                    <Text style={styles.classfyAreaText}>
+                        {classifyArea.activityName}
+                    </Text>
+
+                </View>
+            </TouchableOpacity>
+        )
+    }
+
+    __renderHeader(): ReactElement<any> {
+        return (
+            <View style={styles.header}>
+                <Text style={styles.headerText}>普惠信融</Text>
+            </View>)
+    }
+
+    __renderNews(data): ReactElement<any> {
+        console.log('data:', data);
+        return (
+            <View
+                style={styles.news} height={40}
+                showsPagination={false} autoplayTimeout={10}
+                autoplay={true} removeClippedSubviews={true}>
+                {data.map((obj, i)=> {
+                    return (
+                        <TouchableOpacity
+                            onPress={()=>{
+                                    push({key:'WebView',url:obj.activityUrl})
+                                 }}
+                            key={'key_'+i}
+                            style={styles.newsSlide}>
+                            <Image style={styles.newsImage} source={{uri: obj.logoUrl}}/>
+                            <Text style={styles.newsText}>{obj.activityName} </Text>
+                        </TouchableOpacity>
+                    )
+                })}
+            </View>
+        )
     }
 
     render(): ReactElement<any> {
-        return (
-            <ScrollView style={[this.props.style, {backgroundColor:"white"}]}>
-                <View style={[this.props.style, styles.wrap]}>
-                    <Image source={logo} style={styles.logo}/>
+        const data = this.props.data.toJS().data
 
-                    <WhiteSpace/>
-                    <WhiteSpace/>
-                    <WhiteSpace/>
-                    <View style={{width:200}}>
-                        <Button onClick={this.__gofinancing}>我的会员</Button>
-                    </View>
-                    <WhiteSpace/>
-                    <View style={{width:200}}>
-                        <Button onClick={this.__myfinanced}>我的业务</Button>
+
+        if (!data) return (<View/>)
+
+        const activeArealist = data.activeArealist
+        const classifyArealist = data.classifyArealist
+        const hotArealist = data.hotArealist
+        const rollArealist = data.rollArealist
+        let n = (Dimensions.get('window').width - 10) / 80
+        n = Math.floor(n); // -1. Math.floor(-0.20); // -1.
+
+        const height = hotArealist.length / n * 100
+        return (
+            <ScrollView style={[this.props.style, {backgroundColor:"#dcdcdc",}]}>
+                {this.__renderHeader()}
+                <View style={styles.wrapper}>
+                    <Swiper
+                        index={0}//这个第三方库设定，只有初次才有效，
+                        //其后只有在tatol 不同时候，才重设
+
+                        style={styles.wrapper} height={200}
+                        showsPagination={true} autoplayTimeout={20}
+                        autoplay={true} removeClippedSubviews={true}>
+                        {activeArealist.map((image, i)=> {
+                            return (
+                                <TouchableOpacity
+                                    onPress={()=>{
+                                    push({key:'WebView',url:image.activityUrl})
+                                 }}
+                                    key={'key_'+i}
+                                    style={styles.slide}>
+                                    <Image style={{flex:1}} source={{uri: image.logoUrl}}/>
+                                </TouchableOpacity>
+                            )
+                        })}
+                    </Swiper>
+                </View>
+                {this.__renderNews(rollArealist)}
+                <View style={{backgroundColor:'white'}}>
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                        {classifyArealist.map((obj, i)=> {
+                            return this.__renderclassifyArea(obj, i)
+                        })}
+                    </ScrollView>
+                    <View style={styles.line}/>
+                    <View style={[styles.hotArea]}>
+                        {hotArealist.map((obj, i)=> {
+                            return (
+                                <View key={'key'+ i}
+                                      style={styles.hotAreaItem}
+                                >
+                                    {this.__renderHotArea(obj, i)}
+                                </View>
+
+                            )
+
+                        })}
                     </View>
                 </View>
             </ScrollView>
@@ -82,7 +219,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         paddingHorizontal: 20,
-        backgroundColor: 'white',
+        backgroundColor: '#dcdcdc',
+
     },
     logo: {
         marginTop: 30,
@@ -115,5 +253,104 @@ const styles = StyleSheet.create({
     tip: {
         marginTop: 20,
         fontSize: 12,
+    },
+    wrapper: {
+        backgroundColor: 'white',
+        shadowColor: 'black',
+        shadowOpacity: 0.3,
+        shadowOffset: {width: 0, height: 2},
+        elevation: 5,
+        zIndex: 10,
+    },
+    slide: {
+        flex: 1,
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        // backgroundColor: '#9DD6EB',
+    },
+    classfyAreaImage: {
+        width: 60,
+        height: 60,
+        marginTop: 20,
+    },
+    classfyAreaText: {
+        fontSize:13,
+        marginTop: 5,
+    },
+    line: {
+        height: StyleSheet.hairlineWidth,
+        width: Dimensions.get('window').width,
+        backgroundColor: 'rgba(200,200,200,0.2)',
+        marginTop: 30,
+    },
+    redTip: {
+        width: 10,
+        height: 10,
+        marginTop: 12,
+        borderRadius: 5,
+        backgroundColor: 'red',
+        marginLeft: 5,
+        zIndex: 10,
+        top: 10,
+        right: 5,
+        position: 'absolute',
+    },
+    hotArea: {
+        flexWrap: "wrap",
+        flexDirection: 'row',
+        width: Dimensions.get('window').width,
+
+    },
+    hotAreaItem: {
+        alignItems:'center',
+        justifyContent:'center',
+        width: (Dimensions.get('window').width) / 4,
+        height: (Dimensions.get('window').width) / 4,
+        borderColor: 'rgba(200,200,200,0.2)',
+        borderWidth: StyleSheet.hairlineWidth,
+    },
+    hotAreaImage: {
+        width: (Dimensions.get('window').width) / 8,
+        height: (Dimensions.get('window').width) /8,
+    },
+    header: {
+        height: 64,
+        width: Dimensions.get('window').width,
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: 'transparent',
+        zIndex: 100,
+        position: 'absolute',
+        borderBottomColor: 'rgba(255,255,255,0.5)',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+    },
+    headerText: {
+        marginTop: 10,
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+    news: {
+        backgroundColor: 'white',
+        marginBottom: 10,
+    },
+    newsSlide: {
+        flexDirection: 'row',
+        padding: 10,
+
+    },
+    newsImage: {
+        width: 20,
+        height: 20,
+
+    },
+    newsText: {
+        marginLeft: 10,
+        fontSize: 16,
+        color: '#006ddc',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: Dimensions.get('window').width - 50,
     }
 })

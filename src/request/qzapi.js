@@ -9,9 +9,10 @@ import { methodType, cacheType } from './'
  *   4.1 注册
  *
  */
-export function phxr_register(userName,phoneNo,pwd,registType,hasAdvisersCode,advisersCode,province,city) {
+export function phxr_register(userName,phoneNo,verificationCode,pwd,registType,hasAdvisersCode,advisersCode,province,city) {
     return {
-        path:'/phxr_register',
+        host:'phxrservice.iask.in:9090',
+        path:'/phxrProject/app/phxr/ucenter/register',
         method:methodType.post,
         params:{
             userName,
@@ -21,7 +22,8 @@ export function phxr_register(userName,phoneNo,pwd,registType,hasAdvisersCode,ad
             hasAdvisersCode,
             advisersCode,
             province,
-            city
+            city,
+            verificationCode
         },
     }
 }
@@ -32,16 +34,16 @@ export function phxr_register(userName,phoneNo,pwd,registType,hasAdvisersCode,ad
  *   4.2 登录
  *
  */
-export function phxr_login(phoneNo,pwd,verificationCode,userType) {
+export function phxr_login(phoneNo,pwd,userType) {
     const  r = /^\+?[1-9][0-9]*$/;
     const param = r.test(phoneNo)?{phoneNo}:{userName:phoneNo}
     return {
-        path:'/phxr_login',
+        host:'phxrservice.iask.in:9090',
+        path:'/phxrProject/app/phxr/ucenter/vipLogin',
         method:methodType.post,
         params:{
             pwd,
             userType,
-            verificationCode,
             ...param,
         },
     }
@@ -51,13 +53,13 @@ export function phxr_login(phoneNo,pwd,verificationCode,userType) {
  *   4.3 忘记密码
  *
  */
-export function phxr_forget_pwd(phoneNo,idCardNo,verificationCode) {
+export function phxr_forget_pwd(phoneNo,verificationCode) {
     return {
-        path:'/phxr_forget_pwd',
+        host:'phxrservice.iask.in:9090',
+        path:'/phxrProject/app/phxr/ucenter/vipForgetPwd',
         method:methodType.post,
         params:{
             phoneNo,
-            idCardNo,
             verificationCode
         },
     }
@@ -496,3 +498,20 @@ export function phxr_account_active(userId,accountType) {
     }
 }
 
+
+
+/*
+ *   4.33 首页接口
+ *
+ */
+export function phxr_app_home(versionCode,platformType) {
+    return {
+        host:'phxrservice.iask.in:9090',
+        path:'/phxrProject/app/phxr/apphome/appList',
+        method:methodType.post,
+        params:{
+            versionCode,
+            platformType,
+        },
+    }
+}

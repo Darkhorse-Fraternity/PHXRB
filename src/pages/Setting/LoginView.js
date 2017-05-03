@@ -138,7 +138,7 @@ class RegPhone extends Component {
         if (nextField == '1') {
             this.refs['2'].focus();
         } else if (nextField == '2') {
-            this.refs['2'].focus();
+            this._login()
         } else if (nextField == '3') {
             this._login()
         }
@@ -176,7 +176,7 @@ class RegPhone extends Component {
             this.state.time == 60 && !this.state.isTap;
         const reg = /^\d{6}$/;
 
-        const flag = reg.test(this.state.ymCode) && this.state.phone.length > 0 && this.state.password.length > 0
+        const flag =  this.state.phone.length > 0 && this.state.password.length > 0
 
         return (
             <ScrollView
@@ -196,26 +196,26 @@ class RegPhone extends Component {
                     (text) => this.setState({password: text}), 'default', false, 50, "1", true
                 )}
 
-                <View style={{flexDirection:'row'}}>
-                    {this._renderRowMain('验证码:', '输入您收到的验证码',
-                        (text) => {
-                            this.setState({ymCode: text})
-                        },
-                        'numeric'
-                        , false, 6, "3"
-                    )}
+                {/*<View style={{flexDirection:'row'}}>*/}
+                    {/*{this._renderRowMain('验证码:', '输入您收到的验证码',*/}
+                        {/*(text) => {*/}
+                            {/*this.setState({ymCode: text})*/}
+                        {/*},*/}
+                        {/*'numeric'*/}
+                        {/*, false, 6, "3"*/}
+                    {/*)}*/}
 
-                    <BCButton containerStyle={styles.buttonContainerStyle}
-                              disabled={!codeEnable}
-                              loaded={this.state.timeLoad}
-                        //styleDisabled={{fontWeight:'normal'}}
-                              onPress={this._onClickCode.bind(this)}
-                              style={{fontWeight:'400',fontSize:14}}
-                    >
-                        {this.state.time == 60 || this.state.time == 0 ? '获取验证码' :
-                        this.state.time.toString() + '秒'}
-                    </BCButton>
-                </View>
+                    {/*<BCButton containerStyle={styles.buttonContainerStyle}*/}
+                              {/*disabled={!codeEnable}*/}
+                              {/*loaded={this.state.timeLoad}*/}
+                        {/*//styleDisabled={{fontWeight:'normal'}}*/}
+                              {/*onPress={this._onClickCode.bind(this)}*/}
+                              {/*style={{fontWeight:'400',fontSize:14}}*/}
+                    {/*>*/}
+                        {/*{this.state.time == 60 || this.state.time == 0 ? '获取验证码' :*/}
+                        {/*this.state.time.toString() + '秒'}*/}
+                    {/*</BCButton>*/}
+                {/*</View>*/}
 
 
                 <BCButton

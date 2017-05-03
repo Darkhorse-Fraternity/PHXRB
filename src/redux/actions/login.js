@@ -83,7 +83,7 @@ export function login(state: Object): Function {
 
         dispatch(_loginRequest());
 
-        const parame = phxr_login(state.phone,state.password,state.ymCode,1)
+        const parame = phxr_login(state.phone,state.password,1)
 
         return request(parame, (response)=> {
 
@@ -114,7 +114,7 @@ export function register(state: Object): Function {
 // userName,phoneNo,pwd,registType,hasAdvisersCode,advisersCode,Province,city
     const cityCode = state.clicked == '厦门' ? '592' : '591'
 
-    const params = phxr_register(state.userName, state.phone,
+    const params = phxr_register(state.userName, state.phone,state.ymCode,
         state.password, "1", "0", '', "0", cityCode);
 
     return dispatch => {
@@ -140,7 +140,7 @@ export function iForgot(state:Object):Function {
 
         dispatch(_loginRequest());
 
-        const parame = phxr_forget_pwd(state.phone,state.idCardNo,state.ymCode)
+        const parame = phxr_forget_pwd(state.phone,state.ymCode)
 
         return request(parame, (response)=> {
 

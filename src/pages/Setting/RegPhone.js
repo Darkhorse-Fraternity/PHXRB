@@ -18,6 +18,7 @@ import {BCButton} from '../../components/Base/WBButton'
 import Button from 'react-native-button'
 import {request} from '../../request'
 import {requestSmsCode} from '../../request/leanCloud'
+import {phxr_verification_code} from '../../request/qzapi'
 import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
 import {connect} from 'react-redux'
 import {navigateReplaceIndex, navigatePush} from '../../redux/actions/nav'
@@ -38,8 +39,8 @@ class RegPhone extends Component {
             timeLoad: false,
             userName: '',
             password: '',
-            passwordAgain:"",
-            clicked:'福州'
+            passwordAgain: "",
+            clicked: '福州'
         };
     }
 
@@ -63,18 +64,20 @@ class RegPhone extends Component {
 
         this.setState({timeLoad: true});
         var self = this;
-        requestSmsCode.params.mobilePhoneNumber = this.state.phone;
-        this.requestHandle = request(requestSmsCode, function (response) {
-            if (response.statu) {
-                console.log('test:', response)
+        const param = phxr_verification_code(this.state.phone, '6')
+        this.requestHandle = request(param, function (response) {
+            if (response.data.rspCode == "0000") {
+                //console.log('test:', response)
                 Toast.show("发送成功!");
-                self.refs[2] && self.refs[2].focus()
+                self.refs[3] && self.refs[3].focus()
                 if (self.state.isTap == false) {
                     self.setState({isTap: true});
                     self.id = setInterval(function () {
                         self.time()
                     }, 1000)
                 }
+            } else {
+                Toast.show(response.data.rspMsg);
             }
             self.setState({timeLoad: false});
         });
@@ -102,16 +105,15 @@ class RegPhone extends Component {
     _goRegist() {
 
         //判断用户名
-        if(this.state.userName.length == 0){
+        if (this.state.userName.length == 0) {
             Toast.show('用户名不能为空');
             this.refs['1'].focus();
             return;
         }
 
 
-
         var r = /^\+?[1-9][0-9]*$/;
-        if(r.test(this.state.userName)){
+        if (r.test(this.state.userName)) {
             Toast.show('用户名必须含有字母');
             this.refs['1'].focus();
             return;
@@ -124,30 +126,30 @@ class RegPhone extends Component {
             return;
         }
         //判断验证码的正则
-        // const reg = /^\d{6}$/;
-        // const flag = reg.test(this.state.ymCode)
-        // if (!flag) {
-        //     Toast.show('不是正确验证码');
-        //     this.refs['2'].focus();
-        //     return;
-        // }
-
-
-        if(this.state.password.length < 6){
-            Toast.show('密码需要大于6位数');
+        const reg = /^\d{6}$/;
+        const flag = reg.test(this.state.ymCode)
+        if (!flag) {
+            Toast.show('不是正确验证码');
             this.refs['3'].focus();
             return;
         }
 
-        if(this.state.password != this.state.passwordAgain){
-            Toast.show('密码确定与密码不一致！');
+
+        if (this.state.password.length < 6) {
+            Toast.show('密码需要大于6位数');
             this.refs['4'].focus();
+            return;
+        }
+
+        if (this.state.password != this.state.passwordAgain) {
+            Toast.show('密码确定与密码不一致！');
+            this.refs['5'].focus();
             return;
         }
 
 
         this.props.mRegister(this.state);
-    //
+        //
     }
 
 
@@ -170,7 +172,7 @@ class RegPhone extends Component {
                 wrapProps,
             },
             (buttonIndex) => {
-                if(buttonIndex != BUTTONS.length - 1){
+                if (buttonIndex != BUTTONS.length - 1) {
                     this.setState({clicked: BUTTONS[buttonIndex]});
                 }
 
@@ -189,7 +191,7 @@ class RegPhone extends Component {
 
     _renderRowMain(title: string, placeholder: string, onChangeText: Function,
                    boardType: PropTypes.oneOf = 'default', autoFocus: bool = false, maxLength: number = 16,
-                   ref: string,secureTextEntry:bool=false) {
+                   ref: string, secureTextEntry: bool = false) {
 
         return (
             <View style={styles.rowMainStyle}>
@@ -243,61 +245,65 @@ class RegPhone extends Component {
                 keyboardShouldPersistTaps="always"
                 keyboardDismissMode='interactive'>
 
-                    {this._renderRowMain('用户名:', '请填入用户名',
-                        (text) => this.setState({userName: text}), 'default', true, 16, "1"
+                {this._renderRowMain('用户名:', '请填入用户名',
+                    (text) => this.setState({userName: text}), 'default', true, 16, "1"
+                )}
+
+                {this._renderRowMain('手机号:', '请填入手机号码',
+                    (text) => this.setState({phone: text}), 'numeric', false, 11, "2"
+                )}
+
+
+
+                <View style={{flexDirection:'row'}}>
+                    {this._renderRowMain('验证码:', '输入您收到的验证码',
+                        (text) => {
+                            this.setState({ymCode: text})
+                        },
+                        'numeric'
+                        , false, 6, "3"
                     )}
 
-                    {this._renderRowMain('手机号:', '请填入手机号码',
-                        (text) => this.setState({phone: text}), 'numeric', false, 11, "2"
-                    )}
-
-                    {this._renderRow('请选择所在城市:', this.state.clicked, (title) => {
-                        this.showActionSheet(title, ["福州", "厦门"])
-                    })}
-                    {this._renderRowMain('密码:', '请输入密码',
-                        (text) => this.setState({password: text}), 'default', false, 50, "3",true
-                    )}
-                    {this._renderRowMain('确认密码:', '请再次确认密码',
-                        (text) => this.setState({passwordAgain: text}), 'default', false, 50, "4",true
-                    )}
-
-                    {/*<View style={{flexDirection:'row'}}>*/}
-                    {/*{this._renderRowMain('验证码:', '输入您收到的验证码',*/}
-                    {/*(text) => {*/}
-                    {/*this.setState({ymCode: text})*/}
-                    {/*},*/}
-                    {/*'numeric'*/}
-                    {/*, false, 6, "2"*/}
-                    {/*)}*/}
-
-                    {/*<BCButton containerStyle={styles.buttonContainerStyle}*/}
-                    {/*disabled={!codeEnable}*/}
-                    {/*loaded={this.state.timeLoad}*/}
-                    {/*//styleDisabled={{fontWeight:'normal'}}*/}
-                    {/*onPress={this._onClickCode.bind(this)}*/}
-                    {/*style={{fontWeight:'400',fontSize:14}}*/}
-                    {/*>*/}
-                    {/*{this.state.time == 60 || this.state.time == 0 ? '获取验证码' :*/}
-                    {/*this.state.time.toString() + '秒'}*/}
-                    {/*</BCButton>*/}
-                    {/*</View>*/}
-
-
-                    <BCButton
-                        //disabled={!flag}
-                        isLoad={this.props.state.loaded}
-                        onPress={this._goRegist.bind(this)}
-                        containerStyle={styles.buttonContainerStyle2}>
-                        注册
+                    <BCButton containerStyle={styles.buttonContainerStyle}
+                              disabled={!codeEnable}
+                              loaded={this.state.timeLoad}
+                        //styleDisabled={{fontWeight:'normal'}}
+                              onPress={this._onClickCode.bind(this)}
+                              style={{fontWeight:'400',fontSize:14}}
+                    >
+                        {this.state.time == 60 || this.state.time == 0 ? '获取验证码' :
+                        this.state.time.toString() + '秒'}
                     </BCButton>
-                    <View style={styles.bottom}>
-                        <Text style={styles.protocolPre}>点击注册,即表示已阅读并同意</Text>
-                        <Button
-                            onPress={this._gowebView}
-                            style={styles.protocolSuf}>
-                            《普汇信融用户服务条款》
-                        </Button>
-                    </View>
+                </View>
+
+                {this._renderRow('请选择所在城市:', this.state.clicked, (title) => {
+                    this.showActionSheet(title, ["福州", "厦门"])
+                })}
+                {this._renderRowMain('密码:', '请输入密码',
+                    (text) => this.setState({password: text}), 'default', false, 50, "4", true
+                )}
+                {this._renderRowMain('确认密码:', '请再次确认密码',
+                    (text) => this.setState({passwordAgain: text}), 'default', false, 50, "5", true
+                )}
+
+
+
+
+                <BCButton
+                    //disabled={!flag}
+                    isLoad={this.props.state.loaded}
+                    onPress={this._goRegist.bind(this)}
+                    containerStyle={styles.buttonContainerStyle2}>
+                    注册
+                </BCButton>
+                <View style={styles.bottom}>
+                    <Text style={styles.protocolPre}>点击注册,即表示已阅读并同意</Text>
+                    <Button
+                        onPress={this._gowebView}
+                        style={styles.protocolSuf}>
+                        《普汇信融用户服务条款》
+                    </Button>
+                </View>
             </ScrollView>
         );
     }

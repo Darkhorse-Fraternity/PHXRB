@@ -69,13 +69,13 @@ class BaseWebView extends Component {
     }
 
     componentDidMount() {
-        this.props.refresh({renderLeftComponent:this.renderLeftComponent.bind(this)});
+        this.props.refresh({renderLeftComponent:this.renderLeftComponent.bind(this),title:'加载中。。'});
     }
 
     _onNavigationStateChange(state:Object){
         // console.log('state:',state);
-        if(state.title && state.title.length){
-            this.props.refresh({title:state.title});
+        if(state.title && state.title.length > 0 ){
+            this && this.props.refresh({title:state.title});
         }
         this.canGoBack = state.canGoBack;
     }
