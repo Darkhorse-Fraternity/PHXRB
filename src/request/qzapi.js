@@ -11,7 +11,7 @@ import { methodType, cacheType } from './'
  */
 export function phxr_register(userName,phoneNo,verificationCode,pwd,registType,hasAdvisersCode,advisersCode,province,city) {
     return {
-        host:'phxrservice.iask.in:9090',
+        host:'103.236.253.138:9090',
         path:'/phxrProject/app/phxr/ucenter/register',
         method:methodType.post,
         params:{
@@ -38,7 +38,7 @@ export function phxr_login(phoneNo,pwd,userType) {
     const  r = /^\+?[1-9][0-9]*$/;
     const param = r.test(phoneNo)?{phoneNo}:{userName:phoneNo}
     return {
-        host:'phxrservice.iask.in:9090',
+        host:'103.236.253.138:9090',
         path:'/phxrProject/app/phxr/ucenter/vipLogin',
         method:methodType.post,
         params:{
@@ -55,7 +55,7 @@ export function phxr_login(phoneNo,pwd,userType) {
  */
 export function phxr_forget_pwd(phoneNo,verificationCode) {
     return {
-        host:'phxrservice.iask.in:9090',
+        host:'103.236.253.138:9090',
         path:'/phxrProject/app/phxr/ucenter/vipForgetPwd',
         method:methodType.post,
         params:{
@@ -218,7 +218,7 @@ export function phxr_submit_person_house(params) {
  */
 export function phxr_del_person_house(userId,houseId) {
     return {
-        path:'//phxr_del_person_house',
+        path:'/phxr_del_person_house',
         method:methodType.post,
         params:{
             userId,
@@ -506,12 +506,27 @@ export function phxr_account_active(userId,accountType) {
  */
 export function phxr_app_home(versionCode,platformType) {
     return {
-        host:'phxrservice.iask.in:9090',
+        host:'103.236.253.138:9090',
         path:'/phxrProject/app/phxr/apphome/appList',
         method:methodType.post,
         params:{
             versionCode,
-            platformType,
+            platformType:platformType == 'ios'? "0" : "1",
+            appType:1,
+        },
+    }
+}
+
+export function phxr_app_loginOut(phoneNo) {
+    const  r = /^\+?[1-9][0-9]*$/;
+    const param = r.test(phoneNo)?{phoneNo}:{userName:phoneNo,}
+    return {
+        host:'103.236.253.138:9090',
+        path:'/phxrProject/app/phxr/ucenter/loginOut',
+        method:methodType.post,
+        params:{
+            ...param,
+            userType:1,
         },
     }
 }

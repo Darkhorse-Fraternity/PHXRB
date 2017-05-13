@@ -12,7 +12,8 @@ import  {
     LayoutAnimation,
     TouchableOpacity,
     NativeModules,
-    Image
+    Image,
+    Dimensions
 } from 'react-native'
 import {OS} from '../../util/';
 
@@ -22,12 +23,12 @@ import {request} from '../../request'
 import {phxr_login, phxr_verification_code} from '../../request/qzapi'
 import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
 import {connect} from 'react-redux'
-import {navigateReplaceIndex, navigatePush} from '../../redux/actions/nav'
+import {navigatePop, navigatePush} from '../../redux/actions/nav'
 import {login} from '../../redux/actions/login'
 import {checkPhoneNum, Toast} from '../../util'
 import WBButton from '../../components/Base/WBButton'
 const webUrl = 'https://static.dayi.im/static/fudaojun/rule.html?version=20160603182000';
-import {logo} from '../../../source'
+import {logo, placeholder} from '../../../source'
 class RegPhone extends Component {
     constructor(props: Object) {
         super(props);
@@ -144,13 +145,14 @@ class RegPhone extends Component {
         }
     }
 
-    _renderRowMain(title: string, placeholder: string, onChangeText: Function,
+    _renderRowMain(image: number, title: string, placeholder: string, onChangeText: Function,
                    boardType: PropTypes.oneOf = 'default', autoFocus: bool = false, maxLength: number = 16,
                    ref: string, secureTextEntry = false) {
 
         return (
             <View style={styles.rowMainStyle}>
                 {/*<Text style={styles.textStyle}>{title}</Text>*/}
+                <Image source={image} style={{marginRight:15}}/>
                 <TextInput
                     ref={ref}
                     placeholderTextColor="rgba(180,180,180,1)"
@@ -176,72 +178,71 @@ class RegPhone extends Component {
             this.state.time == 60 && !this.state.isTap;
         const reg = /^\d{6}$/;
 
-        const flag =  this.state.phone.length > 0 && this.state.password.length > 0
+        const flag = this.state.phone.length > 0 && this.state.password.length > 0
 
+
+        const logo2 = require('../../../source/img/login/signin.png')
+        const back = require('../../../source/img/login/btn_back.png')
+        const user = require('../../../source/img/login/ico_user.png')
+        const password = require('../../../source/img/login/ico_password.png')
         return (
-            <ScrollView
-                style={styles.container}
+            <View
+                style={[styles.container,{justifyContent:'space-between'}]}
                 keyboardShouldPersistTaps="always"
                 keyboardDismissMode='interactive'>
-
-                <Image source={logo} style={styles.logo}/>
-
-
-                {this._renderRowMain('用户名/手机号:', '请填入用户名或手机号码',
-                    (text) => this.setState({phone: text}), 'default', false, 16, "2"
-                )}
-
-
-                {this._renderRowMain('密码:', '请输入密码',
-                    (text) => this.setState({password: text}), 'default', false, 50, "1", true
-                )}
-
-                {/*<View style={{flexDirection:'row'}}>*/}
-                    {/*{this._renderRowMain('验证码:', '输入您收到的验证码',*/}
-                        {/*(text) => {*/}
-                            {/*this.setState({ymCode: text})*/}
-                        {/*},*/}
-                        {/*'numeric'*/}
-                        {/*, false, 6, "3"*/}
-                    {/*)}*/}
-
-                    {/*<BCButton containerStyle={styles.buttonContainerStyle}*/}
-                              {/*disabled={!codeEnable}*/}
-                              {/*loaded={this.state.timeLoad}*/}
-                        {/*//styleDisabled={{fontWeight:'normal'}}*/}
-                              {/*onPress={this._onClickCode.bind(this)}*/}
-                              {/*style={{fontWeight:'400',fontSize:14}}*/}
-                    {/*>*/}
-                        {/*{this.state.time == 60 || this.state.time == 0 ? '获取验证码' :*/}
-                        {/*this.state.time.toString() + '秒'}*/}
-                    {/*</BCButton>*/}
-                {/*</View>*/}
+                <View>
+                    <TouchableOpacity style={{width:50,
+                           height:50,
+                            top:35,
+                           left:15,
+                           zIndex:100,
+                           position:'absolute'}} onPress={()=>this.props.pop()}>
+                        <Image source={back}
+                        />
+                    </TouchableOpacity>
+                    <Image source={logo2} style={styles.logo}/>
 
 
-                <BCButton
-                    onPress={this._login}
-                    containerStyle={styles.cbutton}
-                    disabled={!flag}
-                    isLoad={this.props.state.loaded}
-                >
-                    登 录
-                </BCButton>
+                    <View style={{height:20}}/>
+                    {this._renderRowMain(user, '用户名/手机号:', '请填入用户名或手机号码',
+                        (text) => this.setState({phone: text}), 'default', false, 16, "2"
+                    )}
 
+
+                    {this._renderRowMain(password, '密码:', '请输入密码',
+                        (text) => this.setState({password: text}), 'default', false, 50, "1", true
+                    )}
+
+
+                    <BCButton
+                        onPress={this._login}
+                        containerStyle={styles.cbutton}
+                        disabled={!flag}
+                        isLoad={this.props.state.loaded}
+                    >
+                        登 录
+                    </BCButton>
+
+
+                    <TouchableOpacity
+
+                        onPress={()=>this.props.push('FindPwd')}
+                        style={styles.mbutton}
+                    >
+                        <Text style={styles.buttonTextColor}> {'忘记密码?'} </Text>
+                    </TouchableOpacity>
+                </View>
                 <WBButton
                     onPress={()=>this.props.push('RegPhone')}
                     style={{color:mainColor}}
                     containerStyle={[styles.creactbutton,{marginTop:10}]}
                 >
-                    注 册
+                    <Text style={{alignSelf:'center'}}>
+                        <Text style={{color:'rgb(150,150,150)'}}>还没有账号？</Text>
+                        <Text>立即注册</Text>
+                    </Text>
                 </WBButton>
-                <TouchableOpacity
-
-                    onPress={()=>this.props.push('FindPwd')}
-                    style={styles.mbutton}
-                >
-                    <Text style={styles.buttonTextColor}> {'>  忘记密码  <'} </Text>
-                </TouchableOpacity>
-            </ScrollView>
+            </View>
         );
     }
 }
@@ -253,26 +254,28 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
-        paddingTop: 20,
+        // paddingTop: 20,
+
     },
 
     logo: {
-        marginTop: 30,
-        width: 200,
-        height: 120,
-        alignSelf: 'center'
+        marginTop: 0,
+        width: Dimensions.get('window').width,
+        height: 200,
     },
 
     rowMainStyle: {
 
-        flex: 1,
+        // flex: 1,
         height: 40,
         marginTop: 10,
-        backgroundColor: 'rgba(200,200,200,0.1)',
-        paddingHorizontal: 15,
+        // backgroundColor: 'rgba(200,200,200,0.1)',
+        paddingHorizontal: 5,
         flexDirection: 'row',
         alignItems: 'center',
-        marginHorizontal: 15,
+        marginHorizontal: 30,
+        borderBottomColor: 'rgb(200,200,200)',
+        borderBottomWidth: StyleSheet.hairlineWidth
     },
     buttonContainerStyle: {
         marginRight: 15,
@@ -337,15 +340,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     buttonTextColor: {
-        color: mainColor,
+        color: 'rgb(150,150,150)',
         fontSize: 13,
-        textAlign: "center",
+        // textAlign: "center",
     },
 
     cbutton: {
-        marginLeft: 29 / 2,
-        marginRight: 29 / 2,
-        marginTop: 17,
+        marginLeft: 29,
+        marginRight: 29,
+        marginTop: 30,
         height: 40,
         justifyContent: 'center',
 
@@ -354,18 +357,20 @@ const styles = StyleSheet.create({
         marginTop: 12,
         height: 40,
         width: 150,
-        alignSelf: 'center',
+        marginLeft: 30
+        // alignSelf: 'center',
     },
 
     creactbutton: {
-        borderColor: mainColor,
+        borderColor: 'rgb(150,150,150)',
         borderWidth: StyleSheet.hairlineWidth,
-        marginLeft: 29 / 2,
-        marginRight: 29 / 2,
+        marginLeft: 29,
+        marginRight: 29,
         marginTop: 17,
         height: 40,
         justifyContent: 'center',
         borderRadius: 3,
+        marginBottom:20,
     },
 
 
@@ -385,6 +390,9 @@ const mapDispatchToProps = (dispatch) => {
         push: (key)=> {
             //index 为空 则为当前index
             dispatch(navigatePush(key));
+        },
+        pop: ()=> {
+            dispatch(navigatePop())
         },
         login: (state)=> {
             dispatch(login(state));

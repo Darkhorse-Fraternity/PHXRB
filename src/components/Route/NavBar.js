@@ -50,7 +50,7 @@ export default class NavBar extends Component {
             {/*<Image style={styles.button}
              resizeMode = 'contain'
              source={require('../../source/img/xy_arrow/xy_arrow.png')} />*/}
-            <View style={[styles.arrowView,{borderColor:props.scene.route.tintColor||'#8c8c85'}]}/>
+            <View style={[styles.arrowView,{borderColor:"white"}]}/>
           </TouchableOpacity>
       );
     }
@@ -77,7 +77,7 @@ export default class NavBar extends Component {
     if (title && title.length) {
       return (
           <NavigationHeader.Title textStyle={[styles.navigationHeaderTitle,
-        {color:props.scene.route.tintColor||'black'}]}>
+        {color:props.scene.route.tintColor||'white'}]}>
             {title}
           </NavigationHeader.Title>
       );
@@ -99,7 +99,7 @@ export default class NavBar extends Component {
       this.barStyleStatu = 'light-content'
 
     } else if (this.barStyleStatu != 'default') {
-      Platform.OS == 'ios' && StatusBar.setBarStyle('default', false);
+      // Platform.OS == 'ios' && StatusBar.setBarStyle('default', false);
       console.log('scene1111:', scene);
       this.barStyleStatu = 'default'
     }
@@ -120,7 +120,7 @@ export default class NavBar extends Component {
             {...this.props}
             //ref={header=>NavigationManager.navigationHeader=header}
             renderTitleComponent={this._renderTitleComponent}
-            style={[styles.navigationHeader,{backgroundColor:scene.route.barColor||'white'}]}
+            style={[styles.navigationHeader,{backgroundColor:scene.route.barColor||'#0085d9'}]}
             renderRightComponent={renderRightComponent}
             renderLeftComponent={renderLeftComponent}
             onNavigateBack={this._backEvent}
@@ -134,12 +134,12 @@ export default class NavBar extends Component {
 
 const styles = StyleSheet.create({
   navigationHeader: {
-    backgroundColor: 'white',
+    backgroundColor: '#0085d9',
     height: Platform.OS === 'ios' ? 64 : 48,
     borderBottomWidth: 0,
   },
   navigationHeaderTitle: {
-    color: 'black',
+    color: 'white',
     textAlign: 'center',
     fontSize: 17,
   },
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   arrowView: {
     borderBottomWidth: StyleSheet.hairlineWidth * 2,
     borderRightWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: '#8c8c85',
+    borderColor: 'white',
     transform: [{rotate: '135deg'}],
     marginLeft: 15,
     width: 10,

@@ -41,8 +41,13 @@ import MemberUserInfo from '../../pages/PHXR/MemberUserInfo'
 import MemberUserInfoDetail from '../../pages/PHXR/MemberUserInfoDetail'
 import FinanceTip from '../../pages/PHXR/FinanceTip'
 import FilesScan from '../../pages/PHXR/FilesScan'
+
+import {GW,MSG,ZG} from '../../pages/PHXR/PHXRWebView'
 export  const PageMap =
 {
+  GW,
+  MSG,
+  ZG,
   FilesScan,
   FinanceTip,
   MemberUserInfoDetail,

@@ -7,7 +7,7 @@
 
 import {request} from '../../request';
 // import {requestLogin, requestUsersByMobilePhone,getUserByID} from '../../request/leanCloud';
-import  {phxr_register,phxr_login,phxr_forget_pwd} from '../../request/qzapi'
+import  {phxr_register,phxr_login,phxr_forget_pwd,phxr_app_loginOut} from '../../request/qzapi'
 import {saveAccount, saveUserData, loadAccount, clearUserData} from '../../util/XGlobal'
 import {
     navigatePush,
@@ -94,7 +94,8 @@ export function login(state: Object): Function {
                 console.log('test:', '1111');
                 dispatch(_loginSucceed(response.data.result));
                 console.log('test:', '2222');
-                dispatch(navigatePush('TabView'));
+                // dispatch(navigatePush('TabView'));
+                dispatch(navigatePop())
             } else {
                 Toast.show(response.data.rspMsg)
                 dispatch(_loginFailed(response));
@@ -193,7 +194,20 @@ function _loginFailed(response: Object): Object {
 export function logout(): Function {
     clearUserData();
 
-    return dispatch => {
+
+
+    return (dispatch,getState) => {
+        const phone = getState().login.data.phoneNo
+        const param = phxr_app_loginOut(phone)
+        request(param,(res)=>{
+            if (res.data.rspCode == "0000") {
+                //加入sessionToken
+
+            } else {
+
+            }
+            console.log('res:', res);
+        })
         dispatch(logout2());//先退出
         return loadAccount(ret => {
             //加载本地数据。

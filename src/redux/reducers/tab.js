@@ -17,17 +17,25 @@ import {
  * @type {Object}
  */
 
-    // const my_lesson = require('../../../source/img/xy_courses/xy_courses.png');
-    // const my_lesson_hover = require('../../../source/img/xy_courses_hover/xy_courses_hover.png');
-    // const person_center = require('../../../source/img/xy_person/xy_person.png');
-    // const person_center_hover = require('../../../source/img/xy_person_hover/xy_person_hover.png');
+const menu_adviser = require('../../../source/img/tabs/menu_adviser.png');
+const menu_adviser_click = require('../../../source/img/tabs/menu_adviser_click.png');
+const menu_home = require('../../../source/img/tabs/menu_home.png');
+const menu_home_click = require('../../../source/img/tabs/menu_home_click.png');
+const menu_leader = require('../../../source/img/tabs/menu_leader.png');
+const menu_leader_click = require('../../../source/img/tabs/menu_leader_click.png');
+const menu_my = require('../../../source/img/tabs/menu_my.png');
+const menu_my_click = require('../../../source/img/tabs/menu_my_click.png');
+const menu_news = require('../../../source/img/tabs/menu_news.png');
+const menu_news_click = require('../../../source/img/tabs/menu_news_click.png');
+
 const unLoginTabs = [
 
-        {key: 'Home', name: 'logo-freebsd-devil', title: '首页'},
-        {key: 'MemberList', name: 'logo-freebsd-devil', title: '会员'},
-        {key: 'BusinessList', name: 'logo-freebsd-devil', title: '业务'},
-        {key: 'PersonInfo', name: 'logo-freebsd-devil', title: '我的'},
-    ]
+    {key: 'Home', selectImage: menu_home, unSelectImage: menu_home_click, title: '首页'},
+    {key: 'GW', selectImage: menu_adviser, unSelectImage: menu_adviser_click, title: '顾问'},
+    {key: 'ZG', selectImage: menu_leader, unSelectImage: menu_leader_click, title: '业务'},
+    {key: 'MSG', selectImage: menu_news, unSelectImage: menu_news_click, title: '消息'},
+    {key: 'PersonInfo', selectImage: menu_my, unSelectImage: menu_my_click, title: '我的'},
+]
 
 const loginTabs = unLoginTabs
 
@@ -45,7 +53,7 @@ function tabState(state = initialTabState, action) {
             return {
                 ...state,
                 index: action.index,
-                navState:action.navState,
+                navState: action.navState,
             }
         // case LOGIN_SUCCEED:
         //

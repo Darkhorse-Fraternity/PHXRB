@@ -24,7 +24,9 @@ import {routerReducer } from 'react-router-redux'
    if (action.type === 'LOGOUT') {
  	// 	umeng.pageEnd('设置');
  	// 	umeng.pageStart("登录");
-     state = undefined
+      //  const {tab} = state
+     // state = {tab}
+       //这边没有把数据清空 不安全。
    }
 
  	if (action.type === "NAV_PUSH") {

@@ -16,13 +16,16 @@ export function request(key: string, params: Object,callbacll:Function): Functio
             callbacll && callbacll(response)
             console.log('response:',response);
             if(response.rspCode == "0000"){
+                console.log('test:', response.rspCode == '0000');
                 dispatch(requestSucceed(key, response.result))
             }else{
                 Toast.show(response.rspMsg+"")
+
                 dispatch(requestFailed(key, response.rspMsg))
             }
 
         }).catch(e => {
+            Toast.show(e.message)
             dispatch(requestFailed(key, e.message))
         })
     }

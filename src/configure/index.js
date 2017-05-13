@@ -4,8 +4,8 @@
 
 import {LeanCloud_APP_ID,LeanCloud_APP_KEY} from './leancloud'
 const defaultHost = !__DEV__ ?
-    /*release*/   '103.236.253.138:8088/phxr' :
-    /*debug*/     '103.236.253.138:8088/phxr'
+    /*release*/   '103.236.253.138:9090/phxr' :
+    /*debug*/     '103.236.253.138:9090/phxr'
     //'task.dayi.im'
 
 //
@@ -56,7 +56,7 @@ const tag = 1;
 
 //主题色彩
 const themeColorConfig = {
-    mainColor: '#f26355', //主色彩，用于navbar 按钮颜色等、
+    mainColor: '#0085d9', //主色彩，用于navbar 按钮颜色等、
     backViewColor: '#f7f5f6',
     lightMainColor: '#c18379', //主色彩，用于navbar 按钮颜色等、
     containingColor: '#ffffff', //内含主色彩

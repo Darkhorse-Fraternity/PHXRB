@@ -142,7 +142,7 @@ class BaseWebView extends Component {
                     ref={WEBVIEW_REF}
                     automaticallyAdjustContentInsets={false}
                     style={styles.webView}
-                    source={{uri: this.props.scene.route.url}}
+                    source={{uri: this.props.scene.route.url,headers:this.props.scene.route.headers}}
                     // javaScriptEnabled={false}
                     domStorageEnabled={true}
                     decelerationRate="normal"

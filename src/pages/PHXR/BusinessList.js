@@ -25,6 +25,7 @@ import * as immutable from 'immutable';
 
 @connect(
     state =>({
+        userId: state.login.data.userId
     }),
     dispatch =>({
 
@@ -46,6 +47,11 @@ export default class BusinessList extends Component {
     }
 
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.userId != this.props.userId){
+            this.props.load()
+        }
+    }
 
     render() {
 

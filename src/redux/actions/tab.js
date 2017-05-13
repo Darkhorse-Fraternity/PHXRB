@@ -25,13 +25,21 @@ import {navigateRefresh,navigatePush} from './nav'
 
 export function tabSwitch(index: number):Function {
 
-    return (dispatch)=>{
+    return (dispatch,getState)=>{
         if(index == 0){
             // const renderLeftComponent = renderNavImageButton(icon_search, 'left',
             //     ()=>dispatch(navigatePush('PersonInfo')))
             // dispatch(navigateRefresh({renderLeftComponent}))
         }else{
-            dispatch(navigateRefresh({renderLeftComponent:null}))
+            // dispatch(navigateRefresh({renderLeftComponent:null}))
+            // 判断是否登录，没有登录则去登录
+            const isLogin = getState().login.isLogin
+            if(!isLogin){
+                //去登录
+                dispatch(navigatePush('LoginView'))
+                return
+            }
+
         }
 
         return dispatch(tabSwitchResult(index))

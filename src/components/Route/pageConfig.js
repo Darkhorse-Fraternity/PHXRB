@@ -23,7 +23,7 @@ export const pageConfig = {
     "BaseWebView": {title: "加载中。。", gestureResponseDistance: 0.0001},
     "CourseInfoView": {title: "课程详情",},
     "LessonEvaluateView": {title: "课程评价",},
-    "PersonInfo": {title: "设置",},
+    "PersonInfo": {title: "设置",hideNavBar:false},
     "MyOrder": {title: "我的订单",},
     "Setting": {title: "设置",hideNavBar:false},
     "FindPwd": {title: "找回密码",},
@@ -32,7 +32,7 @@ export const pageConfig = {
     "AlterPwd": {title: "修改密码",},
     "NickName": {title: "修改昵称",},
     "PhoneContacts": {title: "修改手机号",},
-    'RegPhone': {title: '注册'},
+    'RegPhone': {title: '注册',hideNavBar:true},
     'Contribute': {title: '创意服务'},
     'Intro': {title: '介绍', hideNavBar: true, gestureResponseDistance: 100},
     'IdeaList': {title: '创意列表'},
@@ -71,7 +71,8 @@ export const pageConfig = {
     "AddHouse":{title:"新增房产"},
     "MemberUserInfo":{title:"会员信息"},
     "MemberUserInfoDetail":{title:"修改会员信息"},
-    "FilesScan":{title:"文件查看"}
+    "FilesScan":{title:"文件查看"},
+    "GW":{title:"顾问",hideNavBar:true}
 }
 
 export function config(key: string): Object {

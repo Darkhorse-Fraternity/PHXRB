@@ -15,7 +15,8 @@ import {
     Alert,
     ScrollView,
     Platform,
-    Dimensions
+    Dimensions,
+    RefreshControl,
 } from 'react-native'
 import Swiper from 'react-native-swiper'
 import * as immutable from 'immutable';
@@ -33,7 +34,9 @@ import {request} from '../../redux/actions/req'
 var DeviceInfo = require('react-native-device-info');
 @connect(
     state =>({
-        data: state.req.get('phxr_app_home')
+        data: state.req.get('phxr_app_home'),
+        isLogin: state.login.isLogin,
+        userId: state.login.data.userId
     }),
     (dispatch, props) =>({
         //...bindActionCreators({},dispatch),
@@ -69,17 +72,24 @@ export  default  class Home extends Component {
         // const renderLeftComponent = renderNavImageButton(icon_class, 'left',
         //     ()=>push('PersonInfo'))
         // refresh({renderLeftComponent})
+        console.log('test:', 'load');
         this.props.load()
     }
 
 
     __renderclassifyArea(classifyArea, i) {
+        console.log('test:', this.props.userId);
         return (
             <TouchableOpacity
                 onPress={()=>{
-                         push({key:'WebView',url:classifyArea.activityUrl})
+                    if(!this.props.isLogin){
+                                    push('LoginView')
+                                }else {
+                                  push({key:'WebView',url:classifyArea.activityUrl,
+                                  headers:{userId:this.props.userId+''}})
+                               }
                      }}
-                style={{marginLeft:30}}
+                style={{marginLeft:25}}
                 key={'key_'+i}>
                 {classifyArea.ifRedShow == 1 && (<View style={styles.redTip}/>)}
                 <Image
@@ -127,52 +137,70 @@ export  default  class Home extends Component {
     __renderNews(data): ReactElement<any> {
         console.log('data:', data);
         return (
-            <View
-                style={styles.news} height={40}
+            <Swiper
+                style={styles.news} height={50}
                 showsPagination={false} autoplayTimeout={10}
-                autoplay={true} removeClippedSubviews={true}>
+                autoplay={true}>
                 {data.map((obj, i)=> {
                     return (
                         <TouchableOpacity
                             onPress={()=>{
-                                    push({key:'WebView',url:obj.activityUrl})
+                                     push({key:'WebView',url:obj.activityUrl})
                                  }}
                             key={'key_'+i}
                             style={styles.newsSlide}>
                             <Image style={styles.newsImage} source={{uri: obj.logoUrl}}/>
-                            <Text style={styles.newsText}>{obj.activityName} </Text>
+                            <Text numberOfLines={1} style={styles.newsText}>{obj.activityName} </Text>
                         </TouchableOpacity>
                     )
                 })}
-            </View>
+            </Swiper>
         )
     }
 
     render(): ReactElement<any> {
         const data = this.props.data.toJS().data
+        const load = this.props.data.toJS().load|| false
 
 
-        if (!data) return (<View/>)
+        if (!data) return ( <ScrollView
+            style={{marginTop:100}}
+                refreshControl={
+              <RefreshControl
+
+                refreshing={load}
+                onRefresh={this.props.load}
+                />
+            }/>)
 
         const activeArealist = data.activeArealist
         const classifyArealist = data.classifyArealist
         const hotArealist = data.hotArealist
         const rollArealist = data.rollArealist
-        let n = (Dimensions.get('window').width - 10) / 80
-        n = Math.floor(n); // -1. Math.floor(-0.20); // -1.
 
-        const height = hotArealist.length / n * 100
+
         return (
-            <ScrollView style={[this.props.style, {backgroundColor:"#dcdcdc",}]}>
-                {this.__renderHeader()}
-                <View style={styles.wrapper}>
-                    <Swiper
-                        index={0}//这个第三方库设定，只有初次才有效，
-                        //其后只有在tatol 不同时候，才重设
+            <ScrollView
+                refreshControl={
+              <RefreshControl
+                refreshing={load}
+                onRefresh={this.props.load}
+                />
+            }
+                style={[this.props.style, {backgroundColor:"#dcdcdc",}]}>
 
-                        style={styles.wrapper} height={200}
+                <View style={styles.wrapper}>
+                    {this.__renderHeader()}
+                    <Swiper
+                        style={styles.swiper} height={200}
+                        activeDotColor="white"
+                        dotColor="rgba(255,255,255,0.4)"
+                        paginationStyle={{zIndex:100,bottom:5}}
+                        dotStyle={{width:6,height:6,borderRadius:3}}
+                        activeDotStyle={{width:6,height:6,borderRadius:3}}
                         showsPagination={true} autoplayTimeout={20}
-                        autoplay={true} removeClippedSubviews={true}>
+                        removeClippedSubviews={false}
+                        autoplay={true} >
                         {activeArealist.map((image, i)=> {
                             return (
                                 <TouchableOpacity
@@ -181,12 +209,15 @@ export  default  class Home extends Component {
                                  }}
                                     key={'key_'+i}
                                     style={styles.slide}>
-                                    <Image style={{flex:1}} source={{uri: image.logoUrl}}/>
+                                    <Image style={{flex:1}}
+                                           source={{uri: image.logoUrl}}
+                                    />
                                 </TouchableOpacity>
                             )
                         })}
                     </Swiper>
                 </View>
+
                 {this.__renderNews(rollArealist)}
                 <View style={{backgroundColor:'white'}}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -262,6 +293,9 @@ const styles = StyleSheet.create({
         elevation: 5,
         zIndex: 10,
     },
+    swiper:{
+        backgroundColor: 'white',
+    },
     slide: {
         flex: 1,
         // justifyContent: 'center',
@@ -274,20 +308,20 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     classfyAreaText: {
-        fontSize:13,
+        fontSize: 13,
         marginTop: 5,
     },
     line: {
         height: StyleSheet.hairlineWidth,
         width: Dimensions.get('window').width,
         backgroundColor: 'rgba(200,200,200,0.2)',
-        marginTop: 30,
+        marginTop: 20,
     },
     redTip: {
-        width: 10,
-        height: 10,
+        width: 6,
+        height: 6,
         marginTop: 12,
-        borderRadius: 5,
+        borderRadius: 23,
         backgroundColor: 'red',
         marginLeft: 5,
         zIndex: 10,
@@ -302,8 +336,8 @@ const styles = StyleSheet.create({
 
     },
     hotAreaItem: {
-        alignItems:'center',
-        justifyContent:'center',
+        alignItems: 'center',
+        justifyContent: 'center',
         width: (Dimensions.get('window').width) / 4,
         height: (Dimensions.get('window').width) / 4,
         borderColor: 'rgba(200,200,200,0.2)',
@@ -311,10 +345,10 @@ const styles = StyleSheet.create({
     },
     hotAreaImage: {
         width: (Dimensions.get('window').width) / 8,
-        height: (Dimensions.get('window').width) /8,
+        height: (Dimensions.get('window').width) / 8,
     },
     header: {
-        height: 64,
+        height:Platform.OS== 'ios'? 64:44,
         width: Dimensions.get('window').width,
         alignItems: 'center',
         flexDirection: 'row',
@@ -336,6 +370,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     newsSlide: {
+        backgroundColor: 'white',
         flexDirection: 'row',
         padding: 10,
 

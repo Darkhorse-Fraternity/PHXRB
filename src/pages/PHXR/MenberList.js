@@ -36,6 +36,7 @@ function myListLoad(more: bool = false) {
 @connect(
     state =>({
         data: state.list.get(listKey),
+        userId: state.login.data.userId
     }),
     dispatch =>({
         //...bindActionCreators({},dispatch),
@@ -69,6 +70,13 @@ export default class MenberList extends Component {
     //     return !immutable.is(this.props, nextProps)
     //         || immutable.is(this.state, nextState)
     // }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.userId != this.props.userId){
+            this.props.load()
+        }
+    }
+
 
     makePhone(number: string) {
         Linking.openURL('tel:' + number)
