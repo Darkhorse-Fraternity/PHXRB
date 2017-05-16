@@ -110,6 +110,7 @@ class RegPhone extends Component {
 
         if(!this.state.choice){
             Toast.show('需要同意《融资无忧用户服务条款》才能注册。');
+            return;
         }
 
         //判断用户名
@@ -408,6 +409,7 @@ const styles = StyleSheet.create({
         marginLeft: 29,
         marginRight: 29,
         marginTop: 80,
+        marginBottom:80,
         height: 40,
         justifyContent: 'center',
     },

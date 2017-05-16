@@ -72,13 +72,13 @@ export  default  class Home extends Component {
         // const renderLeftComponent = renderNavImageButton(icon_class, 'left',
         //     ()=>push('PersonInfo'))
         // refresh({renderLeftComponent})
-        console.log('test:', 'load');
+        // console.log('test:', 'load');
         this.props.load()
     }
 
 
     __renderclassifyArea(classifyArea, i) {
-        console.log('test:', this.props.userId);
+        // console.log('test:', this.props.userId);
         return (
             <TouchableOpacity
                 onPress={()=>{
@@ -130,12 +130,12 @@ export  default  class Home extends Component {
     __renderHeader(): ReactElement<any> {
         return (
             <View style={styles.header}>
-                <Text style={styles.headerText}>普惠信融</Text>
+                <Text style={styles.headerText}>融资顾问</Text>
             </View>)
     }
 
     __renderNews(data): ReactElement<any> {
-        console.log('data:', data);
+        // console.log('data:', data);
         return (
             <Swiper
                 style={styles.news} height={50}

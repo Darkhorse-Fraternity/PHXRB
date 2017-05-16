@@ -10,7 +10,7 @@
 
 export const pageConfig = {
     'TabView': {
-        title: '普惠信融', hideBackBtn: true,
+        title: '融资顾问', hideBackBtn: true,
         gestureResponseDistance: 0.0001,direction: 'vertical',hideNavBar:true
     },
     'LoginView': {
@@ -49,7 +49,7 @@ export const pageConfig = {
     'iRate': {title: '评价'},
     'introDetail': {title: '回复'},
     'About': {title: '关于我们'},
-    'Home': {title: "普汇信融", direction: 'vertical',hideNavBar:true},
+    'Home': {title: "融资顾问", direction: 'vertical',hideNavBar:true},
     "Account": {title: '账户信息'},
     "UserInfo": {title: '我的信息'},
     "AssetsInfo": {title: "资产信息"},
@@ -72,7 +72,9 @@ export const pageConfig = {
     "MemberUserInfo":{title:"会员信息"},
     "MemberUserInfoDetail":{title:"修改会员信息"},
     "FilesScan":{title:"文件查看"},
-    "GW":{title:"顾问",hideNavBar:true}
+    "GW":{title:"顾问",hideNavBar:true},
+    "MSG":{title:"消息",hideNavBar:true},
+    "ZG":{title:"顾问",hideNavBar:true},
 }
 
 export function config(key: string): Object {

@@ -73,7 +73,8 @@ export function phxr_verification_code(phoneNo,codeType) {
     const  r = /^\+?[1-9][0-9]*$/;
     const param = r.test(phoneNo)?{phoneNo}:{userName:phoneNo,}
     return {
-        path:'/phxr_verification_code',
+        host:'103.236.253.138:9090',
+        path:'/phxrProject/app/phxr/ucenter/sendSmsCode',
         method:methodType.post,
         params:{
             ...param,

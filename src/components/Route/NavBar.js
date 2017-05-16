@@ -41,6 +41,7 @@ export default class NavBar extends Component {
 
   //加载返回按钮
   _renderBackButton = (hide: bool)=> {
+
     if (hide) {
       return ()=>null;
     } else {
@@ -91,7 +92,7 @@ export default class NavBar extends Component {
   render() {
     const {scene} = this.props;
 
-    console.log('scene:', scene);
+    // console.log('scene:', scene);
     if (scene.route.tintColor == 'white' || scene.route.hideNavBar
         ) {
 

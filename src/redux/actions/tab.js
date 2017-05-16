@@ -26,7 +26,7 @@ import {navigateRefresh,navigatePush} from './nav'
 export function tabSwitch(index: number):Function {
 
     return (dispatch,getState)=>{
-        if(index == 0){
+        if(index != 4){
             // const renderLeftComponent = renderNavImageButton(icon_search, 'left',
             //     ()=>dispatch(navigatePush('PersonInfo')))
             // dispatch(navigateRefresh({renderLeftComponent}))

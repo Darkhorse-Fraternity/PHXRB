@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     arrowView: {
         borderBottomWidth: StyleSheet.hairlineWidth * 2,
         borderRightWidth: StyleSheet.hairlineWidth * 2,
-        borderColor: '#8c8c85',
+        borderColor: 'white',
         transform: [{rotate: '135deg'}],
         marginLeft: 15,
         width: 10,

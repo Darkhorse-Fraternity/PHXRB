@@ -64,6 +64,11 @@ export  default  class PHXRWebView extends Component {
 
     static propTypes = {
         url: PropTypes.string,
+        userId:PropTypes.string,
+    };
+
+    static defaultProps = {
+        userId:'',
     };
 
     canGoBack: boolean = false;

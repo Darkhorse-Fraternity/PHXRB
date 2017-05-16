@@ -12,6 +12,7 @@ import {
     Switch,
     Linking,
     Platform,
+    Alert
 } from 'react-native'
 import {Toast} from '../../util'
 import {blackFontColor, backViewColor, mainColor} from '../../configure';
@@ -115,7 +116,17 @@ class WBSetting extends Component {
 
     _logout = ()=> {
         //发送请求给服务器
-        this.props.logout();
+
+        Alert.alert(
+            '确定要退出吗？',
+            "",
+            [
+                {text: '取消', onPress: () => {}},
+                {text: '确定', onPress: () =>{
+                    this.props.logout();
+                }},
+            ])
+
     };
 
     componentDidMount() {
