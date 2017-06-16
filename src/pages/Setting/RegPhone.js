@@ -24,7 +24,7 @@ import {requestSmsCode} from '../../request/leanCloud'
 import {phxr_verification_code} from '../../request/qzapi'
 import {deepFontColor, backViewColor, blackFontColor, mainColor} from '../../configure'
 import {connect} from 'react-redux'
-import {navigateReplaceIndex, navigatePush, navigatePop} from '../../redux/actions/nav'
+import {navigatePush, navigatePop} from '../../redux/actions/nav'
 import {register} from '../../redux/actions/login'
 import {checkPhoneNum, Toast} from '../../util'
 

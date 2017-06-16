@@ -75,6 +75,7 @@ export const pageConfig = {
     "GW":{title:"顾问",hideNavBar:true},
     "MSG":{title:"消息",hideNavBar:true},
     "ZG":{title:"顾问",hideNavBar:true},
+    "WD":{title:"我的",hideNavBar:true},
 }
 
 export function config(key: string): Object {

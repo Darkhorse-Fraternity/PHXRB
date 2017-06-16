@@ -34,7 +34,7 @@ import {pop} from './nav'
  */
 function _preConfig() {
 
-
+    StatusBar.backgroundColor = '#0085d9'
     //加载是否是第一次进入。
     // loadFirstJoin()
 

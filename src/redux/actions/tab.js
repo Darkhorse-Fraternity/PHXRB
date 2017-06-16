@@ -33,12 +33,12 @@ export function tabSwitch(index: number):Function {
         }else{
             // dispatch(navigateRefresh({renderLeftComponent:null}))
             // 判断是否登录，没有登录则去登录
-            const isLogin = getState().login.isLogin
-            if(!isLogin){
-                //去登录
-                dispatch(navigatePush('LoginView'))
-                return
-            }
+            // const isLogin = getState().login.isLogin
+            // if(!isLogin){
+            //     //去登录
+            //     dispatch(navigatePush('LoginView'))
+            //     return
+            // }
 
         }
 

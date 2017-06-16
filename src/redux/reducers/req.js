@@ -16,7 +16,7 @@ export default function reqState(state: immutable.Map<string,any> = initialState
 
     switch (action.type) {
         case REQUEST_LOAD:{
-            state.setIn([action.key,'load'], action.load);
+            return state.setIn([action.key,'load'], action.load);
         }
         case REQUEST_FAILED:{
             return state.set(action.key, immutable.fromJS({

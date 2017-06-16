@@ -82,7 +82,7 @@ export  default  class Home extends Component {
         return (
             <TouchableOpacity
                 onPress={()=>{
-                    if(!this.props.isLogin){
+                    if(true){
                                     push('LoginView')
                                 }else {
                                   push({key:'WebView',url:classifyArea.activityUrl,
@@ -164,7 +164,7 @@ export  default  class Home extends Component {
 
 
         if (!data) return ( <ScrollView
-            style={{marginTop:100}}
+            style={{flex:1,backgroundColor:"white"}}
                 refreshControl={
               <RefreshControl
 
@@ -219,7 +219,7 @@ export  default  class Home extends Component {
                 </View>
 
                 {this.__renderNews(rollArealist)}
-                <View style={{backgroundColor:'white'}}>
+                <View style={{backgroundColor:'white',marginBottom:Platform.OS == 'ios'? 100:0}}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                         {classifyArealist.map((obj, i)=> {
                             return this.__renderclassifyArea(obj, i)
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     },
     classfyAreaText: {
         fontSize: 13,
-        marginTop: 5,
+        marginTop: 2,
     },
     line: {
         height: StyleSheet.hairlineWidth,

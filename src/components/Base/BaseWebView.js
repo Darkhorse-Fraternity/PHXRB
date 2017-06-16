@@ -1,18 +1,18 @@
 /* @flow */
 'use strict';
 import React, {Component,PropTypes} from 'react';
-import ReactNative, {
+import  {
     StyleSheet,
     Text,
     View,
     ScrollView,
-    WebView,
+    WebView as WebViewIOS,
     TouchableOpacity,
     Image,
     Platform,
     Linking
 } from 'react-native';
-
+import * as immutable from 'immutable';
 import {navbarHeight,screenHeight} from '../../util';
 // import {httpHeader} from '../../configure';
 // import {userManager} from '../../util/XGlobal';
@@ -20,12 +20,45 @@ import ExceptionView, {ExceptionType} from '../ExceptionView';
 import {connect} from 'react-redux';
 import { navigatePush, navigatePop, navigateRefresh } from '../../redux/actions/nav';
 // import Alipay from 'react-native-payment-alipay';
+import {addParams} from '../../request/useMeth'
+
+// import WebViewAndroid from './WebViewAndroid'
+import {logout} from '../../redux/actions/login'
+
+// console.log('WebViewAndroid:', WebViewAndroid);
+const WebView = Platform.OS == 'ios'? WebViewIOS:WebViewIOS
+// const WebView = WebViewIOS
+
+
 
 const UIManager = require('UIManager');
 const WEBVIEW_REF = 'webview';
-
+import createInvoke from 'react-native-webview-invoke/native'
 // const noWifi = require('../../../source/img/xy_nowifi/xy_nowifi.png');
-class BaseWebView extends Component {
+@connect(
+    state =>({
+        userId: state.login.data.userId?state.login.data.userId+'':''
+    }),
+    (dispatch, props) =>({
+        push:(key)=>{
+            dispatch(navigatePush(key))
+        },
+        pop:(state)=>{
+            dispatch(navigatePop(state))
+        },
+        refresh:(route)=>{
+            dispatch(navigateRefresh(route))
+        },
+        share:()=>{
+
+        },
+        logout:()=>{
+            dispatch(logout())
+        }
+
+    })
+)
+export  default class BaseWebView extends Component {
 
     constructor(props:Object){
         super(props);
@@ -53,7 +86,7 @@ class BaseWebView extends Component {
     canGoBack:boolean = false;
     backEventHandle() {
         if (this.canGoBack) {
-            this.refs[WEBVIEW_REF].goBack();
+            this.webview.goBack();
         }else {
             this.props.pop();
         }
@@ -68,23 +101,63 @@ class BaseWebView extends Component {
         );
     }
 
+    shouldComponentUpdate(nextProps: Object,nextState:Object) {
+        return !immutable.is(this.props, nextProps) ||
+            !immutable.is(this.state,nextState)
+    }
+
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.userId != this.props.userId){
+            this.sendUserID(nextProps.userId)
+        }
+    }
+
+
+
+    gologin = ()=>{
+        this.props.push('LoginView')
+    }
+
+    webview: WebView
+    invoke = createInvoke(() => this.webview)
+    sendUserID:Function
+
+
     componentDidMount() {
-        this.props.refresh({renderLeftComponent:this.renderLeftComponent.bind(this),title:'加载中。。'});
+        this.invoke.define('goBack', this.props.pop)
+            .define('gologin', this.gologin)
+            .define('logout', this.props.logout)
+            .define('share', this.props.share)
+
+        this.sendUserID = this.invoke.bind('sendUserID')
+        // console.log('test:', this.props.userI);
+        // console.log('this.props.userId:', this.props.userId);
+        this.sendUserID(this.props.userId)
+
+        if(this.props.scene){
+            this.props.refresh({renderLeftComponent:this.renderLeftComponent.bind(this),title:'加载中。。'});
+        }else {
+            this.props.refresh({title:'加载中。。'});
+        }
+
     }
 
     _onNavigationStateChange(state:Object){
         // console.log('state:',state);
-        if(state.title && state.title.length > 0 ){
+        if(state.title && state.title.length > 0 && !state.title.startsWith('103.236.253') ){
             this && this.props.refresh({title:state.title});
         }
         this.canGoBack = state.canGoBack;
+        this.props.onNavigationStateChange && this.props.onNavigationStateChange(state)
     }
 
     _onError(error:Object){
-        console.log("webError:",error);
+        this.webview.reload()
+        // console.log("webError:",error);
     }
     _onLoadStart(event){
-        console.log("onloadStart:", event.nativeEvent);
+        // console.log("onloadStart:", event.nativeEvent);
     }
     _onLoad(){
 
@@ -110,9 +183,9 @@ class BaseWebView extends Component {
      * @param  {[type]} event [description]
      * @return {[type]}       [description]
      */
-     _onShouldStartLoadWithRequest(event:Object) {
-      //Implement any custom loading logic here, don't forget to return!
-      console.log("onShouldStartLoadWithRequest:", event.url);
+    _onShouldStartLoadWithRequest(event:Object) {
+        //Implement any custom loading logic here, don't forget to return!
+        console.log("onShouldStartLoadWithRequest:", event.url);
         if(event.url.startsWith('http://') || event.url.startsWith('https://')) {
             return true;
         }else{
@@ -129,21 +202,38 @@ class BaseWebView extends Component {
             })
         }
 
-      return false;
+        return false;
     }
 
+
+
+
+    webview: WebView
+    invoke = createInvoke(() => this.webview)
     render() {
         //  console.log(this.props.scene);
         // console.log(this.props.scene .route.url);
         //  var header = Object.assign({}, httpHeader,{token:userManager.userData.user_token || ""})
+        const headers = {userId: this.props.userId + ''}
+        let  url = this.props.url || this.props.scene.route.url
+        const data = {
+            userId : this.props.userId,
+            platform:Platform.OS,
+        }
+        url = addParams(url,data)
+        // console.log('url:', url);
         return (
             <View style={[styles.container]}>
                 <WebView
-                    ref={WEBVIEW_REF}
+                    ref={w => {
+                        this.webview = w
+                        this.props.getWebView && this.props.getWebView(w)
+                        {/*this.sendUserID(this.props.userID)*/}
+                    }}
                     automaticallyAdjustContentInsets={false}
                     style={styles.webView}
-                    source={{uri: this.props.scene.route.url,headers:this.props.scene.route.headers}}
-                    // javaScriptEnabled={false}
+                    source={{uri: url,headers:headers}}
+                    javaScriptEnabled={true}
                     domStorageEnabled={true}
                     decelerationRate="normal"
                     onShouldStartLoadWithRequest={this._onShouldStartLoadWithRequest.bind(this)}
@@ -154,6 +244,7 @@ class BaseWebView extends Component {
                     onError={this._onError}
                     onLoadStart={this._onLoadStart}
                     onLoad={this._onLoad} //
+                    onMessage={this.invoke.listener}
                     //onMessage={()=>{}}
                     //onShouldStartLoadWithRequest={this._onShouldStartLoadWithRequest.bind(this)}//iOS,Android 咱么处理
                     //onLoadEnd
@@ -199,32 +290,3 @@ const styles = StyleSheet.create({
 });
 
 
-const mapStateToProps = (state) => {
-    //从login reduce 中获取state的初始值。
-    //console.log('state:',state);
-    //去最后一个
-    // console.log("web view map state",state.route.navigationState.routes[state.route.navigationState.index]);
-    return {
-        //  state:state.route.navigationState.routes[state.route.navigationState.index],
-        // uri:'',
-    }
-}
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        push:(key)=>{
-            dispatch(navigatePush(key))
-        },
-        pop:(state)=>{
-            dispatch(navigatePop(state))
-        },
-        refresh:(route)=>{
-            dispatch(navigateRefresh(route))
-        }
-    }
-}
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(BaseWebView)
