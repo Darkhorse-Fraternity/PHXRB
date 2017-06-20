@@ -45,6 +45,7 @@ class RegPhone extends Component {
             passwordAgain: "",
             clicked: '福州',
             choice:true,
+            isEP: false,
         };
     }
 
@@ -109,7 +110,7 @@ class RegPhone extends Component {
     _goRegist() {
 
         if(!this.state.choice){
-            Toast.show('需要同意《融资无忧用户服务条款》才能注册。');
+            Toast.show('需要同意《普汇顾问用户服务条款》才能注册。');
             return;
         }
 
@@ -196,6 +197,37 @@ class RegPhone extends Component {
         } else if (nextField == '2') {
             this._goRegist()
         }
+    }
+
+
+    _renderEpSwitch(title: string) {
+        const a = require('../../../source/img/single/ardio_a.png')
+        const b = require('../../../source/img/single/ardio_b.png')
+        return (
+            <View>
+                <View >
+                    <View style={styles.row}>
+                        <Text style={[styles.rowText,{marginRight:60}]}>
+                            {title}
+                        </Text>
+                        <TouchableOpacity
+                            onPress={()=>this.setState({isEP:false})}
+                            style={{flexDirection:'row',alignItems:"center",justifyContent:'center'}}>
+                            <Text style={{marginRight:10}}>融资</Text>
+                            <Image style={{width:15,height:15}}
+                                   source={!this.state.isEP?b:a}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={()=>this.setState({isEP:true})}
+                            style={{flexDirection:'row',marginLeft:30,alignItems:"center",justifyContent:'center'}}>
+                            <Text style={{marginRight:10}}>资管</Text>
+                            <Image style={{width:15,height:15}}
+                                   source={this.state.isEP?b:a}/>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        );
     }
 
     _renderRowMain(title: string, placeholder: string, onChangeText: Function,
@@ -290,7 +322,7 @@ class RegPhone extends Component {
 
 
                     <View style={{flexDirection:'row'}}>
-                        {this._renderRowMain('验证码:', '输入您收到的验证码',
+                        {this._renderRowMain('验证码:', '请输入验证码',
                             (text) => {
                                 this.setState({ymCode: text})
                             },
@@ -315,6 +347,8 @@ class RegPhone extends Component {
                     })}
 
 
+                    <View style={styles.line}/>
+                    {this._renderEpSwitch("顾问类型:")}
                 </View>
                 <View style={styles.bottom}>
                     <TouchableWithoutFeedback onPress={()=>{
@@ -326,7 +360,7 @@ class RegPhone extends Component {
                     <Button
                         onPress={this._gowebView}
                         style={styles.protocolSuf}>
-                        《融资无忧用户服务条款》
+                        《普汇顾问用户服务条款》
                     </Button>
                 </View>
                 <BCButton
@@ -367,7 +401,7 @@ const styles = StyleSheet.create({
         // backgroundColor:'red'
     },
     buttonContainerStyle: {
-        marginRight: 15,
+        marginRight: 10,
         marginLeft: -5,
         height: 35,
         marginVertical: 5,

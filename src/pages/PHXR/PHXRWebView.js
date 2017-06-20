@@ -215,25 +215,61 @@ const styles = StyleSheet.create({
     },
 })
 
+
+@connect(
+    state =>({
+        userType: state.login.data.userType
+    }),
+    dispatch =>({})
+)
+
 export class GW extends Component {
     render(): ReactElement<any> {
-        return (             <PHXRWebView url="http://103.236.253.138:9090/phxrProject/gw/h5/gw-gw.html"/>         );
+        const gwUrl = 'http://103.236.253.138:9090/phxrProject/gw/h5/gw-gw.html'
+        const zggwUrl = 'http://103.236.253.138:9090/phxrProject/zggw/h5/gw-gw.html'
+        return (             <PHXRWebView url={this.props.userType === 1 ?gwUrl:zggwUrl}/>         );
     }
 }
+@connect(
+    state =>({
+        userType: state.login.data.userType
+    }),
+    dispatch =>({})
+)
+
 export class MSG extends Component {
     render(): ReactElement<any> {
-        return (             <PHXRWebView url="http://103.236.253.138:9090/phxrProject/gw/h5/gw-xx.html"/>         );
+        const gwUrl = 'http://103.236.253.138:9090/phxrProject/gw/h5/gw-xx.html'
+        const zggwUrl = 'http://103.236.253.138:9090/phxrProject/zggw/h5/gw-xx.html'
+        return (             <PHXRWebView url={this.props.userType === 1 ?gwUrl:zggwUrl}/>         );
     }
 }
+@connect(
+    state =>({
+        userType: state.login.data.userType
+    }),
+    dispatch =>({})
+)
+
 export class ZG extends Component {
     render(): ReactElement<any> {
-        return (             <PHXRWebView url="http://103.236.253.138:9090/phxrProject/gw/h5/gw-zg.html"/>         );
+        const gwUrl = 'http://103.236.253.138:9090/phxrProject/gw/h5/gw-jg.html'
+        const zggwUrl = 'http://103.236.253.138:9090/phxrProject/zggw/h5/gw-jg.html'
+        return (             <PHXRWebView url={this.props.userType === 1 ?gwUrl:zggwUrl}/>         );
     }
 }
+@connect(
+    state =>({
+        userType: state.login.data.userType
+    }),
+    dispatch =>({})
+)
+
 export class WD extends Component {
     render(): ReactElement<any> {
-        return (             <PHXRWebView url="http://103.236.253.138:9090/phxrProject/gw/h5/gw-wd.html"/>
-// <PHXRWebView url="http://103.236.253.138:9090/phxrProject/hy/h5/smfw_xxzf.html"/>         ); 
+        const gwUrl = 'http://103.236.253.138:9090/phxrProject/gw/h5/gw-wd.html'
+        const zggwUrl = 'http://103.236.253.138:9090/phxrProject/zggw/h5/gw-wd.html'
+        return (             <PHXRWebView url={this.props.userType === 1 ?gwUrl:zggwUrl}/>         );
     }
 }
 

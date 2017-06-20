@@ -27,6 +27,7 @@ import {navigatePop, navigatePush} from '../../redux/actions/nav'
 import {login} from '../../redux/actions/login'
 import {checkPhoneNum, Toast} from '../../util'
 import WBButton from '../../components/Base/WBButton'
+import {ActionSheet} from 'antd-mobile';
 const webUrl = 'https://static.dayi.im/static/fudaojun/rule.html?version=20160603182000';
 import {logo, placeholder} from '../../../source'
 class RegPhone extends Component {
@@ -39,6 +40,7 @@ class RegPhone extends Component {
             isTap: false,
             timeLoad: false,
             password: '',
+            clicked: -1,
         };
     }
 
@@ -145,6 +147,46 @@ class RegPhone extends Component {
         }
     }
 
+    _renderRow(image: number, clicked, onPress: Function) {
+
+        let title = clicked == 0 ? "融资顾问" : "资管顾问"
+        if (clicked == -1) {
+            title = "请选择顾问类型"
+        }
+
+        return (
+            <TouchableOpacity onPress={onPress} style={styles.rowMainStyle}>
+                {/*<Text style={styles.textStyle}>{title}</Text>*/}
+                <View style={styles.rowItem}>
+                    <Image source={image} style={{marginRight:15}}/>
+                    <Text style={{color:clicked == -1?"rgb(180,180,180)":"black"}}>{title}</Text>
+                </View>
+                <View style={styles.arrowView}/>
+            </TouchableOpacity>
+        );
+    }
+
+    showActionSheet(message: string, op: any) {
+        const wrapProps = {onTouchStart: e => e.preventDefault()}
+        const BUTTONS = op.concat('取消')
+        ActionSheet.showActionSheetWithOptions({
+                options: BUTTONS,
+                // title: '标题',
+                cancelButtonIndex: BUTTONS.length - 1,
+                message,
+                maskClosable: true,
+                'data-seed': 'logId',
+                wrapProps,
+            },
+            (buttonIndex) => {
+                if (buttonIndex != BUTTONS.length - 1) {
+                    this.setState({clicked: buttonIndex});
+                }
+
+            });
+    }
+
+
     _renderRowMain(image: number, title: string, placeholder: string, onChangeText: Function,
                    boardType: PropTypes.oneOf = 'default', autoFocus: bool = false, maxLength: number = 16,
                    ref: string, secureTextEntry = false) {
@@ -181,6 +223,7 @@ class RegPhone extends Component {
         const flag = this.state.phone.length > 0 && this.state.password.length > 0
 
 
+        const type = require('../../../source/img/login/ico_type.png')
         const logo2 = require('../../../source/img/login/signin.png')
         const back = require('../../../source/img/login/btn_back.png')
         const user = require('../../../source/img/login/ico_user.png')
@@ -191,19 +234,23 @@ class RegPhone extends Component {
                 keyboardShouldPersistTaps="always"
                 keyboardDismissMode='interactive'>
                 <View>
-                    <TouchableOpacity style={{width:50,
-                           height:50,
-                            top:35,
-                           left:15,
-                           zIndex:100,
-                           position:'absolute'}} onPress={()=>this.props.pop()}>
-                        <Image source={back}
-                        />
-                    </TouchableOpacity>
+                    {/*<TouchableOpacity style={{width:50,*/}
+                           {/*height:50,*/}
+                            {/*top:35,*/}
+                           {/*left:15,*/}
+                           {/*zIndex:100,*/}
+                           {/*position:'absolute'}} onPress={()=>this.props.pop()}>*/}
+                        {/*<Image source={back}*/}
+                        {/*/>*/}
+                    {/*</TouchableOpacity>*/}
                     <Image source={logo2} style={styles.logo}/>
 
-
                     <View style={{height:20}}/>
+                    {this._renderRow(type, this.state.clicked, () => {
+                         this.showActionSheet("请选择顾问类型", ["融资顾问", "资管顾问"])
+                    })}
+
+
                     {this._renderRowMain(user, '用户名/手机号:', '请填入用户名或手机号码',
                         (text) => this.setState({phone: text}), 'default', false, 16, "2"
                     )}
@@ -275,7 +322,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginHorizontal: 30,
         borderBottomColor: 'rgb(200,200,200)',
-        borderBottomWidth: StyleSheet.hairlineWidth
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        justifyContent:'space-between'
+    },
+    rowItem:{
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     buttonContainerStyle: {
         marginRight: 15,
@@ -372,6 +424,17 @@ const styles = StyleSheet.create({
         borderRadius: 3,
         marginBottom:20,
     },
+    arrowView: {
+        borderBottomWidth: StyleSheet.hairlineWidth * 2,
+        borderRightWidth: StyleSheet.hairlineWidth * 2,
+        borderColor: '#8c8c85',
+        transform: [{rotate: '45deg'}],
+        marginRight: 10,
+        marginBottom: 2,
+        width: 10,
+        height: 10,
+    },
+
 
 
 })

@@ -120,7 +120,9 @@ export  default class BaseWebView extends Component {
     }
 
     webview: WebView
-    invoke = createInvoke(() => this.webview)
+    invoke = createInvoke(() =>{
+        return this.webview || {}
+    } )
     sendUserID:Function
 
 
@@ -143,6 +145,10 @@ export  default class BaseWebView extends Component {
 
     }
 
+    componentWillUnmount() {
+        this.timer && clearTimeout(this.timer);
+    }
+
     _onNavigationStateChange(state:Object){
         // console.log('state:',state);
         if(state.title && state.title.length > 0 && !state.title.startsWith('103.236.253') ){
@@ -153,7 +159,13 @@ export  default class BaseWebView extends Component {
     }
 
     _onError(error:Object){
-        this.webview.reload()
+        // this.webview && this.webview.reload()
+        this.timer && clearTimeout(this.timer);
+        this.timer = setTimeout(
+            () => { this.webview && this.webview.reload() },
+            3000
+        );
+
         // console.log("webError:",error);
     }
     _onLoadStart(event){
@@ -208,8 +220,7 @@ export  default class BaseWebView extends Component {
 
 
 
-    webview: WebView
-    invoke = createInvoke(() => this.webview)
+
     render() {
         //  console.log(this.props.scene);
         // console.log(this.props.scene .route.url);
@@ -234,16 +245,16 @@ export  default class BaseWebView extends Component {
                     style={styles.webView}
                     source={{uri: url,headers:headers}}
                     javaScriptEnabled={true}
-                    domStorageEnabled={true}
+                    domStorageEnabled={false}
                     decelerationRate="normal"
                     onShouldStartLoadWithRequest={this._onShouldStartLoadWithRequest.bind(this)}
                     //javaScriptEnabled={false}
                     onNavigationStateChange={this._onNavigationStateChange.bind(this)}
                     startInLoadingState={true}
                     scalesPageToFit={this.state.scalesPageToFit}
-                    onError={this._onError}
+                    onError={this._onError.bind(this)}
                     onLoadStart={this._onLoadStart}
-                    onLoad={this._onLoad} //
+                    onLoad={this._onLoad.bind(this)} //
                     onMessage={this.invoke.listener}
                     //onMessage={()=>{}}
                     //onShouldStartLoadWithRequest={this._onShouldStartLoadWithRequest.bind(this)}//iOS,Android 咱么处理

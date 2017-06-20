@@ -16,7 +16,7 @@ import {
 import {LOGOUT} from '../actions/login'
 //生成原始单页配置数据。
 // const originalRoute = config('WidgetForm');
-const originalRoute =  config('TabView');
+const originalRoute =  config('LoginView');
 const originalRoute2 = config('Home');
 
 const initialNavLoginState = {

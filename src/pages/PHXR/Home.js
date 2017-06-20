@@ -82,7 +82,7 @@ export  default  class Home extends Component {
         return (
             <TouchableOpacity
                 onPress={()=>{
-                    if(true){
+                    if(false){
                                     push('LoginView')
                                 }else {
                                   push({key:'WebView',url:classifyArea.activityUrl,

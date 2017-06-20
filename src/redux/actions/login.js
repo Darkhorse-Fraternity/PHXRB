@@ -83,7 +83,8 @@ export function login(state: Object): Function {
 
         dispatch(_loginRequest());
 
-        const parame = phxr_login(state.phone,state.password,1)
+        const userType = state.clicked === 0?1:4
+        const parame = phxr_login(state.phone,state.password,userType)
 
         return request(parame, (response)=> {
 
@@ -91,11 +92,9 @@ export function login(state: Object): Function {
             // console.log('test:', response.data.rspCode);
             if (response.data.rspCode == "0000") {
                 //加入sessionToken
-                console.log('test:', '1111');
-                dispatch(_loginSucceed(response.data.result));
-                console.log('test:', '2222');
-                // dispatch(navigatePush('TabView'));
-                dispatch(navigatePop())
+                dispatch(_loginSucceed({...response.data.result,userType}));
+                 dispatch(navigatePush('TabView'));
+                // dispatch(navigatePop())
             } else {
                 Toast.show(response.data.rspMsg)
                 dispatch(_loginFailed(response));
@@ -116,7 +115,7 @@ export function register(state: Object): Function {
     const cityCode = state.clicked == '厦门' ? '592' : '591'
 
     const params = phxr_register(state.userName, state.phone,state.ymCode,
-        state.password, "1", "0", '', "0", cityCode);
+        state.password, state.isEP?"4":"1", "0", '', "0", cityCode);
 
     return dispatch => {
         dispatch(_loginRequest());
