@@ -6,7 +6,8 @@
 import {
     REQUEST_LOAD,
     REQUEST_FAILED,
-    REQUEST_SUCCEEED
+    REQUEST_SUCCEEED,
+    REQUESR_CHANGE_DATA
 } from '../actions/req'
 
 import * as immutable from 'immutable';
@@ -29,6 +30,9 @@ export default function reqState(state: immutable.Map<string,any> = initialState
                 load:action.load,
                 data:action.payload
             }));
+        }
+        case REQUESR_CHANGE_DATA:{
+            return state.mergeDeep({[action.key]:{data:action.payload}});
         }
         default:
             return state;

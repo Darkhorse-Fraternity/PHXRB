@@ -23,33 +23,54 @@ import * as immutable from 'immutable';
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux';
 import {placeholder} from '../../../source/'
-import {push} from '../../redux/nav'
+import {push,refresh} from '../../redux/nav'
 import {renderNavImageButton} from '../../util/viewUtil'
 //static displayName = Home
 import {Button, WhiteSpace} from 'antd-mobile';
 import {icon_class} from '../../../source'
 import {logo} from '../../../source'
 import {phxr_app_home} from '../../request/qzapi'
-import {request} from '../../redux/actions/req'
+import {request,reqChangeData} from '../../redux/actions/req'
 var DeviceInfo = require('react-native-device-info');
 @connect(
     state =>({
         data: state.req.get('phxr_app_home'),
         isLogin: state.login.isLogin,
-        userId: state.login.data.userId
+        userId: state.login.data.userId,
+        userType:state.login.data.userType,
     }),
     (dispatch, props) =>({
         //...bindActionCreators({},dispatch),
         load: ()=> {
             dispatch(async(dispatch, getState)=> {
 
-                // const uid = getState().login.data.userId
-                const params = phxr_app_home(DeviceInfo.getBuildNumber(), Platform.OS)
+                const userType = getState().login.data.userType
+
+                const params = phxr_app_home(DeviceInfo.getBuildNumber(), Platform.OS,userType)
+                console.log('params:', params);
                 await dispatch(request('phxr_app_home', params))
 
             })
 
+        },
+        updateHeadTitle:()=>{
+            dispatch((dispatch, getState)=> {
+                const userType = getState().login.data.userType
+                // console.log('userType:', userType);
+                refresh({title:userType == 1 ?'融资顾问':'资管顾问'})
+            })
+        },
+        cleanRed:(key,i)=>{
+            dispatch((dispatch, getState)=> {
+                const data = getState().req.get('phxr_app_home').get('data').toJS()
+                // console.log('userType:', userType);
+                data[key][i]['ifRedShow'] = 0
+                console.log('test:', data);
+
+                dispatch(reqChangeData('phxr_app_home',data))
+            })
         }
+
     })
 )
 export  default  class Home extends Component {
@@ -74,8 +95,15 @@ export  default  class Home extends Component {
         // refresh({renderLeftComponent})
         // console.log('test:', 'load');
         this.props.load()
+        this.props.updateHeadTitle()
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.userType != this.props.userType){
+            // this.props.updateHeadTitle()
+        }
+
+    }
 
     __renderclassifyArea(classifyArea, i) {
         // console.log('test:', this.props.userId);
@@ -87,6 +115,7 @@ export  default  class Home extends Component {
                                 }else {
                                   push({key:'WebView',url:classifyArea.activityUrl,
                                   headers:{userId:this.props.userId+''}})
+                                  classifyArea.ifRedShow == 1 && this.props.cleanRed('classifyArealist',i)
                                }
                      }}
                 style={{marginLeft:25}}
@@ -111,6 +140,7 @@ export  default  class Home extends Component {
                 style={{backgroundColor:'white',alignItems:'center'}}
                 onPress={()=>{
                          push({key:'WebView',url:classifyArea.activityUrl})
+                         classifyArea.ifRedShow == 1 && this.props.cleanRed('hotArealist',i)
                      }}
                 key={'key_'+i}>
                 {classifyArea.ifRedShow == 1 && (<View style={[styles.redTip,{top:-6,right:6,}]}/>)}
@@ -130,7 +160,7 @@ export  default  class Home extends Component {
     __renderHeader(): ReactElement<any> {
         return (
             <View style={styles.header}>
-                <Text style={styles.headerText}>融资顾问</Text>
+                <Text style={styles.headerText}>{this.props.userType===1?'融资顾问':'资管顾问'}</Text>
             </View>)
     }
 

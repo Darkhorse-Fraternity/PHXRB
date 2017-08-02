@@ -13,6 +13,7 @@ import com.facebook.soloader.SoLoader;
 import com.imagepicker.ImagePickerPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.phxrb.CWebView.RNWebViewPackage;
 import com.theweflex.react.WeChatPackage;
 
 import java.util.Arrays;
@@ -33,14 +34,15 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
-            new WeChatPackage(),
-            new QQPackage(),
+                    new WeChatPackage(),
+                    new QQPackage(),
                     new LeanCloudPushPackage(),
                     new ReactNativePushNotificationPackage(),
                     new VectorIconsPackage(),
                     new ImagePickerPackage(),
                     new ReactNativeDialogsPackage(),
-                    new RNDeviceInfo()
+                    new RNDeviceInfo(),
+                    new RNWebViewPackage()
             );
         }
     };

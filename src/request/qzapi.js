@@ -505,7 +505,7 @@ export function phxr_account_active(userId,accountType) {
  *   4.33 首页接口
  *
  */
-export function phxr_app_home(versionCode,platformType) {
+export function phxr_app_home(versionCode,platformType,appType) {
     return {
         host:'103.236.253.138:9090',
         path:'/phxrProject/app/phxr/apphome/appList',
@@ -513,7 +513,7 @@ export function phxr_app_home(versionCode,platformType) {
         params:{
             versionCode,
             platformType:platformType == 'ios'? "0" : "1",
-            appType:1,
+            appType,
         },
     }
 }

@@ -54,6 +54,9 @@ import createInvoke from 'react-native-webview-invoke/native'
         },
         logout:()=>{
             dispatch(logout())
+        },
+        uploadImage:()=>{
+
         }
 
     })
@@ -119,6 +122,10 @@ export  default class BaseWebView extends Component {
         this.props.push('LoginView')
     }
 
+    clearCache = () =>{
+
+    }
+
     webview: WebView
     invoke = createInvoke(() =>{
         return this.webview || {}
@@ -131,7 +138,8 @@ export  default class BaseWebView extends Component {
             .define('gologin', this.gologin)
             .define('logout', this.props.logout)
             .define('share', this.props.share)
-
+            .define('clearCache',this.props.clearCache)
+            .define('uploadImage',this.props.uploadImage)
         this.sendUserID = this.invoke.bind('sendUserID')
         // console.log('test:', this.props.userI);
         // console.log('this.props.userId:', this.props.userId);
@@ -204,7 +212,7 @@ export  default class BaseWebView extends Component {
             Linking.canOpenURL(event.url)
                 .then(supported => {
                     if(supported){
-                        return Linking.openURL(url);
+                        return Linking.openURL(event.url);
                         // return false;
                     }else{
                         return false;

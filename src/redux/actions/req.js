@@ -7,6 +7,7 @@ import {send} from '../../request'
 export const REQUEST_LOAD = 'REQUEST_LOAD'
 export const REQUEST_SUCCEEED = 'REQUEST_SUCCEEED'
 export const REQUEST_FAILED = 'REQUEST_FAILED'
+export const REQUESR_CHANGE_DATA = 'REQUESR_CHANGE_DATA'
 import {Toast} from '../../util'
 export function request(key: string, params: Object,callbacll:Function): Function {
 
@@ -65,6 +66,14 @@ function requestStart(key: string): Object {
     return {
         type: REQUEST_LOAD,
         load: true,
+        key,
+    }
+}
+
+export function reqChangeData(key: string, data: Object): Object {
+    return {
+        type: REQUESR_CHANGE_DATA,
+        payload: data,
         key,
     }
 }

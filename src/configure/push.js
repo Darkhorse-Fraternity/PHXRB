@@ -7,7 +7,8 @@ import  PushNotification from 'react-native-push-notification'
 import DeviceInfo from 'react-native-device-info'
 import {Platform ,
     DeviceEventEmitter,
-    NativeModules,} from 'react-native'
+    NativeModules,
+} from 'react-native'
 
 export default function pushConfig(){
 
