@@ -56,7 +56,7 @@ function _preConfig() {
 
     // Platform.OS=='ios'&& StatusBar.setBarStyle('light-content', true);
 
-    //pushConfig()
+    pushConfig()
 
   // const param = {
   //         "userId": 1250,

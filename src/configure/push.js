@@ -3,14 +3,14 @@ import  {send} from'../request'
 import {pushInstallation} from '../request/leanCloud'
 import {Toast} from '../util'
 import  PushNotification from 'react-native-push-notification'
-
+import {push} from '../redux/nav'
 import DeviceInfo from 'react-native-device-info'
 import {Platform ,
     DeviceEventEmitter,
-    NativeModules,
-} from 'react-native'
+    Alert,
+    NativeModules,} from 'react-native'
 
-export default function pushConfig(){
+export default  function pushConfig(){
 
 
     if(Platform.OS == 'ios'){
@@ -27,10 +27,24 @@ export default function pushConfig(){
 
             // (required) Called when a remote or local notification is opened or received
             onNotification: function(notification) {
-                console.log( 'NOTIFICATION:', notification );
+                // console.log( 'NOTIFICATION:', notification );
+                const data = notification.data
                 if(notification.foreground){
-                    Toast.show(notification.message)
+                    // Toast.show(notification.message)
+                    Alert.alert(
+                        data.title||'标题',
+                        notification.message||"",
+                        [
+                            {text: '取消', onPress: () => {}},
+                            {text: '确定', onPress: () =>{
+                                push({key:'WebView',url:data.webUrl})
+                            }},
+                        ])
+                }else {
+                    push({key:'WebView',url:data.webUrl})
                 }
+
+
             },
 
             // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
@@ -56,34 +70,52 @@ export default function pushConfig(){
         });
     }else{
 
-        const uniqueID =  DeviceInfo.getUniqueID()
-
-        let  token = uniqueID
-        if(global.TextEncoder){
-            console.log('global.TextEncoder:',global.TextEncoder)
-            const buffer =  new TextEncoder("utf-8").encode(uniqueID)
-            const  uuid = require('react-native-uuid');
-            token = uuid.unparse(buffer)
-        }
-
-
-
-        const param = pushInstallation(Platform.OS,uniqueID)
-        send(param).then((response)=>{
-            console.log('response:',response)
-        })
 
 
         const LeanCloudPushNative = NativeModules.LeanCloudPush;
+
+        LeanCloudPushNative.getInstallationId().then(id=>{
+            const param = pushInstallation(Platform.OS,id)
+            send(param).then((response)=>{
+                console.log('response:',response)
+            })
+
+        })
+
+
         LeanCloudPushNative.getInitialNotification().then((res)=>{
-            console.log('InitialNotification:',res)
+            // console.log('InitialNotification:',res)
+            const data = JSON.parse(res.data)
+            push({key:'WebView',url:data.webUrl})
+            Toast.show(data.alert)
+            Alert.alert(
+                data.title||'标题',
+                data.alert||"",
+                [
+                    {text: '取消', onPress: () => {}},
+                    {text: '确定', onPress: () =>{
+                        push({key:'WebView',url:data.webUrl})
+                    }},
+                ])
         }).catch((err)=>{
             console.log('message:',err.message)
         })
 
         DeviceEventEmitter.addListener(LeanCloudPushNative.ON_RECEIVE, (res) => {
-            console.log('ON_RECEIVE:',res.data)
-            Toast.show(res.data.toString())
+
+            const data = JSON.parse(res.data)
+            Toast.show(data.alert)
+            // console.log('ON_RECEIVE:',data)
+            push({key:'WebView',url:data.webUrl})
+            // Alert.alert(
+            //     data.title||'标题',
+            //     "",
+            //     [
+            //         {text: '取消', onPress: () => {}},
+            //         {text: '确定', onPress: () =>{
+            //             push({key:'WebView',url:data.webUrl})
+            //         }},
+            //     ])
         });
         DeviceEventEmitter.addListener(LeanCloudPushNative.ON_ERROR, (res) => {
             console.log('ON_ERROR:',res)

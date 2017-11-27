@@ -342,9 +342,9 @@ class RegPhone extends Component {
                         </BCButton>
                     </View>
                     <View style={styles.line}/>
-                    {this._renderRow('请选择所在城市:', this.state.clicked, (title) => {
-                        this.showActionSheet(title, ["福州", "厦门"])
-                    })}
+                    {/*{this._renderRow('请选择所在城市:', this.state.clicked, (title) => {*/}
+                        {/*this.showActionSheet(title, ["福州", "厦门"])*/}
+                    {/*})}*/}
 
 
                     <View style={styles.line}/>

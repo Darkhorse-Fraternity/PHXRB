@@ -107,6 +107,7 @@ export  default  class Home extends Component {
 
     __renderclassifyArea(classifyArea, i) {
         // console.log('test:', this.props.userId);
+        // classifyArea.activityUrl= 'http://103.236.253.138:9090/phxrProject/component/imageDemo.html?_=2'
         return (
             <TouchableOpacity
                 onPress={()=>{

@@ -26,3 +26,22 @@ export function uploadPHXRImage(files) {
     })
 
 }
+
+
+export function uploadImage(url,files) {
+    const body = new FormData()
+    files.map((item)=> {
+        const file = {
+            uri: item.uri,
+            name: item.filename||( Math.random()*700 + Date.parse(new Date()) + "_IMG.JPG"),
+            type: "image/jpg",
+        }
+        body.append('file', file)
+    })
+    // const url = "http://"+ "103.236.253.138:8088" + "/uploadImage"
+    return  fetch(url, {
+        method: 'POST',
+        body,
+    })
+
+}

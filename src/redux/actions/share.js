@@ -11,31 +11,69 @@ export const Share_TO_ZONE = 'Share_TO_ZONE'
 export const SHARE_TO_SINA = 'SHARE_TO_SINA'
 import * as WeChat from 'react-native-wechat';
 import * as QQAPI from 'react-native-qq';
+import {Toast} from '../../util'
+
+WeChat.registerApp('wxbd3fc96a076aec22')
+
+export function shareTo(type: string,param:object):Function {
+
+    return dispatch => {
+        if(type ==SHARE_TO_TIMELINE || type == SHARE_TO_SESSION){
+            dispatch(shareToWechat(type,param))
+        }else if(type ==SHARE_TO_QQ || type == Share_TO_ZONE) {
+            dispatch(shareToQQ(type,param))
+        }else if(type == SHARE_TO_SINA) {
+            dispatch(shareToWeibo(param))
+        }
+    }
 
 
-WeChat.registerApp('wx5417c31ce54aaef2')
-export function shareToWechat(type: string): Function {
+
+}
+
+
+export  function shareToWechat(type: string,param:object): Function {
+
+
+
 
     let Method = WeChat.shareToTimeline;
     if (type == SHARE_TO_SESSION) Method = WeChat.shareToSession
 
     return async(dispatch)=> {
+
+
+
         try {
+            const res = await WeChat.isWXAppInstalled()
+            if(!res){
+                Toast.show('需要先安装微信!')
+                return
+            }
+            const res2 = await WeChat.isWXAppSupportApi()
+            if(!res2){
+                Toast.show('当前版本微信不支持!')
+                return
+            }
+
+
             let result = await Method({
                 type: 'news',
-                title: 'web image',
-                webpageUrl: 'www.baidu.com',
-                description: 'share web image to time line',
+                title: param.title||'web image',
+                webpageUrl: param.webpageUrl||'www.baidu.com',
+                description: param.description||'share web image to time line',
                 mediaTagName: 'email signature',
                 messageAction: undefined,
                 messageExt: undefined,
-                imageUrl: 'http://www.ncloud.hk/email-signature-262x100.png'
+                imageUrl: param.imageUrl||'http://www.ncloud.hk/email-signature-262x100.png',
+                thumbImage:param.thumbImage
             });
             console.log('share text message to time line successful:', result);
             return dispatch(()=> {
                 type, result
             })
         } catch (e) {
+            Toast.show(e.message)
             console.error('share text message to time line failed with:', e.message);
         }
     }
@@ -43,30 +81,34 @@ export function shareToWechat(type: string): Function {
 
 }
 
-export function shareToQQ(type:string):Function{
+export function shareToQQ(type:string,param:object):Function{
     let Method = QQAPI.shareToQQ;
     if(type == Share_TO_ZONE)  Method = QQAPI.shareToQzone
 
     return async (dispatch)=> {
+
         try {
+            await QQAPI.isQQInstalled()
+            await QQAPI.isQQSupportApi()
             let result = await Method({
                 type: 'news',
-                title: '分享标题',
-                description: '描述',
-                webpageUrl: '网页地址',
-                imageUrl: '远程图片地址',
+                title: param.title||'分享标题',
+                description:  param.description||'描述',
+                webpageUrl: param.webpageUrl||'网页地址',
+                imageUrl: param.imageUrl||param.thumbImage||'http://www.ncloud.hk/email-signature-262x100.png',
             });
             console.log('share text message to time line successful:', result);
             return dispatch(()=> {
                 type, result
             })
         } catch (e) {
-            console.error('share text message to time line failed with:', e.message);
+            Toast.show('分享失败,请检查QQ是否安装,或者版本是否支持。')
+            console.log('share text message to time line failed with:', e.message);
         }
     }
 }
 
-export  function shareToWeibo() :Function{
+export  function shareToWeibo(param:object) :Function{
     return async    (dispatch)=> {
         try {
             let result = await WeiboAPI.share({

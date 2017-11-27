@@ -12,6 +12,7 @@ import  {
     Platform,
     Linking
 } from 'react-native';
+import imagePicker from '../../util/imagePicker'
 import * as immutable from 'immutable';
 import {navbarHeight,screenHeight} from '../../util';
 // import {httpHeader} from '../../configure';
@@ -24,11 +25,11 @@ import {addParams} from '../../request/useMeth'
 
 // import WebViewAndroid from './WebViewAndroid'
 import {logout} from '../../redux/actions/login'
-
+import {uploadImage} from '../../util/uploadAVImage'
 // console.log('WebViewAndroid:', WebViewAndroid);
 const WebView = Platform.OS == 'ios'? WebViewIOS:WebViewIOS
 // const WebView = WebViewIOS
-
+import {shareTo} from '../../redux/actions/share'
 
 
 const UIManager = require('UIManager');
@@ -49,13 +50,34 @@ import createInvoke from 'react-native-webview-invoke/native'
         refresh:(route)=>{
             dispatch(navigateRefresh(route))
         },
-        share:()=>{
-
+        share:(type,param)=>{
+            dispatch(shareTo(type,param))
         },
         logout:()=>{
             dispatch(logout())
         },
-        uploadImage:()=>{
+        uploadImage:  (url)=>{
+            console.log('url:', url);
+            console.log('url:');
+            return new Promise(function (resolve, reject) {
+                // setTimeout(() => resolve("111"), 1);
+                const opt = {
+                    title: '添加图片',
+                    maxWidth: 2000, // photos only
+                    maxHeight: 2000, // photos only
+                }
+
+                url && url.length > 0 && imagePicker(opt, (response)=> {
+                    // console.log('response:', response);
+                    if( response.uri){
+                        // resolve(response.uri)
+                        uploadImage(url,[response])
+                            .then(res=>resolve(res))
+                            .catch(e=>reject(e))
+                    }
+                })
+            })
+
 
         }
 

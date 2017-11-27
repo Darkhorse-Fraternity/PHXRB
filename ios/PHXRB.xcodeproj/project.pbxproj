@@ -635,6 +635,7 @@
 				14D76F37BE6FB929EF410EB7 /* Pods */,
 				115E0148E2FB61C13FFE9539 /* Frameworks */,
 				75ECA9F6022C47239496F9FF /* Resources */,
+				CCF6AD4E1F7E2C420094A663 /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -781,6 +782,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CCF6AD4E1F7E2C420094A663 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				858A1DA5B94F48AA98B5A47F /* libRNDeviceInfo.a */,
+				03425A176E554E0CA0F9D1AB /* libRNImagePicker.a */,
+				16815CB8C8B24DFDB0DBFA28 /* libRNVectorIcons.a */,
+				B33F8BA4045C4A09A8E1CDED /* libRCTQQAPI.a */,
+				8D5A78FFFBE64862911175F2 /* libRCTWeChat.a */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -844,7 +857,7 @@
 								enabled = 1;
 							};
 							com.apple.Push = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -1376,6 +1389,7 @@
 			baseConfigurationReference = C5795D33A59FFF7734212F5B /* Pods-phxrb.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = phxrb/phxrb.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 3XYLE4WU79;
@@ -1417,7 +1431,7 @@
 					"-framework",
 					"\"TencentOpenAPI\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.reactnative.phxrb;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fj.phxrb;
 				PRODUCT_NAME = phxrb;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1429,6 +1443,7 @@
 			baseConfigurationReference = 5D8C4A73B937A1EB53019824 /* Pods-phxrb.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = phxrb/phxrb.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3XYLE4WU79;
@@ -1466,7 +1481,7 @@
 					"-framework",
 					"\"TencentOpenAPI\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.reactnative.phxrb;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fj.phxrb;
 				PRODUCT_NAME = phxrb;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
